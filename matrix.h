@@ -47,12 +47,12 @@ MatrixCache makeCache() { return MatrixCache(); }
 }  // namespace
 
 class Matrix;
-float determinant(const MatrixData2 &m);
-float determinant(const MatrixData3 &m);
-float determinant(const MatrixData4 &m);
-float cofactor(const MatrixData4 &m, size_t row, size_t column);
-float cofactor(const MatrixData3 &m, size_t row, size_t column);
-float cofactor(const MatrixData2 &m, size_t row, size_t column);
+double determinant(const MatrixData2 &m);
+double determinant(const MatrixData3 &m);
+double determinant(const MatrixData4 &m);
+double cofactor(const MatrixData4 &m, size_t row, size_t column);
+double cofactor(const MatrixData3 &m, size_t row, size_t column);
+double cofactor(const MatrixData2 &m, size_t row, size_t column);
 MatrixData3 submatrix(const MatrixData4 &m, size_t row, size_t column);
 MatrixData2 submatrix(const MatrixData3 &m, size_t row, size_t column);
 MatrixData4 get_inverse(const MatrixData4 &m);
@@ -237,11 +237,11 @@ Matrix CreateShearing(const float xy, const float xz, const float yx,
   return out;
 }
 
-float determinant(const MatrixData2 &m) {
+double determinant(const MatrixData2 &m) {
   return m[0][0] * m[1][1] - m[0][1] * m[1][0];
 }
 
-float determinant(const MatrixData3 &m) {
+double determinant(const MatrixData3 &m) {
   float out = 0.0;
   for (size_t i = 0; i < 3; ++i) {
     out += m[0][i] * cofactor(m, 0, i);
@@ -249,7 +249,7 @@ float determinant(const MatrixData3 &m) {
   return out;
 }
 
-float determinant(const MatrixData4 &m) {
+double determinant(const MatrixData4 &m) {
   float out = 0.0;
   for (size_t i = 0; i < 4; ++i) {
     out += (m[0][i] * cofactor(m, 0, i));
@@ -257,17 +257,17 @@ float determinant(const MatrixData4 &m) {
   return out;
 }
 
-float minor(const MatrixData3 &m, size_t row, size_t column) {
+double minor(const MatrixData3 &m, size_t row, size_t column) {
   MatrixData2 sub = submatrix(m, row, column);
   return determinant(sub);
 }
 
-float minor(const MatrixData4 &m, size_t row, size_t column) {
+double minor(const MatrixData4 &m, size_t row, size_t column) {
   MatrixData3 sub = submatrix(m, row, column);
   return determinant(sub);
 }
 
-float cofactor(const MatrixData3 &m, size_t row, size_t column) {
+double cofactor(const MatrixData3 &m, size_t row, size_t column) {
   float mi = minor(m, row, column);
   if ((row + column) % 2 == 1) {
     return -mi;
@@ -275,7 +275,7 @@ float cofactor(const MatrixData3 &m, size_t row, size_t column) {
   return mi;
 }
 
-float cofactor(const MatrixData4 &m, size_t row, size_t column) {
+double cofactor(const MatrixData4 &m, size_t row, size_t column) {
   float mi = minor(m, row, column);
   if ((row + column) % 2 == 1) {
     return -mi;

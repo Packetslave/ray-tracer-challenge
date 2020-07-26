@@ -9,7 +9,7 @@ class CanvasTest : public ::testing::Test {
     
 };
 
-TEST_F(CanvasTest, Initialize) {
+TEST(CanvasTest, Initialize) {
   // Scenario: Creating a canvas
 
   // Given c ← canvas(10, 20)
