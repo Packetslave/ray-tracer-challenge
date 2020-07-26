@@ -1,8 +1,8 @@
 #include "../light.h"
 
-#include "gtest/gtest.h"
 #include "../color.h"
 #include "../tuple.h"
+#include "gtest/gtest.h"
 
 TEST(Light, PointLight) {
   auto i = Color(1, 1, 1);

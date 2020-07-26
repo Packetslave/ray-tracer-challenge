@@ -1,13 +1,10 @@
 #include "../canvas.h"
 
+#include "../color.h"
 #include "absl/strings/str_split.h"
 #include "gtest/gtest.h"
-#include "../color.h"
 
-
-class CanvasTest : public ::testing::Test {
-    
-};
+class CanvasTest : public ::testing::Test {};
 
 TEST(CanvasTest, Initialize) {
   // Scenario: Creating a canvas

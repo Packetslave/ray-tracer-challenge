@@ -4,11 +4,11 @@
 
 #include "../sphere.h"
 
-#include "gtest/gtest.h"
 #include "../material.h"
 #include "../matrix.h"
 #include "../ray.h"
 #include "../tuple.h"
+#include "gtest/gtest.h"
 
 bool vector_is_near(Tuple a, Tuple b, float abs) {
   std::cout << "A: " << a << std::endl;

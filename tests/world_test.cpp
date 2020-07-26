@@ -1,11 +1,13 @@
 #include "../world.h"
+
 #include <cmath>
-#include "gtest/gtest.h"
+
 #include "../camera.h"
 #include "../light.h"
 #include "../material.h"
 #include "../sphere.h"
 #include "../tuple.h"
+#include "gtest/gtest.h"
 
 bool matrix_is_near(Matrix a, Matrix b, float abs) {
   for (int row = 0; row < a.size(); ++row) {
@@ -19,7 +21,8 @@ bool matrix_is_near(Matrix a, Matrix b, float abs) {
 }
 
 bool tuple_is_near(Tuple a, Tuple b) {
-    return abs(a.x - b.x) < EPSILON && abs(a.y - b.y) < EPSILON && abs(a.x - b.x) < EPSILON && abs(a.w - b.w) < EPSILON;
+  return abs(a.x - b.x) < EPSILON && abs(a.y - b.y) < EPSILON &&
+         abs(a.x - b.x) < EPSILON && abs(a.w - b.w) < EPSILON;
 }
 
 TEST(World, Create) {

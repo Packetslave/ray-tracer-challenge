@@ -9,8 +9,8 @@
 
 #include <iostream>
 
-#include "gtest/gtest.h"
 #include "../tuple.h"
+#include "gtest/gtest.h"
 
 TEST(Matrix, Create4x4) {
   Matrix m{MatrixData4{{{1, 2, 3, 4},
@@ -100,104 +100,100 @@ TEST(Matrix, TransposeIdentity) {
   ASSERT_EQ(a, b);
 }
 
- TEST(Matrix, Determinant2x2) {
-   MatrixData2 a{{
-       {1, 5},
-       {-3, 2},
-   }};
-   ASSERT_EQ(17, determinant(a));
- }
+TEST(Matrix, Determinant2x2) {
+  MatrixData2 a{{
+      {1, 5},
+      {-3, 2},
+  }};
+  ASSERT_EQ(17, determinant(a));
+}
 
- TEST(Matrix, Determinant3x3) {
-   MatrixData3 a{{
-       {1, 2, 6},
-       {-5, 8, -4},
-       {2, 6, 4},
-   }};
-   ASSERT_EQ(56, cofactor(a, 0, 0));
-   ASSERT_EQ(12, cofactor(a, 0, 1));
-   ASSERT_EQ(-46, cofactor(a,  0, 2));
-   ASSERT_EQ(-196, determinant(a));
- }
+TEST(Matrix, Determinant3x3) {
+  MatrixData3 a{{
+      {1, 2, 6},
+      {-5, 8, -4},
+      {2, 6, 4},
+  }};
+  ASSERT_EQ(56, cofactor(a, 0, 0));
+  ASSERT_EQ(12, cofactor(a, 0, 1));
+  ASSERT_EQ(-46, cofactor(a, 0, 2));
+  ASSERT_EQ(-196, determinant(a));
+}
 //
 TEST(Matrix, Determinant4x4) {
-    MatrixData4 a{{{-2, -8, 3,  5},
-                  {-3, 1,  7,  3},
-                  {1,  2,  -9, 6},
-                  {-6, 7,  7,
-                               -9}}};
+  MatrixData4 a{{{-2, -8, 3, 5}, {-3, 1, 7, 3}, {1, 2, -9, 6}, {-6, 7, 7, -9}}};
 
-EXPECT_EQ(690, cofactor(a, 0, 0));
-EXPECT_EQ(447, cofactor(a, 0, 1));
-EXPECT_EQ(210, cofactor(a, 0, 2));
-EXPECT_EQ(51, cofactor(a, 0, 3));
-EXPECT_EQ(-4071, determinant(a));
+  EXPECT_EQ(690, cofactor(a, 0, 0));
+  EXPECT_EQ(447, cofactor(a, 0, 1));
+  EXPECT_EQ(210, cofactor(a, 0, 2));
+  EXPECT_EQ(51, cofactor(a, 0, 3));
+  EXPECT_EQ(-4071, determinant(a));
 }
 
 template <class T>
 bool matrix_data_is_near(T a, T b) {
-    for (size_t i = 0; i < a.size(); ++i) {
-        for (size_t j = 0; j < b.size(); ++j) {
-            if (abs(a[i][j] - b[i][j]) > EPSILON) {
-                return false;
-            }
-        }
+  for (size_t i = 0; i < a.size(); ++i) {
+    for (size_t j = 0; j < b.size(); ++j) {
+      if (abs(a[i][j] - b[i][j]) > EPSILON) {
+        return false;
+      }
     }
-    return true;
+  }
+  return true;
 }
 
- TEST(Matrix, Submatrix3x3) {
-   MatrixData4 a{{
-       {1, 5, 0},
-       {-3, 2, 7},
-       {0, 6, -3},
-   }};
-   MatrixData3 b{{
-       {-3, 2},
-       {0, 6},
-   }};
-   MatrixData3 c = submatrix(a, 0, 2);
-   ASSERT_TRUE(matrix_data_is_near<MatrixData3>(b, c));
- }
+TEST(Matrix, Submatrix3x3) {
+  MatrixData4 a{{
+      {1, 5, 0},
+      {-3, 2, 7},
+      {0, 6, -3},
+  }};
+  MatrixData3 b{{
+      {-3, 2},
+      {0, 6},
+  }};
+  MatrixData3 c = submatrix(a, 0, 2);
+  ASSERT_TRUE(matrix_data_is_near<MatrixData3>(b, c));
+}
 
- TEST(Matrix, Submatrix4x4) {
-   MatrixData4 a{{
-       {-6, 1, 1, 6},
-       {-8, 5, 8, 6},
-       {-1, 0, 8, 2},
-       {-7, 1, -1, 1},
-   }};
-   MatrixData3 b{{
-       {-6, 1, 6},
-       {-8, 8, 6},
-       {-7, -1, 1},
-   }};
-   MatrixData3 c = submatrix(a, 2, 1);
-   ASSERT_TRUE(matrix_data_is_near(b, c));
- }
+TEST(Matrix, Submatrix4x4) {
+  MatrixData4 a{{
+      {-6, 1, 1, 6},
+      {-8, 5, 8, 6},
+      {-1, 0, 8, 2},
+      {-7, 1, -1, 1},
+  }};
+  MatrixData3 b{{
+      {-6, 1, 6},
+      {-8, 8, 6},
+      {-7, -1, 1},
+  }};
+  MatrixData3 c = submatrix(a, 2, 1);
+  ASSERT_TRUE(matrix_data_is_near(b, c));
+}
 
- TEST(Matrix, Minor3x3) {
-   MatrixData3 a{{
-       {3, 5, 0},
-       {2, -1, -7},
-       {6, -1, 5},
-   }};
-   MatrixData2 b = submatrix(a, 1, 0);
-   ASSERT_EQ(25, determinant(b));
-   ASSERT_EQ(25, minor(a, 1, 0));
- }
+TEST(Matrix, Minor3x3) {
+  MatrixData3 a{{
+      {3, 5, 0},
+      {2, -1, -7},
+      {6, -1, 5},
+  }};
+  MatrixData2 b = submatrix(a, 1, 0);
+  ASSERT_EQ(25, determinant(b));
+  ASSERT_EQ(25, minor(a, 1, 0));
+}
 
- TEST(Matrix, Cofactor) {
-   MatrixData3 a{{
-       {3, 5, 0},
-       {2, -1, -7},
-       {6, -1, 5},
-   }};
-   ASSERT_EQ(-12, minor(a, 0, 0));
-   ASSERT_EQ(-12, cofactor(a, 0, 0));
-   ASSERT_EQ(25, minor(a, 1, 0));
-   ASSERT_EQ(-25, cofactor(a, 1, 0));
- }
+TEST(Matrix, Cofactor) {
+  MatrixData3 a{{
+      {3, 5, 0},
+      {2, -1, -7},
+      {6, -1, 5},
+  }};
+  ASSERT_EQ(-12, minor(a, 0, 0));
+  ASSERT_EQ(-12, cofactor(a, 0, 0));
+  ASSERT_EQ(25, minor(a, 1, 0));
+  ASSERT_EQ(-25, cofactor(a, 1, 0));
+}
 
 TEST(Matrix, IsInvertible) {
   Matrix a{MatrixData4{{

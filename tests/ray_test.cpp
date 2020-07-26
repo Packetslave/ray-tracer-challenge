@@ -4,9 +4,9 @@
 
 #include "../ray.h"
 
-#include "gtest/gtest.h"
 #include "../matrix.h"
 #include "../tuple.h"
+#include "gtest/gtest.h"
 
 TEST(Ray, Create) {
   auto p = Tuple::point(1, 2, 3);

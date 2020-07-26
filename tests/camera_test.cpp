@@ -1,11 +1,13 @@
 #include "../camera.h"
-#include "../world.h"
+
 #include <cmath>
 
+#include "../world.h"
 #include "gtest/gtest.h"
 
 bool tuple_is_near(Tuple a, Tuple b) {
-    return abs(a.x - b.x) < EPSILON && abs(a.y - b.y) < EPSILON && abs(a.x - b.x) < EPSILON && abs(a.w - b.w) < EPSILON;
+  return abs(a.x - b.x) < EPSILON && abs(a.y - b.y) < EPSILON &&
+         abs(a.x - b.x) < EPSILON && abs(a.w - b.w) < EPSILON;
 }
 
 TEST(Camera, Create) {
@@ -33,11 +35,11 @@ TEST(Camera, RayThroughCenter) {
 
   auto expectedp = Tuple::point(0.0, 0.0, 0.0);
   auto actualp = r.origin();
-    EXPECT_TRUE(tuple_is_near(expectedp, actualp));
+  EXPECT_TRUE(tuple_is_near(expectedp, actualp));
 
   auto expectedv = Tuple::vector(0, 0, -1);
   auto actualv = r.direction();
-    EXPECT_TRUE(tuple_is_near(expectedv, actualv));
+  EXPECT_TRUE(tuple_is_near(expectedv, actualv));
 }
 
 TEST(Camera, RayThroughCorner) {
@@ -48,7 +50,7 @@ TEST(Camera, RayThroughCorner) {
   EXPECT_TRUE(tuple_is_near(expectedp, r.origin()));
 
   auto expectedv = Tuple::vector(0.66519, 0.33259, -0.66851);
-    EXPECT_TRUE(tuple_is_near(expectedv, r.direction()));
+  EXPECT_TRUE(tuple_is_near(expectedv, r.direction()));
 }
 
 TEST(Camera, RayWithTransformedCamera) {
@@ -59,24 +61,23 @@ TEST(Camera, RayWithTransformedCamera) {
   auto r = c.ray_for_pixel(100.0, 50.0);
 
   auto expectedp = Tuple::point(0.0, 2.0, -5.0);
-  EXPECT_TRUE(tuple_is_near(expectedp, r.origin()))
-      << r.origin() << std::endl
-      << expectedp;
+  EXPECT_TRUE(tuple_is_near(expectedp, r.origin())) << r.origin() << std::endl
+                                                    << expectedp;
 
-  auto expectedv = Tuple::vector(sqrt(2) / 2, 0, -sqrt(2)/2);
+  auto expectedv = Tuple::vector(sqrt(2) / 2, 0, -sqrt(2) / 2);
   EXPECT_TRUE(tuple_is_near(expectedv, r.direction()));
 }
 
- TEST(Camera, RenderWorld) {
-   auto w = World::default_world();
-   auto c = Camera(11, 11, PI_2);
-   auto from = Tuple::point(0, 0, -5);
-   auto to = Tuple::point(0, 0, 0);
-   auto up = Tuple::vector(0, 1, 0);
-   auto vt = view_transform(from, to, up);
-   c.set_transform(vt);
-   auto image = c.render(w);
-   auto expected = Color(0.38066, 0.47583, 0.2855);
-   auto actual = image.pixel_at(5, 5);
-   EXPECT_TRUE(tuple_is_near(expected, actual));
- }
+TEST(Camera, RenderWorld) {
+  auto w = World::default_world();
+  auto c = Camera(11, 11, PI_2);
+  auto from = Tuple::point(0, 0, -5);
+  auto to = Tuple::point(0, 0, 0);
+  auto up = Tuple::vector(0, 1, 0);
+  auto vt = view_transform(from, to, up);
+  c.set_transform(vt);
+  auto image = c.render(w);
+  auto expected = Color(0.38066, 0.47583, 0.2855);
+  auto actual = image.pixel_at(5, 5);
+  EXPECT_TRUE(tuple_is_near(expected, actual));
+}

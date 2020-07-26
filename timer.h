@@ -6,7 +6,7 @@
 using hrc = std::chrono::high_resolution_clock;
 
 class Timer {
-public:
+ public:
   static const int SECONDS = 1;
   static const int MILLISECONDS = 2;
 
@@ -32,7 +32,7 @@ public:
     std::cout << name_ << ": " << t << " " << s << std::endl;
   }
 
-private:
+ private:
   std::string name_;
   hrc::time_point start_;
   int resolution_;

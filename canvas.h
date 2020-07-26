@@ -6,9 +6,9 @@
 #include <string>
 #include <vector>
 
-#include "color.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/str_join.h"
+#include "color.h"
 
 inline constexpr std::string_view kPPMHeader = "P3\n%i %i\n%i\n";
 inline constexpr std::string_view kPPMElement = "%i %i %i";

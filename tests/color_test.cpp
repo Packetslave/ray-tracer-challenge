@@ -1,11 +1,9 @@
 #include "../color.h"
 
-#include "gtest/gtest.h"
 #include "../tuple.h"
+#include "gtest/gtest.h"
 
-class ColorTest : public ::testing::Test {
-
-};
+class ColorTest : public ::testing::Test {};
 
 TEST(ColorTest, Color) {
   // Scenario: Colors are (red, green, blue) tuples

@@ -9,15 +9,15 @@ enable_testing()
 add_subdirectory(tests)
 add_subdirectory(external/abseil-cpp)
 
-add_library(camera  camera.cpp)
-target_link_libraries(camera  color)
+add_library(camera camera.cpp)
+target_link_libraries(camera color)
 target_link_libraries(camera canvas color matrix ray tuple world)
 
-add_library(canvas  canvas.cpp)
+add_library(canvas canvas.cpp)
 target_link_libraries(canvas color)
 target_link_libraries(canvas absl::str_format)
 
-add_library(color  color.cpp)
+add_library(color color.cpp)
 target_link_libraries(color tuple)
 
 add_library(intersection intersection.cpp)
@@ -41,9 +41,9 @@ target_link_libraries(sphere tuple matrix)
 add_library(world world.cpp)
 target_link_libraries(world canvas intersection light ray sphere)
 
-add_library(timer  timer.cpp)
+add_library(timer timer.cpp)
 
-add_library(tuple  tuple.cpp)
+add_library(tuple tuple.cpp)
 
 add_executable(raytrace1 raytrace1.cpp)
 target_link_libraries(raytrace1 canvas color intersection light material matrix ray sphere timer tuple)

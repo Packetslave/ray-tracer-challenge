@@ -1,9 +1,9 @@
 #include "../material.h"
 
-#include "gtest/gtest.h"
 #include "../color.h"
 #include "../light.h"
 #include "../tuple.h"
+#include "gtest/gtest.h"
 
 bool color_is_near(Color a, Color b, float abs) {
   return ((std::abs(a.x - b.x) < abs) && (std::abs(a.y - b.y) < abs) &&
