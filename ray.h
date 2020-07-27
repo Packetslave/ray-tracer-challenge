@@ -12,7 +12,7 @@ class Ray {
 
   Tuple direction() const { return direction_; }
 
-  Tuple position(const float distance) const {
+  Tuple position(const double distance) const {
     return origin_ + (direction_ * distance);
   }
 

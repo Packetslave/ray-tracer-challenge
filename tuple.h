@@ -4,18 +4,18 @@
 #include <cmath>
 #include <ostream>
 
-static constexpr float EPSILON = 0.0001;
+static constexpr double EPSILON = 0.0001;
 
-bool eq(const float a, const float b) { return abs(a - b) < EPSILON; }
+bool eq(const double a, const double b) { return abs(a - b) < EPSILON; }
 
 class Tuple;
-float dot(const Tuple& a, const Tuple& b);
+double dot(const Tuple& a, const Tuple& b);
 
 class Tuple {
  public:
-  Tuple(float x, float y, float z, float w) : x{x}, y{y}, z{z}, w{w} {}
+  Tuple(double x, double y, double z, double w) : x{x}, y{y}, z{z}, w{w} {}
 
-  static Tuple point(float x, float y, float z) { return Tuple(x, y, z, 1.0); }
+  static Tuple point(double x, double y, double z) { return Tuple(x, y, z, 1.0); }
 
   static Tuple point(const Tuple& rhs) {
     if (rhs.w != 1.0) {
@@ -24,7 +24,7 @@ class Tuple {
     return Tuple(rhs.x, rhs.y, rhs.z, 1.0);
   }
 
-  static Tuple vector(float x, float y, float z) { return Tuple(x, y, z, 0.0); }
+  static Tuple vector(double x, double y, double z) { return Tuple(x, y, z, 0.0); }
 
   static Tuple vector(const Tuple& rhs) {
     if (rhs.w != 0.0) {
@@ -37,10 +37,10 @@ class Tuple {
 
   bool vector() const { return w == 0.0; }
 
-  float magnitude() const { return sqrt(x * x + y * y + z * z + w * w); }
+  double magnitude() const { return sqrt(x * x + y * y + z * z + w * w); }
 
   Tuple normalize() const {
-    const float mag = magnitude();
+    const double mag = magnitude();
     return Tuple(x / mag, y / mag, z / mag, w / mag);
   }
 
@@ -69,7 +69,7 @@ class Tuple {
     return *this;
   }
 
-  Tuple& operator*=(const float rhs) {
+  Tuple& operator*=(const double rhs) {
     x *= rhs;
     y *= rhs;
     z *= rhs;
@@ -78,7 +78,7 @@ class Tuple {
     return *this;
   }
 
-  Tuple& operator/=(const float rhs) {
+  Tuple& operator/=(const double rhs) {
     x /= rhs;
     y /= rhs;
     z /= rhs;
@@ -97,17 +97,17 @@ class Tuple {
     return lhs;
   }
 
-  friend Tuple operator*(Tuple lhs, const float rhs) {
+  friend Tuple operator*(Tuple lhs, const double rhs) {
     lhs *= rhs;
     return lhs;
   }
 
-  friend Tuple operator/(Tuple lhs, const float rhs) {
+  friend Tuple operator/(Tuple lhs, const double rhs) {
     lhs /= rhs;
     return lhs;
   }
 
-  float x, y, z, w;
+  double x, y, z, w;
 };
 
 Tuple operator-(const Tuple& rhs) {
@@ -119,7 +119,7 @@ inline bool operator==(const Tuple& lhs, const Tuple& rhs) {
          eq(lhs.w, rhs.w);
 }
 
-float dot(const Tuple& a, const Tuple& b) {
+double dot(const Tuple& a, const Tuple& b) {
   return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
 }
 

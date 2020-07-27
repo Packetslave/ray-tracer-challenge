@@ -98,13 +98,13 @@ class Matrix {
     }
   }
 
-  float get(const size_t row, const size_t column) const {
+  double get(const size_t row, const size_t column) const {
     assert(row < 4);
     assert(column < 4);
     return data_[row][column];
   }
 
-  void set(const size_t row, const size_t column, const float value) {
+  void set(const size_t row, const size_t column, const double value) {
     assert(row < 4);
     assert(column < 4);
     data_[row][column] = value;
@@ -158,7 +158,7 @@ inline Matrix operator*(const Matrix &a, const Matrix &b) {
 
   for (size_t row = 0; row < 4; ++row) {
     for (size_t col = 0; col < 4; ++col) {
-      float sum = 0.0;
+      double sum = 0.0;
       for (size_t i = 0; i < 4; ++i) {
         sum += (a.get(row, i) * b.get(i, col));
       }
@@ -169,7 +169,7 @@ inline Matrix operator*(const Matrix &a, const Matrix &b) {
 }
 
 inline Tuple operator*(const Matrix &a, const Tuple &b) {
-  float out[4];
+  double out[4];
   for (size_t i = 0; i < 4; ++i) {
     out[i] = a.get(i, 0) * b.x + a.get(i, 1) * b.y + a.get(i, 2) * b.z +
              a.get(i, 3) * b.w;
@@ -182,7 +182,7 @@ inline Tuple operator*(const Matrix &a, const Tuple &b) {
   };
 }
 
-Matrix CreateTranslation(const float x, const float y, const float z) {
+Matrix CreateTranslation(const double x, const double y, const double z) {
   Matrix out{IDENTITY};
   out.set(0, 3, x);
   out.set(1, 3, y);
@@ -190,7 +190,7 @@ Matrix CreateTranslation(const float x, const float y, const float z) {
   return out;
 }
 
-Matrix CreateScaling(const float x, const float y, const float z) {
+Matrix CreateScaling(const double x, const double y, const double z) {
   Matrix out{IDENTITY};
   out.set(0, 0, x);
   out.set(1, 1, y);
@@ -198,7 +198,7 @@ Matrix CreateScaling(const float x, const float y, const float z) {
   return out;
 }
 
-Matrix CreateRotationX(const float radians) {
+Matrix CreateRotationX(const double radians) {
   Matrix out{IDENTITY};
   out.set(1, 1, cos(radians));
   out.set(1, 2, -sin(radians));
@@ -207,7 +207,7 @@ Matrix CreateRotationX(const float radians) {
   return out;
 }
 
-Matrix CreateRotationY(const float radians) {
+Matrix CreateRotationY(const double radians) {
   Matrix out{IDENTITY};
   out.set(0, 0, cos(radians));
   out.set(0, 2, sin(radians));
@@ -216,7 +216,7 @@ Matrix CreateRotationY(const float radians) {
   return out;
 }
 
-Matrix CreateRotationZ(const float radians) {
+Matrix CreateRotationZ(const double radians) {
   Matrix out{IDENTITY};
   out.set(0, 0, cos(radians));
   out.set(0, 1, -sin(radians));
@@ -225,8 +225,8 @@ Matrix CreateRotationZ(const float radians) {
   return out;
 }
 
-Matrix CreateShearing(const float xy, const float xz, const float yx,
-                      const float yz, const float zx, const float zy) {
+Matrix CreateShearing(const double xy, const double xz, const double yx,
+                      const double yz, const double zx, const double zy) {
   Matrix out{IDENTITY};
   out.set(0, 1, xy);
   out.set(0, 2, xz);
@@ -242,7 +242,7 @@ double determinant(const MatrixData2 &m) {
 }
 
 double determinant(const MatrixData3 &m) {
-  float out = 0.0;
+  double out = 0.0;
   for (size_t i = 0; i < 3; ++i) {
     out += m[0][i] * cofactor(m, 0, i);
   }
@@ -250,7 +250,7 @@ double determinant(const MatrixData3 &m) {
 }
 
 double determinant(const MatrixData4 &m) {
-  float out = 0.0;
+  double out = 0.0;
   for (size_t i = 0; i < 4; ++i) {
     out += (m[0][i] * cofactor(m, 0, i));
   }
@@ -268,7 +268,7 @@ double minor(const MatrixData4 &m, size_t row, size_t column) {
 }
 
 double cofactor(const MatrixData3 &m, size_t row, size_t column) {
-  float mi = minor(m, row, column);
+  double mi = minor(m, row, column);
   if ((row + column) % 2 == 1) {
     return -mi;
   }
@@ -276,7 +276,7 @@ double cofactor(const MatrixData3 &m, size_t row, size_t column) {
 }
 
 double cofactor(const MatrixData4 &m, size_t row, size_t column) {
-  float mi = minor(m, row, column);
+  double mi = minor(m, row, column);
   if ((row + column) % 2 == 1) {
     return -mi;
   }
@@ -284,12 +284,12 @@ double cofactor(const MatrixData4 &m, size_t row, size_t column) {
 }
 
 MatrixData4 get_inverse(const MatrixData4 &m) {
-  float det = determinant(m);
+  double det = determinant(m);
 
   MatrixData4 out;
   for (size_t row = 0; row < 4; ++row) {
     for (size_t col = 0; col < 4; ++col) {
-      float c = cofactor(m, row, col);
+      double c = cofactor(m, row, col);
       out[col][row] = c / det;
     }
   }

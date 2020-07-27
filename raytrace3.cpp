@@ -17,7 +17,7 @@ int main() {
   auto world = World();
   world.set_light(PointLight(Tuple::point(-10, 10, -10), Color(1, 1, 1)));
 
-  auto camera = Camera(800, 400, PI / 3);
+  auto camera = Camera(1600, 1200, PI / 3);
   camera.set_transform(view_transform(
       Tuple::point(0, 1.5, -5), Tuple::point(0, 1, 0), Tuple::vector(0, 1, 0)));
 

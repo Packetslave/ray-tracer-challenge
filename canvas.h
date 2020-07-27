@@ -13,8 +13,8 @@ inline constexpr std::string_view kPPMHeader = "P3\n{} {}\n{}\n";
 inline constexpr std::string_view kPPMElement = "{} {} {}";
 
 namespace {
-int clamp(const float x, const float min, const float max) {
-  float val = x * 256;
+int clamp(const double x, const double min, const double max) {
+  double val = x * 256;
   if (val < min) {
     return min;
   }
