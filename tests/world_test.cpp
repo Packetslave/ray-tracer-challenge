@@ -161,3 +161,57 @@ TEST(ViewTransformP, Arbitraty) {
 
   EXPECT_TRUE(matrix_is_near(expected, t, 0.0001));
 }
+
+TEST(Shadows, NoShadowWhenNoCollinear) {
+  auto w = World::default_world();
+  auto p = Tuple::point(0, 10, 0);
+  EXPECT_FALSE(w.is_shadowed(p));
+}
+
+TEST(Shadows, ShadowWhenObjectIsBetweenPointAndLight) {
+  auto w = World::default_world();
+  auto p = Tuple::point(10, -10, 10);
+  EXPECT_TRUE(w.is_shadowed(p));
+}
+
+TEST(Shadows, NoShadowWhenObjectBehindLight) {
+  auto w = World::default_world();
+  auto p = Tuple::point(-20, 20, -20);
+  EXPECT_FALSE(w.is_shadowed(p));
+}
+
+TEST(Shadows, NoShadowWhenObjectBehindPoint) {
+  auto w = World::default_world();
+  auto p = Tuple::point(-2, 2, -2);
+  EXPECT_FALSE(w.is_shadowed(p));
+}
+
+TEST(Shadows, ShadeHitGivenShadow) {
+  auto w = World();
+  w.set_light(PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1)));
+
+  auto s1 = Sphere();
+  w.add(s1);
+
+  auto s2 = Sphere();
+  s2.set_transform(CreateTranslation(0, 0, 10));
+  w.add(s2);
+
+  auto r = Ray(Tuple::point(0, 0, 5), Tuple::vector(0, 0, 1));
+  auto i = Intersection(4, &s2);
+
+  auto comps = ComputedIntersection(i, r);
+  auto c = w.shade_hit(comps);
+
+  EXPECT_EQ(Color(0.1, 0.1, 0.1), c);
+}
+
+TEST(Shadows, HitOffset) {
+  auto r = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
+  auto s = Sphere();
+  s.set_transform((CreateTranslation(0, 0, 1)));
+  auto i = Intersection(5, &s);
+  auto comps = ComputedIntersection(i, r);
+  EXPECT_TRUE(comps.over_point.z < -EPSILON/2);
+  EXPECT_TRUE(comps.point.z > comps.over_point.z);
+}

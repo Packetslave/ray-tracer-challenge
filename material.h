@@ -24,7 +24,7 @@ class Material {
   void set_specular(const double d) { specular_ = d; }
   void set_shininess(const double d) { shininess_ = d; }
 
-  Color lighting(PointLight light, Tuple point, Tuple eye_v, Tuple normal_v) {
+  Color lighting(PointLight light, Tuple point, Tuple eye_v, Tuple normal_v, bool in_shadow) {
     Color effective = this->color() * light.intensity();
     Tuple light_v = (light.position() - point).normalize();
     Tuple ambient = effective * this->ambient();
@@ -44,8 +44,7 @@ class Material {
         specular = light.intensity() * this->specular() * f;
       }
     }
-
-    return ambient + diffuse + specular;
+    return in_shadow ? ambient : (ambient + diffuse + specular);
   }
 
  private:

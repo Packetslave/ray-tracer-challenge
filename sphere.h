@@ -64,7 +64,9 @@ struct ComputedIntersection {
         t(i.t()),
         point(r.position(t)),
         eyev(-r.direction()),
-        normalv(object->normal_at(point)) {
+        normalv(object->normal_at(point)),
+        over_point(point + normalv * EPSILON)
+         {
     if (dot(normalv, eyev) < 0) {
       inside = true;
       normalv = -normalv;
@@ -76,6 +78,7 @@ struct ComputedIntersection {
   Tuple point;
   Tuple eyev;
   Tuple normalv;
+  Tuple over_point;
   bool inside = false;
 };
 

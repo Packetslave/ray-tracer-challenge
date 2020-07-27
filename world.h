@@ -32,8 +32,9 @@ class World {
   }
 
   Color shade_hit(const ComputedIntersection& comps) {
-    auto out = comps.object->material()->lighting(*light_, comps.point,
-                                                  comps.eyev, comps.normalv);
+    auto shadowed = is_shadowed(comps.over_point);
+    auto out = comps.object->material()->lighting(*light_, comps.over_point,
+                                                  comps.eyev, comps.normalv, shadowed);
     return out;
   }
 
@@ -76,6 +77,21 @@ class World {
                 return a.t() < b.t();
               });
     return out;
+  }
+
+  bool is_shadowed(const Tuple& point) {
+    auto v = light_->position() - point;
+    auto distance = v.magnitude();
+    auto direction = v.normalize();
+
+    auto r = Ray(point, direction);
+    auto intersections = intersect(r);
+
+    auto h = Hit(intersections);
+    if (h && h->t() < distance) {
+      return true;
+    }
+    return false;
   }
 
  private:
