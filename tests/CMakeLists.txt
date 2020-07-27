@@ -8,7 +8,7 @@ target_link_libraries(CameraTest camera)
 
 add_executable(CanvasTest canvas_test.cpp)
 target_link_libraries(CanvasTest gtest gtest_main)
-target_link_libraries(CanvasTest canvas)
+target_link_libraries(CanvasTest canvas ${FOLLY_LIBRARIES})
 
 add_executable(ColorTest color_test.cpp)
 target_link_libraries(ColorTest gtest gtest_main)

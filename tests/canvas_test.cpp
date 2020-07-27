@@ -1,7 +1,6 @@
 #include "../canvas.h"
 
 #include "../color.h"
-#include "absl/strings/str_split.h"
 #include "gtest/gtest.h"
 
 class CanvasTest : public ::testing::Test {};
@@ -56,7 +55,8 @@ TEST(CanvasTest, Header) {
   //     5 3
   //     255
   // """
-  std::vector<std::string> lines = absl::StrSplit(ppm, "\n");
+  std::vector<std::string> lines;
+  folly::split("\n", ppm, lines);
   EXPECT_GE(lines.size(), 3);
   EXPECT_EQ("P3", lines[0]);
   EXPECT_EQ("5 3", lines[1]);
@@ -89,7 +89,6 @@ TEST(CanvasTest, GeneratePPM) {
 
   // And ppm ← canvas_to_ppm(c)
   auto ppm = c.to_ppm();
-  std::cout << ppm << std::endl;
 
   // Then lines 4-6 of ppm are
   //    """
@@ -97,7 +96,8 @@ TEST(CanvasTest, GeneratePPM) {
   //    0 0 0 0 0 0 0 128 0 0 0 0 0 0 0
   //    0 0 0 0 0 0 0 0 0 0 0 0 0 0 255
   //    """
-  std::vector<std::string> lines = absl::StrSplit(ppm, "\n");
+  std::vector<std::string> lines;
+  folly::split( "\n", ppm, lines);
   EXPECT_EQ("255 0 0 0 0 0 0 0 0 0 0 0 0 0 0", lines[3]);
   EXPECT_EQ("0 0 0 0 0 0 0 128 0 0 0 0 0 0 0", lines[4]);
   EXPECT_EQ("0 0 0 0 0 0 0 0 0 0 0 0 0 0 255", lines[5]);
@@ -126,7 +126,8 @@ TEST(CanvasTest, SplitLongLines) {
   //         255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204
   //         153 255 204 153 255 204 153 255 204 153 255 204 153
   //     """
-  std::vector<std::string> lines = absl::StrSplit(ppm, "\n");
+  std::vector<std::string> lines;
+  folly::split( "\n", ppm, lines);
   EXPECT_EQ(
       "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204",
       lines[3]);

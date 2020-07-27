@@ -6,12 +6,11 @@
 #include <string>
 #include <vector>
 
-#include "absl/strings/str_format.h"
-#include "absl/strings/str_join.h"
 #include "color.h"
+#include "folly/Format.h"
 
-inline constexpr std::string_view kPPMHeader = "P3\n%i %i\n%i\n";
-inline constexpr std::string_view kPPMElement = "%i %i %i";
+inline constexpr std::string_view kPPMHeader = "P3\n{} {}\n{}\n";
+inline constexpr std::string_view kPPMElement = "{} {} {}";
 
 namespace {
 int clamp(const float x, const float min, const float max) {
@@ -43,12 +42,11 @@ class Canvas {
 
   std::string to_ppm() const {
     std::vector<std::string> rows;
-    std::string header = absl::StrFormat(kPPMHeader, width_, height_, 255);
-
+    std::string header = folly::sformat(kPPMHeader, width_, height_, 255);
     std::string row;
     int ctr = 0;
     for (const auto &i : *pixels_) {
-      row += absl::StrFormat(kPPMElement, clamp(i.r(), 0, 255),
+      row += folly::sformat(kPPMElement, clamp(i.r(), 0, 255),
                              clamp(i.g(), 0, 255), clamp(i.b(), 0, 255));
 
       if (++ctr == width_) {
@@ -75,8 +73,7 @@ class Canvas {
         row += ' ';
       }
     }
-
-    return header + absl::StrJoin(rows, "\n") + '\n';
+    return header + folly::join("\n", rows) + '\n';
   }
 
   void save(const std::string &filename) const {

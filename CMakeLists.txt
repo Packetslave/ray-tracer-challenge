@@ -1,21 +1,24 @@
 cmake_minimum_required(VERSION 3.5)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
 project(ray-tracing2 VERSION 1.0 LANGUAGES CXX)
 
 # Pick the C++ standard to compile with.
 # Abseil currently supports C++11, C++14, and C++17.
 set(CMAKE_CXX_STANDARD 17)
 
+set(FOLLY_ROOT_DIR /Users/blanders/.brew)
+find_package(folly)
+include_directories(${FOLLY_INCLUDE_DIR})
+
 enable_testing()
 add_subdirectory(tests)
-add_subdirectory(external/abseil-cpp)
 
 add_library(camera camera.cpp)
-target_link_libraries(camera color)
-target_link_libraries(camera canvas color matrix ray tuple world)
+target_link_libraries(camera canvas)
 
 add_library(canvas canvas.cpp)
-target_link_libraries(canvas color)
-target_link_libraries(canvas absl::str_format)
+target_link_libraries(canvas color ${folly_LIBRARIES})
 
 add_library(color color.cpp)
 target_link_libraries(color tuple)
@@ -39,17 +42,17 @@ add_library(sphere sphere.cpp)
 target_link_libraries(sphere tuple matrix)
 
 add_library(world world.cpp)
-target_link_libraries(world canvas intersection light ray sphere)
+target_link_libraries(world camera canvas intersection light ray sphere)
 
 add_library(timer timer.cpp)
 
 add_library(tuple tuple.cpp)
 
 add_executable(raytrace1 raytrace1.cpp)
-target_link_libraries(raytrace1 canvas color intersection light material matrix ray sphere timer tuple)
+target_link_libraries(raytrace1 camera canvas color intersection light material matrix ray sphere timer tuple ${FOLLY_LIBRARIES})
 
 add_executable(raytrace2 raytrace2.cpp)
-target_link_libraries(raytrace2 canvas color intersection light material matrix ray sphere timer tuple)
+target_link_libraries(raytrace2 canvas color intersection light material matrix ray sphere timer tuple ${FOLLY_LIBRARIES})
 
 add_executable(raytrace3 raytrace3.cpp)
-target_link_libraries(raytrace3 canvas color intersection light material matrix ray sphere timer tuple)
+target_link_libraries(raytrace3 camera canvas color intersection light material matrix ray sphere timer tuple ${FOLLY_LIBRARIES})
