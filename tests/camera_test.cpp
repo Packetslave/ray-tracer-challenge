@@ -79,5 +79,5 @@ TEST(Camera, RenderWorld) {
   auto image = c.render(w);
   auto expected = Color(0.38066, 0.47583, 0.2855);
   auto actual = image.pixel_at(5, 5);
-  EXPECT_TRUE(tuple_is_near(expected, actual));
+  EXPECT_TRUE(tuple_is_near(expected, actual)) << expected << " != " << actual;
 }

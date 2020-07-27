@@ -6,6 +6,7 @@
 #include "intersection.h"
 #include "material.h"
 #include "ray.h"
+#include "folly/Optional.h"
 
 class Sphere {
  public:
@@ -64,11 +65,13 @@ struct ComputedIntersection {
         point(r.position(t)),
         eyev(-r.direction()),
         normalv(object->normal_at(point)),
-        over_point(point + normalv * EPSILON) {
+        over_point(Tuple::point(0, 0, 0)),
+        inside(false){
     if (dot(normalv, eyev) < 0) {
       inside = true;
       normalv = -normalv;
     }
+    over_point = point + normalv * EPSILON;
   }
 
   Sphere *object;
@@ -77,16 +80,23 @@ struct ComputedIntersection {
   Tuple eyev;
   Tuple normalv;
   Tuple over_point;
-  bool inside = false;
+  bool inside;
 };
 
-folly::Optional<Intersection> Hit(const std::vector<Intersection> &v) {
-  std::vector<Intersection> sorted;
-  sorted.reserve(v.size());
+template <typename T>
+std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
+  if ( !v.empty() ) {
+    out << '[';
+    std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
+    out << "\b\b]";
+  }
+  return out;
+}
 
-  partial_sort_copy(std::begin(v), std::end(v), std::begin(sorted),
-                    std::end(sorted),
-                    [](auto a, auto b) { return a.t() < b.t(); });
+std::optional<Intersection> Hit(const std::vector<Intersection> &v) {
+  std::vector<Intersection> sorted = v;
+  std::sort(sorted.begin(), sorted.end(),
+            [](const auto &a, const auto &b) { return a.t() < b.t(); });
 
   for (const auto &i : sorted) {
     if (i.t() >= 0) {

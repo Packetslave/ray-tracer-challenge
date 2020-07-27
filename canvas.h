@@ -11,7 +11,7 @@
 #include "fmt/format.h"
 #include "folly/String.h"
 
-constexpr char const *kPPMHeader = "P3\n{} {}\n{}\n";
+constexpr char const *kPPMHeader = "P3\n{} {}\n{}";
 constexpr char const *kPPMElement = "{} {} {}";
 
 namespace {
@@ -50,7 +50,7 @@ class Canvas {
     std::string row;
     int ctr = 0;
     for (const auto &i : *pixels_) {
-      fmt::format(kPPMElement, clamp(i.r(), 0, 255), clamp(i.g(), 0, 255),
+      row += fmt::format(kPPMElement, clamp(i.r(), 0, 255), clamp(i.g(), 0, 255),
                   clamp(i.b(), 0, 255));
 
       if (++ctr == width_) {

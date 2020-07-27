@@ -7,8 +7,10 @@
 #include <unordered_map>
 #include <vector>
 
-#include "folly/container/F14Map.h"
+//#include "folly/container/F14Map.h"
+
 #include "tuple.h"
+#include "absl/container/flat_hash_map.h"
 
 constexpr double PI = 3.14159265358979323846;
 constexpr double PI_2 = 1.57079632679489661923;
@@ -18,24 +20,7 @@ using MatrixData4 = std::array<std::array<double, 4>, 4>;
 using MatrixData3 = std::array<std::array<double, 3>, 3>;
 using MatrixData2 = std::array<std::array<double, 2>, 2>;
 
-namespace std {
-template <>
-struct hash<MatrixData4> {
-  std::size_t operator()(const MatrixData4 &m) const noexcept {
-    size_t seed = 0;
-    for (size_t j = 0; j < 4; ++j) {
-      for (size_t i = 0; i < 4; ++i) {
-        seed ^= std::hash<double>()(m[i][j]) + 0x9e3779b9 + (seed << 6) +
-                (seed >> 2);
-      }
-    }
-    return seed;
-  }
-};
-}  // namespace std
-
-// using MatrixCache = std::unordered_map<MatrixData4, MatrixData4>;
-using MatrixCache = folly::F14FastMap<MatrixData4, MatrixData4>;
+using MatrixCache = absl::flat_hash_map<MatrixData4, MatrixData4>;
 
 constexpr MatrixData4 IDENTITY = MatrixData4{{
     {1.0, 0.0, 0.0, 0.0},

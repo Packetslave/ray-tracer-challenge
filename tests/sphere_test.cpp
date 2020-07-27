@@ -93,7 +93,7 @@ TEST(Sphere, HitPositive) {
   Intersection i1(1, &s);
   Intersection i2(2, &s);
   auto i = Hit({i2, i1});
-  ASSERT_EQ(i1, i);
+  ASSERT_EQ(i1, i.value());
 }
 
 TEST(Sphere, HitSomeNegative) {
@@ -101,7 +101,7 @@ TEST(Sphere, HitSomeNegative) {
   Intersection i1(-1, &s);
   Intersection i2(1, &s);
   auto i = Hit({i2, i1});
-  ASSERT_EQ(i2, i);
+  ASSERT_EQ(i2, i.value());
 }
 
 TEST(Sphere, HitAllNegative) {
@@ -119,7 +119,7 @@ TEST(Sphere, HitMany) {
   Intersection i3(-3, &s);
   Intersection i4(2, &s);
   auto i = Hit({i1, i2, i3, i4});
-  ASSERT_EQ(i4, i);
+  ASSERT_EQ(i4, i.value());
 }
 
 TEST(Sphere, DefaultTransform) {

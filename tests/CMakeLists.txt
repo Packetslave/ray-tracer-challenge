@@ -4,11 +4,11 @@ include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 add_executable(CameraTest camera_test.cpp)
 target_link_libraries(CameraTest gtest gtest_main)
-target_link_libraries(CameraTest camera)
+target_link_libraries(CameraTest camera absl::flat_hash_map)
 
 add_executable(CanvasTest canvas_test.cpp)
-target_link_libraries(CanvasTest gtest gtest_main)
-target_link_libraries(CanvasTest canvas ${FOLLY_LIBRARIES})
+target_link_libraries(CanvasTest gtest gtest_main fmt::fmt)
+target_link_libraries(CanvasTest canvas ${FOLLY_LIBRARIES} absl::flat_hash_map)
 
 add_executable(ColorTest color_test.cpp)
 target_link_libraries(ColorTest gtest gtest_main)

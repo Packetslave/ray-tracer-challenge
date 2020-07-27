@@ -12,6 +12,10 @@ find_package(folly)
 include_directories(${FOLLY_INCLUDE_DIR})
 
 find_package(fmt REQUIRED)
+
+#set(absl_DIR external/abseil-cpp)
+find_package(absl REQUIRED)
+
 enable_testing()
 add_subdirectory(tests)
 
@@ -34,7 +38,7 @@ add_library(material material.cpp)
 target_link_libraries(material color light)
 
 add_library(matrix matrix.cpp)
-target_link_libraries(matrix tuple)
+target_link_libraries(matrix tuple absl::flat_hash_map)
 
 add_library(ray ray.cpp)
 target_link_libraries(ray tuple matrix)
