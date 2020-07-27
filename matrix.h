@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "folly/container/F14Map.h"
 #include "tuple.h"
 
 constexpr double PI = 3.14159265358979323846;
@@ -33,7 +34,8 @@ struct hash<MatrixData4> {
 };
 }  // namespace std
 
-using MatrixCache = std::unordered_map<MatrixData4, MatrixData4>;
+// using MatrixCache = std::unordered_map<MatrixData4, MatrixData4>;
+using MatrixCache = folly::F14FastMap<MatrixData4, MatrixData4>;
 
 constexpr MatrixData4 IDENTITY = MatrixData4{{
     {1.0, 0.0, 0.0, 0.0},
@@ -59,7 +61,7 @@ MatrixData4 get_inverse(const MatrixData4 &m);
 
 class Matrix {
  public:
-  static const Matrix cache_lookup(const MatrixData4 &key) {
+  static Matrix cache_lookup(const MatrixData4 &key) {
     static MatrixCache cache = makeCache();
 
     const auto it = cache.find(key);
@@ -87,7 +89,7 @@ class Matrix {
   }
 
   // For testing only
-  const MatrixData4 *TEST_get_data() const { return &data_; }
+  [[nodiscard]] const MatrixData4 *TEST_get_data() const { return &data_; }
 
   void print() {
     for (size_t i = 0; i < 4; ++i) {
@@ -98,7 +100,7 @@ class Matrix {
     }
   }
 
-  double get(const size_t row, const size_t column) const {
+  [[nodiscard]] double get(const size_t row, const size_t column) const {
     assert(row < 4);
     assert(column < 4);
     return data_[row][column];
@@ -110,9 +112,9 @@ class Matrix {
     data_[row][column] = value;
   }
 
-  size_t size() const { return 4; }
+  [[nodiscard]] static size_t size() { return 4; }
 
-  Matrix transpose() const {
+  [[nodiscard]] Matrix transpose() const {
     Matrix out;
     for (size_t i = 0; i < 4; ++i) {
       for (size_t j = 0; j < 4; ++j) {
@@ -122,9 +124,9 @@ class Matrix {
     return out;
   }
 
-  bool is_invertible() const { return determinant(data_) != 0; }
+  [[nodiscard]] bool is_invertible() const { return determinant(data_) != 0; }
 
-  Matrix inverse(bool use_cache = true) { return cache_lookup(data_); }
+  Matrix inverse(bool /* unused */ = true) { return cache_lookup(data_); }
 
  private:
   MatrixData4 data_ = MatrixData4{{

@@ -27,7 +27,7 @@ TEST(Material, EyeBetween) {
   auto n = Tuple::vector(0, 0, -1);
   auto l = PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1));
 
-  auto r = m.lighting(l, p, e, n);
+  auto r = m.lighting(l, p, e, n, false);
   EXPECT_EQ(Color(1.9, 1.9, 1.9), r);
 }
 
@@ -39,7 +39,7 @@ TEST(Material, EyeBetween45) {
   auto n = Tuple::vector(0, 0, -1);
   auto l = PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1));
 
-  auto r = m.lighting(l, p, e, n);
+  auto r = m.lighting(l, p, e, n, false);
   EXPECT_EQ(Color(1.0, 1.0, 1.0), r);
 }
 
@@ -51,7 +51,7 @@ TEST(Material, EyeOpposite45) {
   auto n = Tuple::vector(0, 0, -1);
   auto l = PointLight(Tuple::point(0, 10, -10), Color(1, 1, 1));
 
-  auto r = m.lighting(l, p, e, n);
+  auto r = m.lighting(l, p, e, n, false);
   EXPECT_EQ(Color(0.7364, 0.7364, 0.7364), r);
 }
 
@@ -63,7 +63,7 @@ TEST(Material, EyeInPath) {
   auto n = Tuple::vector(0, 0, -1);
   auto l = PointLight(Tuple::point(0, 10, -10), Color(1, 1, 1));
 
-  auto r = m.lighting(l, p, e, n);
+  auto r = m.lighting(l, p, e, n, false);
   EXPECT_TRUE(color_is_near(Color(1.6364, 1.6364, 1.6364), r, 0.0001));
 }
 
@@ -75,6 +75,6 @@ TEST(Material, LightBehind) {
   auto n = Tuple::vector(0, 0, -1);
   auto l = PointLight(Tuple::point(0, 0, 10), Color(1, 1, 1));
 
-  auto r = m.lighting(l, p, e, n);
+  auto r = m.lighting(l, p, e, n, false);
   EXPECT_TRUE(color_is_near(Color(0.1, 0.1, 0.1), r, 0.0001));
 }

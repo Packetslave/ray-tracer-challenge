@@ -54,7 +54,7 @@ TEST(ColorTest, MultiplyColorByScalar) {
   const auto c = Color(0.2, 0.3, 0.4);
 
   // Then c * 2 = color(0.4, 0.6, 0.8)
-  EXPECT_EQ(Color(0.4, 0.6, 0.8), c * 2);
+  EXPECT_EQ(Color(0.4, 0.6, 0.8), c * 2.0);
 }
 
 TEST(ColorTest, MultiplyColors) {

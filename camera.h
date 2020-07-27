@@ -9,21 +9,23 @@
 
 class Camera {
  public:
-  Camera(double h, double v, double f)
+  Camera(int h, int v, double f)
       : hsize_(h),
         vsize_(v),
         field_of_view_(f),
+        half_width_{0.0},
+        half_height_{0.0},
         pixel_size_(ComputePixelSize(h, v, f)),
         transform_(IDENTITY) {}
 
-  double hsize() { return hsize_; }
-  double vsize() { return vsize_; }
-  double field_of_view() { return field_of_view_; }
+  [[nodiscard]] double hsize() const { return hsize_; }
+  [[nodiscard]] double vsize() const { return vsize_; }
+  [[nodiscard]] double field_of_view() const { return field_of_view_; }
 
   Matrix* transform() { return &transform_; }
   void set_transform(const Matrix& t) { transform_ = t; }
 
-  double pixel_size() { return pixel_size_; }
+  [[nodiscard]] double pixel_size() const { return pixel_size_; }
 
   Ray ray_for_pixel(double px, double py) {
     double xoff = (px + 0.5) * pixel_size_;
@@ -53,8 +55,8 @@ class Camera {
   }
 
  private:
-  double hsize_;
-  double vsize_;
+  int hsize_;
+  int vsize_;
   double field_of_view_;
   double half_width_;
   double half_height_;

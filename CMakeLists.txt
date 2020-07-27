@@ -11,11 +11,12 @@ set(FOLLY_ROOT_DIR /Users/blanders/.brew)
 find_package(folly)
 include_directories(${FOLLY_INCLUDE_DIR})
 
+find_package(fmt REQUIRED)
 enable_testing()
 add_subdirectory(tests)
 
 add_library(camera camera.cpp)
-target_link_libraries(camera canvas)
+target_link_libraries(camera canvas fmt::fmt)
 
 add_library(canvas canvas.cpp)
 target_link_libraries(canvas color ${folly_LIBRARIES})

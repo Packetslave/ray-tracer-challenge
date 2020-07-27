@@ -97,7 +97,7 @@ TEST(CanvasTest, GeneratePPM) {
   //    0 0 0 0 0 0 0 0 0 0 0 0 0 0 255
   //    """
   std::vector<std::string> lines;
-  folly::split( "\n", ppm, lines);
+  folly::split("\n", ppm, lines);
   EXPECT_EQ("255 0 0 0 0 0 0 0 0 0 0 0 0 0 0", lines[3]);
   EXPECT_EQ("0 0 0 0 0 0 0 128 0 0 0 0 0 0 0", lines[4]);
   EXPECT_EQ("0 0 0 0 0 0 0 0 0 0 0 0 0 0 255", lines[5]);
@@ -127,7 +127,7 @@ TEST(CanvasTest, SplitLongLines) {
   //         153 255 204 153 255 204 153 255 204 153 255 204 153
   //     """
   std::vector<std::string> lines;
-  folly::split( "\n", ppm, lines);
+  folly::split("\n", ppm, lines);
   EXPECT_EQ(
       "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204",
       lines[3]);

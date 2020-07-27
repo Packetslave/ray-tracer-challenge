@@ -10,8 +10,8 @@
 #include "gtest/gtest.h"
 
 bool matrix_is_near(Matrix a, Matrix b, float abs) {
-  for (int row = 0; row < a.size(); ++row) {
-    for (int col = 0; col < a.size(); ++col) {
+  for (size_t row = 0; row < a.size(); ++row) {
+    for (size_t col = 0; col < a.size(); ++col) {
       if (std::abs(a.get(row, col) - b.get(row, col)) > abs) {
         return false;
       }
@@ -212,6 +212,6 @@ TEST(Shadows, HitOffset) {
   s.set_transform((CreateTranslation(0, 0, 1)));
   auto i = Intersection(5, &s);
   auto comps = ComputedIntersection(i, r);
-  EXPECT_TRUE(comps.over_point.z < -EPSILON/2);
+  EXPECT_TRUE(comps.over_point.z < -EPSILON / 2);
   EXPECT_TRUE(comps.point.z > comps.over_point.z);
 }

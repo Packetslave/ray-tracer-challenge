@@ -9,9 +9,9 @@ class Color : public Tuple {
   Color(double red, double green, double blue) : Tuple(red, green, blue, 0.0) {}
   Color(const Tuple& a) : Tuple(a.x, a.y, a.z, 0.0) {}
 
-  double r() const { return x; }
-  double g() const { return y; }
-  double b() const { return z; }
+  [[nodiscard]] double r() const { return x; }
+  [[nodiscard]] double g() const { return y; }
+  [[nodiscard]] double b() const { return z; }
 
   friend std::ostream& operator<<(std::ostream& os, const Color& rhs) {
     return os << "Color(" << rhs.x << ", " << rhs.y << ", " << rhs.z << ")";

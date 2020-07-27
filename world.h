@@ -33,8 +33,8 @@ class World {
 
   Color shade_hit(const ComputedIntersection& comps) {
     auto shadowed = is_shadowed(comps.over_point);
-    auto out = comps.object->material()->lighting(*light_, comps.over_point,
-                                                  comps.eyev, comps.normalv, shadowed);
+    auto out = comps.object->material()->lighting(
+        *light_, comps.over_point, comps.eyev, comps.normalv, shadowed);
     return out;
   }
 
@@ -59,17 +59,16 @@ class World {
     return std::find(objects_.begin(), objects_.end(), s) != objects_.end();
   }
 
-  std::optional<PointLight> light() { return light_; }
+  folly::Optional<PointLight> light() { return light_; }
   void set_light(const PointLight& p) { light_ = p; }
 
   std::vector<Intersection> intersect(const Ray& r) {
     std::vector<Intersection> out;
+    out.reserve(objects_.size() * 3);
 
     for (auto& o : objects_) {
       auto hits = o.intersects(r);
-      for (const auto& h : hits) {
-        out.push_back(h);
-      }
+      std::move(std::begin(hits), std::end(hits), std::back_inserter(out));
     }
 
     std::sort(out.begin(), out.end(),
@@ -88,13 +87,10 @@ class World {
     auto intersections = intersect(r);
 
     auto h = Hit(intersections);
-    if (h && h->t() < distance) {
-      return true;
-    }
-    return false;
+    return h && h->t() < distance;
   }
 
  private:
   std::vector<Sphere> objects_;
-  std::optional<PointLight> light_;
+  folly::Optional<PointLight> light_;
 };

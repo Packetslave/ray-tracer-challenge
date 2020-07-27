@@ -49,8 +49,8 @@ int main() {
         auto point = r.position(hit->t());
         auto normal = hit->object()->normal_at(point);
         auto eye = -r.direction();
-        auto color =
-            hit->object()->material()->lighting(light, point, eye, normal);
+        auto color = hit->object()->material()->lighting(light, point, eye,
+                                                         normal, false);
 
         out.write_pixel(x, y, color);
       } else {

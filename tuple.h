@@ -15,7 +15,9 @@ class Tuple {
  public:
   Tuple(double x, double y, double z, double w) : x{x}, y{y}, z{z}, w{w} {}
 
-  static Tuple point(double x, double y, double z) { return Tuple(x, y, z, 1.0); }
+  static Tuple point(double x, double y, double z) {
+    return Tuple(x, y, z, 1.0);
+  }
 
   static Tuple point(const Tuple& rhs) {
     if (rhs.w != 1.0) {
@@ -24,7 +26,9 @@ class Tuple {
     return Tuple(rhs.x, rhs.y, rhs.z, 1.0);
   }
 
-  static Tuple vector(double x, double y, double z) { return Tuple(x, y, z, 0.0); }
+  static Tuple vector(double x, double y, double z) {
+    return Tuple(x, y, z, 0.0);
+  }
 
   static Tuple vector(const Tuple& rhs) {
     if (rhs.w != 0.0) {

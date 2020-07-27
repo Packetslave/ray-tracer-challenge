@@ -13,8 +13,7 @@ class Sphere {
 
   // FIXME: this can be optimized a fair bit
   std::vector<Intersection> intersects(const Ray &r) {
-    std::vector<Intersection> out;
-    Matrix t = transform_.inverse(false);
+    Matrix t = transform_.inverse();
     auto r2 = r.transform(t);
 
     auto sphere_to_ray = r2.origin() - Tuple::point(0, 0, 0);
@@ -24,18 +23,18 @@ class Sphere {
     auto d = (b * b) - (4 * a * c);
 
     if (d < 0) {
-      return out;
+      return std::vector<Intersection>();
     }
 
-    out.emplace_back(Intersection((-b - sqrt(d)) / (2 * a), this));
-    out.emplace_back(Intersection((-b + sqrt(d)) / (2 * a), this));
+    std::vector<Intersection> out{Intersection((-b - sqrt(d)) / (2 * a), this),
+                                  Intersection((-b + sqrt(d)) / (2 * a), this)};
     return out;
   }
 
   Tuple normal_at(const Tuple &p) {
-    auto object_point = transform_.inverse(false) * p;
+    auto object_point = transform_.inverse() * p;
     auto object_normal = object_point - Tuple::point(0, 0, 0);
-    auto world_normal = transform_.inverse(false).transpose() * object_normal;
+    auto world_normal = transform_.inverse().transpose() * object_normal;
     world_normal.w = 0;
     return world_normal.normalize();
   }
@@ -65,8 +64,7 @@ struct ComputedIntersection {
         point(r.position(t)),
         eyev(-r.direction()),
         normalv(object->normal_at(point)),
-        over_point(point + normalv * EPSILON)
-         {
+        over_point(point + normalv * EPSILON) {
     if (dot(normalv, eyev) < 0) {
       inside = true;
       normalv = -normalv;
@@ -82,10 +80,14 @@ struct ComputedIntersection {
   bool inside = false;
 };
 
-std::optional<Intersection> Hit(const std::vector<Intersection> &v) {
-  std::vector<Intersection> sorted = v;
-  std::sort(sorted.begin(), sorted.end(),
-            [](auto a, auto b) { return a.t() < b.t(); });
+folly::Optional<Intersection> Hit(const std::vector<Intersection> &v) {
+  std::vector<Intersection> sorted;
+  sorted.reserve(v.size());
+
+  partial_sort_copy(std::begin(v), std::end(v), std::begin(sorted),
+                    std::end(sorted),
+                    [](auto a, auto b) { return a.t() < b.t(); });
+
   for (const auto &i : sorted) {
     if (i.t() >= 0) {
       return i;
