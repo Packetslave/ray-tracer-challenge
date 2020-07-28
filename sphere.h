@@ -11,6 +11,14 @@
 
 class Sphere : public Shape {
  public:
+  static std::shared_ptr<Shape> Glass() {
+    auto out = std::shared_ptr<Shape>();
+    out.reset( new Sphere() );
+    out->material()->set_transparency(1.0);
+    out->material()->set_refractive(1.5);
+    return out;
+  }
+
   explicit Sphere() : Shape() {}
 
   // FIXME: this can be optimized a fair bit

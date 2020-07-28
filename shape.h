@@ -17,6 +17,7 @@ class Shape : public std::enable_shared_from_this<Shape> {
  public:
   explicit Shape()
       : transform_(Matrix(IDENTITY)),
+        inverse_(Matrix(IDENTITY)),
         material_(Material()) {}
 
   virtual ~Shape() = default;
@@ -27,15 +28,19 @@ class Shape : public std::enable_shared_from_this<Shape> {
   virtual bool compare(const Shape&) const noexcept = 0;
 
   Matrix transform() { return transform_; }
+  Matrix inverse() { return inverse_; }
 
-  void set_transform(const Matrix &t) { transform_ = t; }
+  void set_transform(const Matrix &t) {
+    transform_ = t;
+    inverse_ = transform_.inverse();
+  }
 
   Material *material() { return &material_; }
 
   void set_material(const Material &m) { material_ = m; }
 
   std::vector<Intersection> intersects(const Ray &r) {
-    auto local_ray = r.transform(transform_.inverse());
+    auto local_ray = r.transform(inverse_);
     return local_intersect(local_ray);
   };
 
@@ -51,13 +56,14 @@ class Shape : public std::enable_shared_from_this<Shape> {
 
  protected:
   Matrix transform_;
+  Matrix inverse_;
   Material material_;
 
  private:
-  Tuple worldToObject(const Tuple& point) { return this->transform_.inverse() * point; };
+  Tuple worldToObject(const Tuple& point) { return this->inverse_ * point; };
   Tuple objectToWorld(const Tuple& point) { return this->transform_ * point; };
   Tuple normalToWorld(const Tuple& normalVector) {
-    Tuple world_normal = this->transform_.inverse().transpose() * normalVector;
+    Tuple world_normal = this->inverse_.transpose() * normalVector;
     world_normal.w = 0;
     return world_normal.normalize();
   };

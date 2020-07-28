@@ -10,13 +10,10 @@
 //#include "folly/container/F14Map.h"
 
 #include "tuple.h"
-#include "absl/container/flat_hash_map.h"
 
 using MatrixData4 = std::array<std::array<double, 4>, 4>;
 using MatrixData3 = std::array<std::array<double, 3>, 3>;
 using MatrixData2 = std::array<std::array<double, 2>, 2>;
-
-using MatrixCache = absl::flat_hash_map<MatrixData4, MatrixData4>;
 
 constexpr MatrixData4 IDENTITY = MatrixData4{{
     {1.0, 0.0, 0.0, 0.0},
@@ -24,10 +21,6 @@ constexpr MatrixData4 IDENTITY = MatrixData4{{
     {0.0, 0.0, 1.0, 0.0},
     {0.0, 0.0, 0.0, 1.0},
 }};
-
-namespace {
-MatrixCache makeCache() { return MatrixCache(); }
-}  // namespace
 
 class Matrix;
 double determinant(const MatrixData2 &m);
@@ -42,8 +35,6 @@ MatrixData4 get_inverse(const MatrixData4 &m);
 
 class Matrix {
  public:
-  static Matrix cache_lookup(const MatrixData4 &key);
-
   explicit Matrix();
 
   explicit Matrix(const MatrixData4 &values);
@@ -63,7 +54,7 @@ class Matrix {
 
   [[nodiscard]] bool is_invertible() const;
 
-  Matrix inverse(bool /* unused */ = true);
+  Matrix inverse(bool /* unused */ = true) const;
 
  private:
   MatrixData4 data_ = MatrixData4{{

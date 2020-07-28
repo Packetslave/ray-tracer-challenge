@@ -84,3 +84,9 @@ TEST(Material, DefaultHasReflective) {
   auto m = Material();
   EXPECT_EQ(0, m.reflective());
 }
+
+TEST(Material, DefaultTransparencyAndRefractive) {
+  auto m = Material();
+  EXPECT_EQ(0.0, m.transparency());
+  EXPECT_EQ(1.0, m.refractive());
+}

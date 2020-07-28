@@ -16,14 +16,18 @@ class Camera {
         half_width_{0.0},
         half_height_{0.0},
         pixel_size_(ComputePixelSize(h, v, f)),
-        transform_(IDENTITY) {}
+        transform_(IDENTITY),
+        inverse_(IDENTITY) {}
 
   [[nodiscard]] double hsize() const { return hsize_; }
   [[nodiscard]] double vsize() const { return vsize_; }
   [[nodiscard]] double field_of_view() const { return field_of_view_; }
 
   Matrix* transform() { return &transform_; }
-  void set_transform(const Matrix& t) { transform_ = t; }
+  void set_transform(const Matrix& t) {
+    transform_ = t;
+    inverse_ = t.inverse();
+  }
 
   [[nodiscard]] double pixel_size() const { return pixel_size_; }
 
@@ -34,8 +38,8 @@ class Camera {
     double world_x = half_width_ - xoff;
     double world_y = half_height_ - yoff;
 
-    auto pixel = transform_.inverse() * Tuple::point(world_x, world_y, -1);
-    auto origin = transform_.inverse() * Tuple::point(0.0, 0.0, 0.0);
+    auto pixel = inverse_ * Tuple::point(world_x, world_y, -1);
+    auto origin = inverse_ * Tuple::point(0.0, 0.0, 0.0);
     auto direction = (pixel - origin).normalize();
 
     return Ray(origin, direction);
@@ -62,6 +66,7 @@ class Camera {
   double half_height_;
   double pixel_size_;
   Matrix transform_;
+  Matrix inverse_;
 
   double ComputePixelSize(double h, double v, double f) {
     double half_view = tan(f / 2.0);

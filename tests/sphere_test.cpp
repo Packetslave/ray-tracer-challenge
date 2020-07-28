@@ -215,3 +215,33 @@ TEST(Sphere, PreCompInside) {
   EXPECT_EQ(Tuple::vector(0, 0, -1), comps.eyev);
   EXPECT_EQ(Tuple::vector(0, 0, -1), comps.normalv);
 }
+
+TEST(Sphere, GlassSphere) {
+  auto s = Sphere::Glass();
+  EXPECT_EQ(Matrix(IDENTITY), s->transform());
+  EXPECT_EQ(1.0, s->material()->transparency());
+  EXPECT_EQ(1.5, s->material()->refractive());
+}
+
+TEST(Sphere, FindingN1andN2) {
+  auto a = Sphere::Glass();
+  a->set_transform(CreateScaling(2, 2, 2));
+  a->material()->set_refractive(1.5);
+
+  auto b = Sphere::Glass();
+  b->set_transform(CreateTranslation(0, 0, -0.25));
+  b->material()->set_refractive(2.0);
+
+  auto c = Sphere::Glass();
+  c->set_transform(CreateTranslation(0, 0, 0.25));
+  c->material()->set_refractive(2.5);
+
+  auto r = Ray(Tuple::point(0, 0, -4), Tuple::vector(0, 0, 1));
+  auto xs = std::vector<Intersection> {
+    {
+      Intersection(2, a), Intersection(2.75, b), Intersection(3.25, c),
+          Intersection(4.75, b), Intersection(5.25, c), Intersection(6, a),
+    }
+  };
+  // HERE
+}

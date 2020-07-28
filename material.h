@@ -11,7 +11,9 @@ class Material {
         diffuse_(0.9),
         specular_(0.9),
         shininess_(200.0),
-        reflective_(0.0) {}
+        reflective_(0.0),
+        transparency_(0.0),
+        refractive_(1.0) {}
 
   Color color() const { return color_; }
   double ambient() const { return ambient_; }
@@ -19,6 +21,8 @@ class Material {
   double specular() const { return specular_; }
   double shininess() const { return shininess_; }
   double reflective() const { return reflective_; }
+  double transparency() const { return transparency_; }
+  double refractive() const { return refractive_; }
 
   void set_color(const Color &c) { color_ = c; }
   void set_ambient(const double d) { ambient_ = d; }
@@ -26,6 +30,8 @@ class Material {
   void set_specular(const double d) { specular_ = d; }
   void set_shininess(const double d) { shininess_ = d; }
   void set_reflective(const double d) { reflective_ = d; }
+  void set_transparency(const double d) { transparency_ = d; }
+  void set_refractive(const double d) { refractive_ = d; }
 
   Color lighting(PointLight light, Tuple point, Tuple eye_v, Tuple normal_v,
                  bool in_shadow) {
@@ -58,10 +64,13 @@ class Material {
   double specular_;
   double shininess_;
   double reflective_;
+  double transparency_;
+  double refractive_;
 };
 
 inline bool operator==(const Material &a, const Material &b) {
   return a.color() == b.color() && a.ambient() == b.ambient() &&
          a.diffuse() == b.diffuse() && a.specular() == b.specular() &&
-         a.shininess() == b.shininess();
+         a.shininess() == b.shininess() && a.reflective() == b.reflective() &&
+         a.transparency() == b.transparency() && a.refractive() == b.refractive();
 }

@@ -4,74 +4,69 @@
 
 #include "matrix.h"
 
-  Matrix Matrix::cache_lookup(const MatrixData4 &key) {
-    static MatrixCache cache = makeCache();
-
-    const auto it = cache.find(key);
-    if (it != cache.end()) {
-      return Matrix(it->second);
-    }
-    const auto inserted = cache.emplace(key, get_inverse(key));
-    return Matrix(inserted.first->second);
-  }
-
-  Matrix::Matrix() {
-    for (size_t i = 0; i < 4; ++i) {
-      for (size_t j = 0; j < 4; ++j) {
-        data_[i][j] = 0.0;
-      }
+Matrix::Matrix() {
+  for (size_t i = 0; i < 4; ++i) {
+    for (size_t j = 0; j < 4; ++j) {
+      data_[i][j] = 0.0;
     }
   }
+}
 
-  Matrix::Matrix(const MatrixData4 &values) : Matrix() {
-    for (size_t i = 0; i < 4; ++i) {
-      for (size_t j = 0; j < 4; ++j) {
-        data_[i][j] = values[i][j];
-      }
+Matrix::Matrix(const MatrixData4 &values) : Matrix() {
+  for (size_t i = 0; i < 4; ++i) {
+    for (size_t j = 0; j < 4; ++j) {
+      data_[i][j] = values[i][j];
     }
   }
+}
 
-  // For testing only
-  [[nodiscard]] const MatrixData4 *Matrix::TEST_get_data() const { return &data_; }
+// For testing only
+[[nodiscard]] const MatrixData4 *Matrix::TEST_get_data() const {
+  return &data_;
+}
 
-  void Matrix::print() {
-    for (size_t i = 0; i < 4; ++i) {
-      for (size_t j = 0; j < 4; ++j) {
-        std::cout << data_[i][j] << "\t";
-      }
-      std::cout << std::endl;
+void Matrix::print() {
+  for (size_t i = 0; i < 4; ++i) {
+    for (size_t j = 0; j < 4; ++j) {
+      std::cout << data_[i][j] << "\t";
+    }
+    std::cout << std::endl;
+  }
+}
+
+[[nodiscard]] double Matrix::get(const size_t row, const size_t column) const {
+  assert(row < 4);
+  assert(column < 4);
+  return data_[row][column];
+}
+
+void Matrix::set(const size_t row, const size_t column, const double value) {
+  assert(row < 4);
+  assert(column < 4);
+  data_[row][column] = value;
+}
+
+[[nodiscard]] size_t Matrix::size() { return 4; }
+
+[[nodiscard]] Matrix Matrix::transpose() const {
+  Matrix out;
+  for (size_t i = 0; i < 4; ++i) {
+    for (size_t j = 0; j < 4; ++j) {
+      out.set(j, i, data_[i][j]);
     }
   }
+  return out;
+}
 
-  [[nodiscard]] double Matrix::get(const size_t row, const size_t column) const {
-    assert(row < 4);
-    assert(column < 4);
-    return data_[row][column];
-  }
+[[nodiscard]] bool Matrix::is_invertible() const {
+  return determinant(data_) != 0;
+}
 
-  void Matrix::set(const size_t row, const size_t column, const double value) {
-    assert(row < 4);
-    assert(column < 4);
-    data_[row][column] = value;
-  }
+Matrix Matrix::inverse(bool /* unused */) const {
+  return Matrix(get_inverse(data_));
+}
 
-  [[nodiscard]] size_t Matrix::size() { return 4; }
-
-  [[nodiscard]] Matrix Matrix::transpose() const {
-    Matrix out;
-    for (size_t i = 0; i < 4; ++i) {
-      for (size_t j = 0; j < 4; ++j) {
-        out.set(j, i, data_[i][j]);
-      }
-    }
-    return out;
-  }
-
-  [[nodiscard]] bool Matrix::is_invertible() const { return determinant(data_) != 0; }
-
-  Matrix Matrix::inverse(bool /* unused */) { return cache_lookup(data_); }
-
-bool operator==(Matrix const& a, Matrix const& b) {
+bool operator==(Matrix const &a, Matrix const &b) {
   size_t size = a.size();
   if (b.size() != size) {
     return false;
@@ -87,7 +82,7 @@ bool operator==(Matrix const& a, Matrix const& b) {
   return true;
 }
 
-bool operator!=(Matrix const& a, Matrix const& b) { return !(a == b); }
+bool operator!=(Matrix const &a, Matrix const &b) { return !(a == b); }
 
 Matrix operator*(const Matrix &a, const Matrix &b) {
   Matrix out;
