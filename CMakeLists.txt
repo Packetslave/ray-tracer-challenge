@@ -40,6 +40,9 @@ target_link_libraries(material color light)
 add_library(matrix matrix.cpp)
 target_link_libraries(matrix tuple absl::flat_hash_map)
 
+add_library(plane plane.cpp)
+target_link_libraries(plane shape)
+
 add_library(ray ray.cpp)
 target_link_libraries(ray matrix)
 
@@ -64,3 +67,6 @@ target_link_libraries(raytrace2 canvas color intersection light material matrix 
 
 add_executable(raytrace3 raytrace3.cpp)
 target_link_libraries(raytrace3 camera canvas color intersection light material matrix ray sphere timer tuple ${FOLLY_LIBRARIES})
+
+add_executable(raytrace4 raytrace4.cpp)
+target_link_libraries(raytrace4 camera canvas color intersection light material matrix ray plane sphere timer tuple ${FOLLY_LIBRARIES})

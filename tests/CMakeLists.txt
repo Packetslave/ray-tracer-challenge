@@ -26,6 +26,10 @@ add_executable(MatrixTest matrix_test.cpp)
 target_link_libraries(MatrixTest gtest gtest_main)
 target_link_libraries(MatrixTest matrix)
 
+add_executable(PlaneTest plane_test.cpp)
+target_link_libraries(PlaneTest gtest gtest_main)
+target_link_libraries(PlaneTest plane)
+
 add_executable(RayTest ray_test.cpp)
 target_link_libraries(RayTest gtest gtest_main)
 target_link_libraries(RayTest ray)
