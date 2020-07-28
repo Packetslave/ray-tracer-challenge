@@ -9,7 +9,7 @@
 
 #include "color.h"
 #include "fmt/format.h"
-#include "folly/String.h"
+#include "folly/String.h"  // TODO: replace with absl
 
 constexpr char const *kPPMHeader = "P3\n{} {}\n{}";
 constexpr char const *kPPMElement = "{} {} {}";

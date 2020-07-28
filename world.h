@@ -71,6 +71,7 @@ class World {
     return false;
   }
 
+  // TODO: replace with std::optional
   folly::Optional<PointLight> light() { return light_; }
   void set_light(const PointLight& p) { light_ = p; }
 

@@ -7,9 +7,9 @@ project(ray-tracing2 VERSION 1.0 LANGUAGES CXX)
 # Abseil currently supports C++11, C++14, and C++17.
 set(CMAKE_CXX_STANDARD 17)
 
-set(FOLLY_ROOT_DIR /Users/blanders/.brew)
-find_package(folly)
-include_directories(${FOLLY_INCLUDE_DIR})
+#set(FOLLY_ROOT_DIR /Users/blanders/.brew)
+#find_package(folly)
+#include_directories(${FOLLY_INCLUDE_DIR})
 
 find_package(fmt REQUIRED)
 
@@ -23,7 +23,7 @@ add_library(camera camera.cpp)
 target_link_libraries(camera canvas fmt::fmt shape sphere)
 
 add_library(canvas canvas.cpp)
-target_link_libraries(canvas color ${folly_LIBRARIES})
+target_link_libraries(canvas color fmt::fmt) # ${folly_LIBRARIES})
 
 add_library(color color.cpp)
 target_link_libraries(color tuple)
@@ -60,16 +60,16 @@ add_library(timer timer.cpp)
 add_library(tuple tuple.cpp)
 
 add_executable(raytrace1 raytrace1.cpp)
-target_link_libraries(raytrace1 camera canvas color intersection light material matrix ray sphere timer tuple ${FOLLY_LIBRARIES})
+target_link_libraries(raytrace1 camera canvas color intersection light material matrix ray sphere timer tuple )#${FOLLY_LIBRARIES})
 
 add_executable(raytrace2 raytrace2.cpp)
-target_link_libraries(raytrace2 canvas color intersection light material matrix ray sphere timer tuple ${FOLLY_LIBRARIES})
+target_link_libraries(raytrace2 canvas color intersection light material matrix ray sphere timer tuple )#${FOLLY_LIBRARIES})
 
 add_executable(raytrace3 raytrace3.cpp)
-target_link_libraries(raytrace3 camera canvas color intersection light material matrix ray sphere timer tuple ${FOLLY_LIBRARIES})
+target_link_libraries(raytrace3 camera canvas color intersection light material matrix ray sphere timer tuple )#${FOLLY_LIBRARIES})
 
 add_executable(raytrace4 raytrace4.cpp)
-target_link_libraries(raytrace4 camera canvas color intersection light material matrix ray plane sphere timer tuple ${FOLLY_LIBRARIES})
+target_link_libraries(raytrace4 camera canvas color intersection light material matrix ray plane sphere timer tuple )#${FOLLY_LIBRARIES})
 
 add_executable(raytrace5 raytrace5.cpp)
-target_link_libraries(raytrace5 camera canvas color intersection light material matrix ray plane sphere timer tuple ${FOLLY_LIBRARIES})
+target_link_libraries(raytrace5 camera canvas color intersection light material matrix ray plane sphere timer tuple )#${FOLLY_LIBRARIES})

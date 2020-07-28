@@ -3,6 +3,8 @@
 #include "../color.h"
 #include "gtest/gtest.h"
 
+// TODO: replace folly with absl
+
 class CanvasTest : public ::testing::Test {};
 
 TEST(CanvasTest, Initialize) {
