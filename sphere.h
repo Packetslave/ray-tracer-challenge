@@ -6,56 +6,39 @@
 #include "intersection.h"
 #include "material.h"
 #include "ray.h"
+#include "shape.h"
 #include "folly/Optional.h"
 
-class Sphere {
+class Sphere : public Shape {
  public:
-  explicit Sphere() : transform_(Matrix{IDENTITY}), material_(Material()) {}
+  explicit Sphere() : Shape() {}
 
   // FIXME: this can be optimized a fair bit
-  std::vector<Intersection> intersects(const Ray &r) {
-    Matrix t = transform_.inverse();
-    auto r2 = r.transform(t);
-
-    auto sphere_to_ray = r2.origin() - Tuple::point(0, 0, 0);
-    auto a = dot(r2.direction(), r2.direction());
-    auto b = 2 * dot(r2.direction(), sphere_to_ray);
+  std::vector<Intersection> local_intersect(const Ray &r) override {
+    auto sphere_to_ray = r.origin() - Tuple::point(0, 0, 0);
+    auto a = dot(r.direction(), r.direction());
+    auto b = 2 * dot(r.direction(), sphere_to_ray);
     auto c = dot(sphere_to_ray, sphere_to_ray) - 1;
-    auto d = (b * b) - (4 * a * c);
+    auto d = b * b - 4 * a * c;
 
     if (d < 0) {
       return std::vector<Intersection>();
     }
 
-    std::vector<Intersection> out{Intersection((-b - sqrt(d)) / (2 * a), this),
-                                  Intersection((-b + sqrt(d)) / (2 * a), this)};
+    std::vector<Intersection> out{Intersection((-b - sqrt(d)) / (2 * a), shared_from_this()),
+                                  Intersection((-b + sqrt(d)) / (2 * a), shared_from_this())};
     return out;
   }
 
-  Tuple normal_at(const Tuple &p) {
-    auto object_point = transform_.inverse() * p;
-    auto object_normal = object_point - Tuple::point(0, 0, 0);
-    auto world_normal = transform_.inverse().transpose() * object_normal;
-    world_normal.w = 0;
-    return world_normal.normalize();
+  Tuple local_normal_at(const Tuple &p) override {
+    auto normal = p - Tuple::point(0, 0, 0);
+    //normal.w = 0;
+    return normal;
   }
 
-  Matrix transform() { return transform_; }
-
-  void set_transform(const Matrix &t) { transform_ = t; }
-
-  Material *material() { return &material_; }
-
-  void set_material(const Material &m) { material_ = m; }
-
-  bool operator==(const Sphere &rhs) const {
-    return this->transform_ == rhs.transform_ &&
-           this->material_ == rhs.material_;
+  bool compare(const Shape&) const noexcept override {
+    return true;
   }
-
- private:
-  Matrix transform_;
-  Material material_;
 };
 
 struct ComputedIntersection {
@@ -74,7 +57,7 @@ struct ComputedIntersection {
     over_point = point + normalv * EPSILON;
   }
 
-  Sphere *object;
+  std::shared_ptr<Shape> object;
   double t;
   Tuple point;
   Tuple eyev;

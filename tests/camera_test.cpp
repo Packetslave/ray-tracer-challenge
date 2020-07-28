@@ -64,7 +64,7 @@ TEST(Camera, RayWithTransformedCamera) {
   EXPECT_TRUE(tuple_is_near(expectedp, r.origin())) << r.origin() << std::endl
                                                     << expectedp;
 
-  auto expectedv = Tuple::vector(sqrt(2) / 2, 0, -sqrt(2) / 2);
+  auto expectedv = Tuple::vector(SQRT2_2, 0, -SQRT2_2);
   EXPECT_TRUE(tuple_is_near(expectedv, r.direction()));
 }
 

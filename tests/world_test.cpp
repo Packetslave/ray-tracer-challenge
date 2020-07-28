@@ -55,6 +55,7 @@ TEST(World, IntersectRay) {
   auto w = World::default_world();
   auto r = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
   auto xs = w.intersect(r);
+
   EXPECT_EQ(4, xs.size());
   EXPECT_EQ(4, xs[0].t());
   EXPECT_EQ(4.5, xs[1].t());
@@ -62,16 +63,39 @@ TEST(World, IntersectRay) {
   EXPECT_EQ(6, xs[3].t());
 }
 
-TEST(World, ShadeIntersection) {
+TEST(World, HitIntersectionOutside) {
+  auto r = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
+  auto shape = std::shared_ptr<Shape>();
+  shape.reset(new Sphere());
+
+  auto i = Intersection(4, shape);
+  auto comps = ComputedIntersection(i, r);
+  ASSERT_FALSE(comps.inside);
+}
+
+TEST(World, HitIntersectionInside) {
+  auto r = Ray(Tuple::point(0, 0, 0), Tuple::vector(0, 0, 1));
+  auto shape = std::shared_ptr<Shape>();
+  shape.reset(new Sphere());
+
+  auto i = Intersection(1, shape);
+  auto comps = ComputedIntersection(i, r);
+
+  EXPECT_EQ(Tuple::point(0, 0, 1), comps.point);
+  EXPECT_EQ(Tuple::vector(0, 0, -1), comps.eyev);
+  EXPECT_TRUE(comps.inside);
+  EXPECT_EQ(Tuple::vector(0, 0, -1), comps.normalv);
+}
+
+TEST(World, ShadeIntersectionOutside) {
   auto w = World::default_world();
   auto r = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
   auto shape = w.get_object(0);
 
   auto i = Intersection(4, shape);
   auto comps = ComputedIntersection(i, r);
-
   auto c = w.shade_hit(comps);
-  ASSERT_EQ(Color(0.38066, 0.47583, 0.2855), c);
+  EXPECT_EQ(Color(0.38066, 0.47583, 0.2855), c);
 }
 
 TEST(World, ShadeIntersectionInside) {
@@ -83,9 +107,8 @@ TEST(World, ShadeIntersectionInside) {
 
   auto i = Intersection(0.5, shape);
   auto comps = ComputedIntersection(i, r);
-
   auto c = w.shade_hit(comps);
-  ASSERT_EQ(Color(0.90498, 0.90498, 0.90498), c);
+  EXPECT_EQ(Color(0.90498, 0.90498, 0.90498), c);
 }
 
 TEST(World, ColorAtMiss) {
@@ -190,15 +213,15 @@ TEST(Shadows, ShadeHitGivenShadow) {
   auto w = World();
   w.set_light(PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1)));
 
-  auto s1 = Sphere();
+  auto s1 = std::make_shared<Sphere>();
   w.add(s1);
 
-  auto s2 = Sphere();
-  s2.set_transform(CreateTranslation(0, 0, 10));
+  auto s2 = std::make_shared<Sphere>();
+  s2->set_transform(CreateTranslation(0, 0, 10));
   w.add(s2);
 
   auto r = Ray(Tuple::point(0, 0, 5), Tuple::vector(0, 0, 1));
-  auto i = Intersection(4, &s2);
+  auto i = Intersection(4, s2);
 
   auto comps = ComputedIntersection(i, r);
   auto c = w.shade_hit(comps);
@@ -208,9 +231,9 @@ TEST(Shadows, ShadeHitGivenShadow) {
 
 TEST(Shadows, HitOffset) {
   auto r = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
-  auto s = Sphere();
-  s.set_transform((CreateTranslation(0, 0, 1)));
-  auto i = Intersection(5, &s);
+  auto s = std::make_shared<Sphere>();
+  s->set_transform((CreateTranslation(0, 0, 1)));
+  auto i = Intersection(5, s);
   auto comps = ComputedIntersection(i, r);
   EXPECT_TRUE(comps.over_point.z < -EPSILON / 2);
   EXPECT_TRUE(comps.point.z > comps.over_point.z);

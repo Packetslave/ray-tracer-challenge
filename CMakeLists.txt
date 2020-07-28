@@ -20,7 +20,7 @@ enable_testing()
 add_subdirectory(tests)
 
 add_library(camera camera.cpp)
-target_link_libraries(camera canvas fmt::fmt)
+target_link_libraries(camera canvas fmt::fmt shape sphere)
 
 add_library(canvas canvas.cpp)
 target_link_libraries(canvas color ${folly_LIBRARIES})
@@ -29,7 +29,7 @@ add_library(color color.cpp)
 target_link_libraries(color tuple)
 
 add_library(intersection intersection.cpp)
-target_link_libraries(intersection ray tuple)
+target_link_libraries(intersection ray matrix)
 
 add_library(light light.cpp)
 target_link_libraries(light color tuple)
@@ -41,13 +41,16 @@ add_library(matrix matrix.cpp)
 target_link_libraries(matrix tuple absl::flat_hash_map)
 
 add_library(ray ray.cpp)
-target_link_libraries(ray tuple matrix)
+target_link_libraries(ray matrix)
+
+add_library(shape shape.cpp)
+target_link_libraries(shape intersection)
 
 add_library(sphere sphere.cpp)
-target_link_libraries(sphere tuple matrix)
+target_link_libraries(sphere shape)
 
 add_library(world world.cpp)
-target_link_libraries(world camera canvas intersection light ray sphere)
+target_link_libraries(world camera canvas intersection light ray shape)
 
 add_library(timer timer.cpp)
 

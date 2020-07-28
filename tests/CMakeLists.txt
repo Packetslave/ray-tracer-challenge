@@ -4,7 +4,7 @@ include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 add_executable(CameraTest camera_test.cpp)
 target_link_libraries(CameraTest gtest gtest_main)
-target_link_libraries(CameraTest camera absl::flat_hash_map)
+target_link_libraries(CameraTest camera matrix absl::flat_hash_map)
 
 add_executable(CanvasTest canvas_test.cpp)
 target_link_libraries(CanvasTest gtest gtest_main fmt::fmt)
@@ -29,6 +29,10 @@ target_link_libraries(MatrixTest matrix)
 add_executable(RayTest ray_test.cpp)
 target_link_libraries(RayTest gtest gtest_main)
 target_link_libraries(RayTest ray)
+
+add_executable(ShapeTest shape_test.cpp)
+target_link_libraries(ShapeTest gtest gtest_main)
+target_link_libraries(ShapeTest shape)
 
 add_executable(SphereTest sphere_test.cpp)
 target_link_libraries(SphereTest gtest gtest_main)

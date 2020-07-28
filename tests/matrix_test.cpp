@@ -363,7 +363,7 @@ TEST(Transform, RotateX) {
   auto p = Tuple::point(0, 1, 0);
   auto half = CreateRotationX(PI_4);
   auto full = CreateRotationX(PI_2);
-  ASSERT_TRUE(point_is_near(Tuple::point(0, sqrt(2) / 2, sqrt(2) / 2), half * p,
+  ASSERT_TRUE(point_is_near(Tuple::point(0, SQRT2_2, SQRT2_2), half * p,
                             0.001));
   ASSERT_TRUE(point_is_near(Tuple::point(0, 0, 1), full * p, 0.001));
 }
@@ -372,7 +372,7 @@ TEST(Transform, RotateXInverse) {
   auto p = Tuple::point(0, 1, 0);
   auto half = CreateRotationX(PI_4);
   auto inv = half.inverse(/* cache */ false);
-  ASSERT_TRUE(point_is_near(Tuple::point(0, sqrt(2) / 2, -1 * sqrt(2) / 2),
+  ASSERT_TRUE(point_is_near(Tuple::point(0, SQRT2_2, -1 * SQRT2_2),
                             inv * p, 0.001));
 }
 
@@ -380,7 +380,7 @@ TEST(Transform, RotateY) {
   auto p = Tuple::point(0, 0, 1);
   auto half = CreateRotationY(PI_4);
   auto full = CreateRotationY(PI_2);
-  ASSERT_TRUE(point_is_near(Tuple::point(sqrt(2) / 2, 0, sqrt(2) / 2), half * p,
+  ASSERT_TRUE(point_is_near(Tuple::point(SQRT2_2, 0, SQRT2_2), half * p,
                             0.001));
   ASSERT_TRUE(point_is_near(Tuple::point(1, 0, 0), full * p, 0.001));
 }
@@ -389,7 +389,7 @@ TEST(Transform, RotateZ) {
   auto p = Tuple::point(0, 1, 0);
   auto half = CreateRotationZ(PI_4);
   auto full = CreateRotationZ(PI_2);
-  ASSERT_TRUE(point_is_near(Tuple::point(-1 * sqrt(2) / 2, sqrt(2) / 2, 0),
+  ASSERT_TRUE(point_is_near(Tuple::point(-1 * SQRT2_2, SQRT2_2, 0),
                             half * p, 0.001));
   ASSERT_TRUE(point_is_near(Tuple::point(-1, 0, 0), full * p, 0.001));
 }

@@ -2,6 +2,7 @@
 
 #include "../color.h"
 #include "../light.h"
+#include "../matrix.h"
 #include "../tuple.h"
 #include "gtest/gtest.h"
 
@@ -35,7 +36,7 @@ TEST(Material, EyeBetween45) {
   auto m = Material();
   auto p = Tuple::point(0, 0, 0);
 
-  auto e = Tuple::vector(0, sqrt(2) / 2, -sqrt(2) / 2);
+  auto e = Tuple::vector(0, SQRT2_2, -SQRT2_2);
   auto n = Tuple::vector(0, 0, -1);
   auto l = PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1));
 
@@ -59,7 +60,7 @@ TEST(Material, EyeInPath) {
   auto m = Material();
   auto p = Tuple::point(0, 0, 0);
 
-  auto e = Tuple::vector(0, -sqrt(2) / 2, -sqrt(2) / 2);
+  auto e = Tuple::vector(0, -SQRT2_2, -SQRT2_2);
   auto n = Tuple::vector(0, 0, -1);
   auto l = PointLight(Tuple::point(0, 10, -10), Color(1, 1, 1));
 

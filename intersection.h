@@ -8,14 +8,14 @@
 #include "ray.h"
 #include "tuple.h"
 
-class Sphere;
+class Shape;
 
 class Intersection {
  public:
-  Intersection(double t, Sphere *o) : t_(t), sphere_(o) {}
+  Intersection(double t, std::shared_ptr<Shape> o) : t_(t), shape_(o) {}
   double t() const { return t_; };
 
-  Sphere *object() const { return sphere_; }
+  std::shared_ptr<Shape> object() const { return shape_; }
 
   friend std::ostream &operator<<(std::ostream &os, const Intersection &rhs) {
     return os << "Intersection(" << rhs.t() << ")";
@@ -23,7 +23,7 @@ class Intersection {
 
  private:
   double t_;
-  Sphere *sphere_;
+  std::shared_ptr<Shape> shape_;
 };
 
 inline bool operator==(const Intersection &a, const Intersection &b) {

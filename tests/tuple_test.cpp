@@ -279,7 +279,7 @@ TEST(TupleTest, ReflectVector45) {
 
 TEST(TupleTest, ReflectVectorSlanted) {
   auto v = Tuple::vector(0, -1, 0);
-  auto n = Tuple::vector(sqrt(2) / 2, sqrt(2) / 2, 0);
+  auto n = Tuple::vector(SQRT2_2, SQRT2_2, 0);
   auto r = v.reflect(n);
   EXPECT_EQ(Tuple::vector(1, 0, 0), r);
 }
