@@ -58,3 +58,13 @@ TEST(PlaneTest, IntersectBelow) {
   ASSERT_EQ(1, xs[0].t());
   ASSERT_EQ(plane, xs[0].object());
 }
+
+TEST(PlaneTest, PrecomputeReflection) {
+  std::shared_ptr<Shape> s;
+  s.reset(new Plane());
+
+  auto r = Ray(Tuple::point(0, 1, -1), Tuple::vector(0, -SQRT2_2, SQRT2_2));
+  auto i = Intersection(SQRT2_2, s);
+  auto comps = ComputedIntersection(i, r);
+  EXPECT_EQ(Tuple::vector(0, SQRT2_2, SQRT2_2), comps.reflectv);
+}

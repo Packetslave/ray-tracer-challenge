@@ -41,31 +41,6 @@ class Sphere : public Shape {
   }
 };
 
-struct ComputedIntersection {
-  ComputedIntersection(Intersection i, Ray r)
-      : object(i.object()),
-        t(i.t()),
-        point(r.position(t)),
-        eyev(-r.direction()),
-        normalv(object->normal_at(point)),
-        over_point(Tuple::point(0, 0, 0)),
-        inside(false){
-    if (dot(normalv, eyev) < 0) {
-      inside = true;
-      normalv = -normalv;
-    }
-    over_point = point + normalv * EPSILON;
-  }
-
-  std::shared_ptr<Shape> object;
-  double t;
-  Tuple point;
-  Tuple eyev;
-  Tuple normalv;
-  Tuple over_point;
-  bool inside;
-};
-
 template <typename T>
 std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
   if ( !v.empty() ) {

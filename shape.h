@@ -62,3 +62,31 @@ class Shape : public std::enable_shared_from_this<Shape> {
     return world_normal.normalize();
   };
 };
+
+struct ComputedIntersection {
+  ComputedIntersection(Intersection i, Ray r)
+      : object(i.object()),
+        t(i.t()),
+        point(r.position(t)),
+        eyev(-r.direction()),
+        normalv(object->normal_at(point)),
+        over_point(Tuple::point(0, 0, 0)),
+        reflectv(Tuple::vector(0, 0, 0)),
+        inside(false){
+    if (dot(normalv, eyev) < 0) {
+      inside = true;
+      normalv = -normalv;
+    }
+    reflectv = r.direction().reflect(normalv);
+    over_point = point + normalv * EPSILON;
+  }
+
+  std::shared_ptr<Shape> object;
+  double t;
+  Tuple point;
+  Tuple eyev;
+  Tuple normalv;
+  Tuple over_point;
+  Tuple reflectv;
+  bool inside;
+};

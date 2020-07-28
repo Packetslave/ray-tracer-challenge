@@ -34,19 +34,21 @@ class World {
     return w;
   }
 
-  Color shade_hit(const ComputedIntersection& comps) {
+  Color shade_hit(const ComputedIntersection& comps, int remaining=5) {
     auto shadowed = is_shadowed(comps.over_point);
-    auto out = comps.object->material()->lighting(
+
+    auto surface = comps.object->material()->lighting(
         *light_, comps.over_point, comps.eyev, comps.normalv, shadowed);
-    return out;
+    auto reflected = reflected_color(comps, remaining);
+    return surface + reflected;
   }
 
-  Color color_at(const Ray& r) {
+  Color color_at(const Ray& r, int remaining=5) {
     auto intersections = intersect(r);
     auto hit = Hit(intersections);
     if (hit) {
       auto comps = ComputedIntersection(*hit, r);
-      return shade_hit(comps);
+      return shade_hit(comps, remaining);
     }
 
     return Color(0, 0, 0);
@@ -98,6 +100,18 @@ class World {
 
     auto h = Hit(intersections);
     return h && h->t() < distance;
+  }
+
+  Color reflected_color(const ComputedIntersection &comps, int remaining=5) {
+    if (remaining <= 0) {
+      return Color(0, 0, 0);
+    }
+    if (!comps.object->material()->reflective()) {
+      return Color(0, 0, 0);
+    }
+    auto reflect_ray = Ray(comps.over_point, comps.reflectv);
+    auto color = color_at(reflect_ray, --remaining);
+    return color * comps.object->material()->reflective();
   }
 
  private:

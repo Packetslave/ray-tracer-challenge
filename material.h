@@ -10,19 +10,22 @@ class Material {
         ambient_(0.1),
         diffuse_(0.9),
         specular_(0.9),
-        shininess_(200.0) {}
+        shininess_(200.0),
+        reflective_(0.0) {}
 
   Color color() const { return color_; }
   double ambient() const { return ambient_; }
   double diffuse() const { return diffuse_; }
   double specular() const { return specular_; }
   double shininess() const { return shininess_; }
+  double reflective() const { return reflective_; }
 
   void set_color(const Color &c) { color_ = c; }
   void set_ambient(const double d) { ambient_ = d; }
   void set_diffuse(const double d) { diffuse_ = d; }
   void set_specular(const double d) { specular_ = d; }
   void set_shininess(const double d) { shininess_ = d; }
+  void set_reflective(const double d) { reflective_ = d; }
 
   Color lighting(PointLight light, Tuple point, Tuple eye_v, Tuple normal_v,
                  bool in_shadow) {
@@ -54,6 +57,7 @@ class Material {
   double diffuse_;
   double specular_;
   double shininess_;
+  double reflective_;
 };
 
 inline bool operator==(const Material &a, const Material &b) {

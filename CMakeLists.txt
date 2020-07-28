@@ -70,3 +70,6 @@ target_link_libraries(raytrace3 camera canvas color intersection light material 
 
 add_executable(raytrace4 raytrace4.cpp)
 target_link_libraries(raytrace4 camera canvas color intersection light material matrix ray plane sphere timer tuple ${FOLLY_LIBRARIES})
+
+add_executable(raytrace5 raytrace5.cpp)
+target_link_libraries(raytrace5 camera canvas color intersection light material matrix ray plane sphere timer tuple ${FOLLY_LIBRARIES})

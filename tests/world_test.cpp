@@ -5,6 +5,7 @@
 #include "../camera.h"
 #include "../light.h"
 #include "../material.h"
+#include "../plane.h"
 #include "../sphere.h"
 #include "../tuple.h"
 #include "gtest/gtest.h"
@@ -237,4 +238,86 @@ TEST(Shadows, HitOffset) {
   auto comps = ComputedIntersection(i, r);
   EXPECT_TRUE(comps.over_point.z < -EPSILON / 2);
   EXPECT_TRUE(comps.point.z > comps.over_point.z);
+}
+
+TEST(Reflect, NonReflectiveMaterial) {
+  auto w = World::default_world();
+  auto r = Ray(Tuple::point(0, 0, 0), Tuple::vector(0, 0, 1));
+  auto s = w.get_object(1);
+  s->material()->set_ambient(1);
+  auto i = Intersection(1, s);
+  auto comps = ComputedIntersection(i, r);
+  auto color = w.reflected_color(comps);
+  EXPECT_EQ(Color(0, 0, 0), color);
+}
+
+TEST(Reflect, ReflectiveMaterial) {
+  auto w = World::default_world();
+  std::shared_ptr<Shape> s;
+  s.reset(new Plane());
+
+  auto m = Material();
+  m.set_reflective(0.5);
+  s->set_material(m);
+  s->set_transform(CreateTranslation(0, -1, 0));
+  w.add(s);
+
+  auto r = Ray(Tuple::point(0, 0, -3), Tuple::vector(0, -SQRT2_2, SQRT2_2));
+  auto i = Intersection(sqrt(2), s);
+  auto comps = ComputedIntersection(i, r);
+  auto color = w.reflected_color(comps);
+  EXPECT_EQ(Color(0.19032, 0.2379, 0.14274), color);
+}
+
+TEST(Reflect, ShadeHit) {
+  auto w = World::default_world();
+
+  std::shared_ptr<Shape> shape;
+  shape.reset(new Plane());
+  shape->material()->set_reflective(0.5);
+  shape->set_transform(CreateTranslation(0, -1, 0));
+  w.add(shape);
+
+  auto r = Ray(Tuple::point(0, 0, -3), Tuple::vector(0, -SQRT2_2, SQRT2_2));
+  auto i = Intersection(sqrt(2), shape);
+  auto comps = ComputedIntersection(i, r);
+  auto color = w.shade_hit(comps);
+  EXPECT_EQ(Color(0.87677, 0.92436, 0.82918), color);
+}
+
+TEST(Reflect, ColorAtMutuallyReflective) {
+  auto w = World();
+  w.set_light(PointLight(Tuple::point(0, 0, 0), Color(1, 1, 1)));
+
+  std::shared_ptr<Shape> lower;
+  lower.reset(new Plane());
+  lower->material()->set_reflective(1);
+  lower->set_transform(CreateTranslation(0, -1, 0));
+  w.add(lower);
+
+  std::shared_ptr<Shape> upper;
+  upper.reset(new Plane());
+  upper->material()->set_reflective(1);
+  upper->set_transform(CreateTranslation(0, 1, 0));
+  w.add(upper);
+
+  auto r = Ray(Tuple::point(0, 0, 0), Tuple::vector(0, 1, 0));
+  auto c = w.color_at(r);
+}
+
+TEST(Reflect, ColorAtMaxRecursion) {
+  auto w = World();
+  w.set_light(PointLight(Tuple::point(0, 0, 0), Color(1, 1, 1)));
+
+  std::shared_ptr<Shape> plane;
+  plane.reset(new Plane());
+  plane->material()->set_reflective(0.5);
+  plane->set_transform(CreateTranslation(0, -1, 0));
+  w.add(plane);
+
+  auto r = Ray(Tuple::point(0, 0, -3), Tuple::vector(0, -SQRT2_2, SQRT2_2));
+  auto i = Intersection(sqrt(2), plane);
+  auto comps = ComputedIntersection(i, r);
+  auto color = w.reflected_color(comps, 0);
+  EXPECT_EQ(Color(0, 0, 0), color);
 }

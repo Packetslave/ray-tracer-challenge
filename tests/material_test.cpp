@@ -79,3 +79,8 @@ TEST(Material, LightBehind) {
   auto r = m.lighting(l, p, e, n, false);
   EXPECT_TRUE(color_is_near(Color(0.1, 0.1, 0.1), r, 0.0001));
 }
+
+TEST(Material, DefaultHasReflective) {
+  auto m = Material();
+  EXPECT_EQ(0, m.reflective());
+}
