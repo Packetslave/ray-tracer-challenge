@@ -60,16 +60,16 @@ add_library(timer timer.cpp)
 add_library(tuple tuple.cpp)
 
 add_executable(raytrace1 raytrace1.cpp)
-target_link_libraries(raytrace1 camera canvas color intersection light material matrix ray sphere timer tuple )#${FOLLY_LIBRARIES})
+target_link_libraries(raytrace1 camera canvas color intersection light material matrix ray sphere timer tuple)#${FOLLY_LIBRARIES})
 
 add_executable(raytrace2 raytrace2.cpp)
-target_link_libraries(raytrace2 canvas color intersection light material matrix ray sphere timer tuple )#${FOLLY_LIBRARIES})
+target_link_libraries(raytrace2 canvas color intersection light material matrix ray sphere timer tuple)#${FOLLY_LIBRARIES})
 
 add_executable(raytrace3 raytrace3.cpp)
-target_link_libraries(raytrace3 camera canvas color intersection light material matrix ray sphere timer tuple )#${FOLLY_LIBRARIES})
+target_link_libraries(raytrace3 camera canvas color intersection light material matrix ray sphere timer tuple)#${FOLLY_LIBRARIES})
 
 add_executable(raytrace4 raytrace4.cpp)
-target_link_libraries(raytrace4 camera canvas color intersection light material matrix ray plane sphere timer tuple )#${FOLLY_LIBRARIES})
+target_link_libraries(raytrace4 camera canvas color intersection light material matrix ray plane sphere timer tuple)#${FOLLY_LIBRARIES})
 
 add_executable(raytrace5 raytrace5.cpp)
-target_link_libraries(raytrace5 camera canvas color intersection light material matrix ray plane sphere timer tuple )#${FOLLY_LIBRARIES})
+target_link_libraries(raytrace5 camera canvas color intersection light material matrix ray plane sphere timer tuple)#${FOLLY_LIBRARIES})

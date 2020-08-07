@@ -72,5 +72,6 @@ inline bool operator==(const Material &a, const Material &b) {
   return a.color() == b.color() && a.ambient() == b.ambient() &&
          a.diffuse() == b.diffuse() && a.specular() == b.specular() &&
          a.shininess() == b.shininess() && a.reflective() == b.reflective() &&
-         a.transparency() == b.transparency() && a.refractive() == b.refractive();
+         a.transparency() == b.transparency() &&
+         a.refractive() == b.refractive();
 }

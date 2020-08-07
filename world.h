@@ -34,16 +34,18 @@ class World {
     return w;
   }
 
-  Color shade_hit(const ComputedIntersection& comps, int remaining=5) {
+  Color shade_hit(const ComputedIntersection& comps, int remaining = 5) {
     auto shadowed = is_shadowed(comps.over_point);
 
     auto surface = comps.object->material()->lighting(
         *light_, comps.over_point, comps.eyev, comps.normalv, shadowed);
     auto reflected = reflected_color(comps, remaining);
-    return surface + reflected;
+    auto refracted = refracted_color(comps, remaining);
+
+    return surface + reflected + refracted;
   }
 
-  Color color_at(const Ray& r, int remaining=5) {
+  Color color_at(const Ray& r, int remaining = 5) {
     auto intersections = intersect(r);
     auto hit = Hit(intersections);
     if (hit) {
@@ -54,16 +56,14 @@ class World {
     return Color(0, 0, 0);
   }
 
-  std::shared_ptr<Shape> get_object(int index) {
-    return objects_[index];
-  }
+  std::shared_ptr<Shape> get_object(int index) { return objects_[index]; }
 
   int size() const { return objects_.size(); }
 
   void add(const std::shared_ptr<Shape> s) { objects_.push_back(s); };
 
   bool contains(const Shape& s) const {
-    for (const auto &i: objects_) {
+    for (const auto& i : objects_) {
       if (*i == s) {
         return true;
       }
@@ -103,7 +103,7 @@ class World {
     return h && h->t() < distance;
   }
 
-  Color reflected_color(const ComputedIntersection &comps, int remaining=5) {
+  Color reflected_color(const ComputedIntersection& comps, int remaining = 5) {
     if (remaining <= 0) {
       return Color(0, 0, 0);
     }
@@ -113,6 +113,29 @@ class World {
     auto reflect_ray = Ray(comps.over_point, comps.reflectv);
     auto color = color_at(reflect_ray, --remaining);
     return color * comps.object->material()->reflective();
+  }
+
+  Color refracted_color(const ComputedIntersection& comps, int remaining = 5) {
+    if (comps.object->material()->transparency() == 0) {
+      return Color(0, 0, 0);
+    }
+    if (remaining == 0) {
+      return Color(0, 0, 0);
+    }
+    auto n_ratio = comps.n1 / comps.n2;
+    auto cos_i = dot(comps.eyev, comps.normalv);
+    auto sin2_t = n_ratio * n_ratio * (1 - cos_i * cos_i);
+    if (sin2_t > 1) {
+      return Color(0, 0, 0);
+    }
+
+    auto cos_t = sqrt(1.0 - sin2_t);
+    auto direction =
+        comps.normalv * (n_ratio * cos_i - cos_t) - comps.eyev * n_ratio;
+    auto refract_ray = Ray(comps.under_point, direction);
+
+    return color_at(refract_ray, remaining - 1) *
+           comps.object->material()->transparency();
   }
 
  private:

@@ -5,10 +5,8 @@
 #include "shape.h"
 
 bool Shape::operator==(const Shape &other) const noexcept {
-  return typeid(*this) == typeid(other)
-         && transform_ == other.transform_
-         && material_ == other.material_
-         && compare(other);
+  return typeid(*this) == typeid(other) && transform_ == other.transform_ &&
+         material_ == other.material_ && compare(other);
 }
 
 bool Shape::operator!=(const Shape &other) const noexcept {

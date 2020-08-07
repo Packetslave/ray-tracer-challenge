@@ -48,7 +48,7 @@ class Matrix {
 
   void set(const size_t row, const size_t column, const double value);
 
-  [[nodiscard]] static size_t size() ;
+  [[nodiscard]] static size_t size();
 
   [[nodiscard]] Matrix transpose() const;
 
@@ -65,8 +65,8 @@ class Matrix {
   }};
 };
 
-bool operator!=(Matrix const& a, Matrix const& b);
-bool operator==(Matrix const& a, Matrix const& b);
+bool operator!=(Matrix const &a, Matrix const &b);
+bool operator==(Matrix const &a, Matrix const &b);
 
 Matrix operator*(const Matrix &a, const Matrix &b);
 Tuple operator*(const Matrix &a, const Tuple &b);

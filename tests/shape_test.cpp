@@ -2,17 +2,20 @@
 // Created by Brian Landers on 7/27/20.
 //
 
-#include "../matrix.h"
 #include "../shape.h"
+
+#include "../matrix.h"
 #include "gtest/gtest.h"
 
 class TestShape : public Shape {
  public:
-  TestShape() : Shape(), saved_ray_{Ray(Tuple::point(0, 0, 0), Tuple::vector(0, 0, 0))} {}
+  TestShape()
+      : Shape(),
+        saved_ray_{Ray(Tuple::point(0, 0, 0), Tuple::vector(0, 0, 0))} {}
 
   Ray saved_ray() const { return saved_ray_; }
 
-  std::vector<Intersection> local_intersect(const Ray &r) override {
+  std::vector<Intersection> local_intersect(const Ray& r) override {
     saved_ray_ = r;
     return {};
   }

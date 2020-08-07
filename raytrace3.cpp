@@ -34,16 +34,15 @@ int main() {
   std::shared_ptr<Shape> left_wall;
   left_wall.reset(new Sphere());
 
-  left_wall->set_transform(CreateTranslation(0, 0, 5) *
-                          CreateRotationY(-PI_4) * CreateRotationX(PI_2) *
-                          CreateScaling(10, 0.01, 10));
+  left_wall->set_transform(CreateTranslation(0, 0, 5) * CreateRotationY(-PI_4) *
+                           CreateRotationX(PI_2) * CreateScaling(10, 0.01, 10));
 
   std::shared_ptr<Shape> right_wall;
   right_wall.reset(new Sphere());
 
-  right_wall->set_transform(CreateTranslation(0, 0, 5) *
-                           CreateRotationY(PI_4) * CreateRotationX(PI_2) *
-                           CreateScaling(10, 0.01, 10));
+  right_wall->set_transform(CreateTranslation(0, 0, 5) * CreateRotationY(PI_4) *
+                            CreateRotationX(PI_2) *
+                            CreateScaling(10, 0.01, 10));
   right_wall->set_material(mf);
   world.add(right_wall);
 
@@ -62,7 +61,7 @@ int main() {
   right.reset(new Sphere());
 
   right->set_transform(CreateTranslation(1.5, 0.5, -0.5) *
-                      CreateScaling(0.5, 0.5, 0.5));
+                       CreateScaling(0.5, 0.5, 0.5));
   auto mr = Material();
   mr.set_color(Color(0.5, 1, 0.1));
   mr.set_diffuse(0.7);
@@ -74,7 +73,7 @@ int main() {
   left.reset(new Sphere());
 
   left->set_transform(CreateTranslation(-1.5, 0.33, -0.75) *
-                     CreateScaling(0.33, 0.33, 0.33));
+                      CreateScaling(0.33, 0.33, 0.33));
   auto ml = Material();
   ml.set_color(Color(1, 0.8, 0.1));
   ml.set_diffuse(0.7);

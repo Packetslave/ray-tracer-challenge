@@ -50,8 +50,8 @@ class Canvas {
     std::string row;
     int ctr = 0;
     for (const auto &i : *pixels_) {
-      row += fmt::format(kPPMElement, clamp(i.r(), 0, 255), clamp(i.g(), 0, 255),
-                  clamp(i.b(), 0, 255));
+      row += fmt::format(kPPMElement, clamp(i.r(), 0, 255),
+                         clamp(i.g(), 0, 255), clamp(i.b(), 0, 255));
 
       if (++ctr == width_) {
         // word wrap algorithm can almost certainly be improved

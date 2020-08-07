@@ -3,8 +3,8 @@
 //
 
 #include "../plane.h"
-#include "../shape.h"
 
+#include "../shape.h"
 #include "gtest/gtest.h"
 
 TEST(PlaneTest, NormalIsConstant) {

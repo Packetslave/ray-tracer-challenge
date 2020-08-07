@@ -237,11 +237,31 @@ TEST(Sphere, FindingN1andN2) {
   c->material()->set_refractive(2.5);
 
   auto r = Ray(Tuple::point(0, 0, -4), Tuple::vector(0, 0, 1));
-  auto xs = std::vector<Intersection> {
-    {
-      Intersection(2, a), Intersection(2.75, b), Intersection(3.25, c),
-          Intersection(4.75, b), Intersection(5.25, c), Intersection(6, a),
-    }
-  };
-  // HERE
+  auto xs = std::vector<Intersection>{{
+      Intersection(2, a),
+      Intersection(2.75, b),
+      Intersection(3.25, c),
+      Intersection(4.75, b),
+      Intersection(5.25, c),
+      Intersection(6, a),
+  }};
+  double n1[] = {1.0, 1.5, 2.0, 2.5, 2.5, 1.5};
+  double n2[] = {1.5, 2.0, 2.5, 2.5, 1.5, 1.0};
+
+  for (int i = 0; i < 6; ++i) {
+    auto comps = ComputedIntersection(xs[i], r, xs);
+    EXPECT_EQ(n1[i], comps.n1);
+    EXPECT_EQ(n2[i], comps.n2);
+  }
+}
+
+TEST(Sphere, UnderPoint) {
+  auto r = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
+  auto shape = Sphere::Glass();
+  shape->set_transform(CreateTranslation(0, 0, 1));
+  auto i = Intersection(5, shape);
+  auto xs = std::vector<Intersection>{i};
+  auto comps = ComputedIntersection(i, r, xs);
+  EXPECT_TRUE(comps.under_point.z > EPSILON / 2);
+  EXPECT_TRUE(comps.point.z < comps.under_point.z);
 }

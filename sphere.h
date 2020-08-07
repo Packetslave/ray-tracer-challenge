@@ -3,17 +3,17 @@
 #include <optional>
 #include <vector>
 
+#include "folly/Optional.h"
 #include "intersection.h"
 #include "material.h"
 #include "ray.h"
 #include "shape.h"
-#include "folly/Optional.h"
 
 class Sphere : public Shape {
  public:
   static std::shared_ptr<Shape> Glass() {
     auto out = std::shared_ptr<Shape>();
-    out.reset( new Sphere() );
+    out.reset(new Sphere());
     out->material()->set_transparency(1.0);
     out->material()->set_refractive(1.5);
     return out;
@@ -33,27 +33,26 @@ class Sphere : public Shape {
       return std::vector<Intersection>();
     }
 
-    std::vector<Intersection> out{Intersection((-b - sqrt(d)) / (2 * a), shared_from_this()),
-                                  Intersection((-b + sqrt(d)) / (2 * a), shared_from_this())};
+    std::vector<Intersection> out{
+        Intersection((-b - sqrt(d)) / (2 * a), shared_from_this()),
+        Intersection((-b + sqrt(d)) / (2 * a), shared_from_this())};
     return out;
   }
 
   Tuple local_normal_at(const Tuple &p) override {
     auto normal = p - Tuple::point(0, 0, 0);
-    //normal.w = 0;
+    // normal.w = 0;
     return normal;
   }
 
-  bool compare(const Shape&) const noexcept override {
-    return true;
-  }
+  bool compare(const Shape &) const noexcept override { return true; }
 };
 
 template <typename T>
-std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
-  if ( !v.empty() ) {
+std::ostream &operator<<(std::ostream &out, const std::vector<T> &v) {
+  if (!v.empty()) {
     out << '[';
-    std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
+    std::copy(v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
     out << "\b\b]";
   }
   return out;
