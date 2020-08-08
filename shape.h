@@ -18,7 +18,8 @@ class Shape : public std::enable_shared_from_this<Shape> {
   explicit Shape()
       : transform_(Matrix(IDENTITY)),
         inverse_(Matrix(IDENTITY)),
-        material_(Material()) {}
+        material_(Material()),
+        parent_{nullptr} {}
 
   virtual ~Shape() = default;
 
@@ -29,6 +30,9 @@ class Shape : public std::enable_shared_from_this<Shape> {
 
   Matrix transform() { return transform_; }
   Matrix inverse() { return inverse_; }
+
+  Shape* parent() { return parent_; }
+  void set_parent(Shape* p) { parent_ = p; }
 
   void set_transform(const Matrix &t) {
     transform_ = t;
@@ -53,20 +57,27 @@ class Shape : public std::enable_shared_from_this<Shape> {
 
   virtual std::vector<Intersection> local_intersect(const Ray &r) = 0;
   virtual Tuple local_normal_at(const Tuple &p) = 0;
+  Tuple worldToObject(const Tuple &point);
+  Tuple normalToWorld(const Tuple &normalVector) {
+    Tuple world_normal = this->inverse_.transpose() * normalVector;
+    world_normal.w = 0;
+    world_normal = world_normal.normalize();
+
+    if (parent_ != nullptr) {
+      world_normal = parent_->normalToWorld(world_normal);
+    }
+    return world_normal;
+  };
 
  protected:
   Matrix transform_;
   Matrix inverse_;
   Material material_;
+  Shape* parent_;
 
  private:
-  Tuple worldToObject(const Tuple &point) { return this->inverse_ * point; };
   Tuple objectToWorld(const Tuple &point) { return this->transform_ * point; };
-  Tuple normalToWorld(const Tuple &normalVector) {
-    Tuple world_normal = this->inverse_.transpose() * normalVector;
-    world_normal.w = 0;
-    return world_normal.normalize();
-  };
+
 };
 
 struct ComputedIntersection {
@@ -151,4 +162,43 @@ struct ComputedIntersection {
   bool inside;
   double n1;
   double n2;
+};
+
+class Group : public Shape {
+ public:
+  bool compare(const Shape&) const noexcept override { return true; }
+
+  std::vector<Intersection> local_intersect(const Ray& r) override {
+    std::vector<Intersection> out;
+
+    for (const auto& i : children_) {
+      auto result = i->intersects(r);
+      for (const auto& j : result) {
+        out.push_back(j);
+      }
+    }
+
+    std::sort(out.begin(), out.end(), [](const auto& a, const auto& b) {
+      return a.t() < b.t();
+    });
+
+    return out;
+  };
+
+  Tuple local_normal_at(const Tuple& p) override {
+    return Tuple::vector(0, 0, 0);
+  }
+
+  size_t size() const { return children_.size(); }
+
+  void add(const std::shared_ptr<Shape>& s) {
+    s->set_parent(this);
+    children_.push_back(s);
+  }
+
+  bool contains(const std::shared_ptr<Shape>& s) {
+    return std::find(children_.begin(), children_.end(), s) != children_.end();
+  }
+ private:
+  std::vector<std::shared_ptr<Shape>> children_;
 };

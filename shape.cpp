@@ -13,6 +13,14 @@ bool Shape::operator!=(const Shape &other) const noexcept {
   return !(*this == other);
 }
 
+Tuple Shape::worldToObject(const Tuple &point) {
+  Tuple p = point;
+  if (parent_ != nullptr) {
+    p = parent_->worldToObject(p);
+  }
+  return this->transform().inverse() * p;
+};
+
 std::optional<Intersection> Hit(const std::vector<Intersection> &v) {
   std::vector<Intersection> sorted = v;
   std::sort(sorted.begin(), sorted.end(),

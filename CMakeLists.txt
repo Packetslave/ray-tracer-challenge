@@ -19,7 +19,25 @@ find_package(absl REQUIRED)
 enable_testing()
 add_subdirectory(tests)
 
-add_library(raytrace_lib camera.cpp canvas.cpp color.cpp intersection.cpp light.cpp material.cpp matrix.cpp pattern.cpp plane.cpp ray.cpp shape.cpp sphere.cpp timer.cpp tuple.cpp world.cpp)
+add_library(raytrace_lib "")
+target_sources(raytrace_lib PRIVATE
+        camera.cpp
+        canvas.cpp
+        color.cpp
+        cube.cpp
+        intersection.cpp
+        light.cpp
+        material.cpp
+        matrix.cpp
+        pattern.cpp
+        plane.cpp
+        ray.cpp
+        shape.cpp
+        sphere.cpp
+        timer.cpp
+        tuple.cpp
+        world.cpp
+)
 target_link_libraries(raytrace_lib fmt::fmt)
 
 add_executable(raytrace1 raytrace1.cpp)
@@ -36,3 +54,6 @@ target_link_libraries(raytrace4 raytrace_lib)
 
 add_executable(raytrace5 raytrace5.cpp)
 target_link_libraries(raytrace5 raytrace_lib)
+
+add_executable(raytrace6 raytrace6.cpp)
+target_link_libraries(raytrace6 raytrace_lib)

@@ -29,6 +29,17 @@ class TestPattern : public Pattern {
   }
 };
 
+class SolidPattern : public Pattern {
+ public:
+  explicit SolidPattern(const Color& c) : Pattern(), color_{c} {}
+  Color pattern_at(const Tuple& point) const override {
+    return color_;
+  }
+ private:
+  Color color_;
+};
+
+
 class StripePattern : public Pattern {
  public:
   explicit StripePattern(const Color& a, const Color& b) : Pattern(), a{a}, b{b} {}
