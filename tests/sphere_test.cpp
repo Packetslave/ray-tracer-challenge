@@ -9,14 +9,7 @@
 #include "../ray.h"
 #include "../tuple.h"
 #include "gtest/gtest.h"
-
-bool vector_is_near(Tuple a, Tuple b, float abs) {
-  std::cout << "A: " << a << std::endl;
-  std::cout << "B: " << b << std::endl;
-
-  return ((std::abs(a.x - b.x) < abs) && (std::abs(a.y - b.y) < abs) &&
-          (std::abs(a.z - b.z) < abs) && (a.w == b.w));
-}
+#include "test_common.h"
 
 TEST(Sphere, Intersects) {
   auto p = Tuple::point(0, 0, -5);
@@ -264,4 +257,67 @@ TEST(Sphere, UnderPoint) {
   auto comps = ComputedIntersection(i, r, xs);
   EXPECT_TRUE(comps.under_point.z > EPSILON / 2);
   EXPECT_TRUE(comps.point.z < comps.under_point.z);
+}
+
+TEST(Sphere, StripesWithObjTransform) {
+  auto s = std::shared_ptr<Shape>();
+  s.reset(new Sphere());
+
+  s->set_transform(CreateScaling(2, 2, 2));
+  auto p = StripePattern(Color(1, 1, 1), Color(0, 0, 0));
+  auto c = p.pattern_at_object(s, Tuple::point(1.5, 0, 0));
+  EXPECT_EQ(Color(1, 1, 1), c);
+}
+
+TEST(Sphere, StripesWithPatternTransform) {
+  auto s = std::shared_ptr<Shape>();
+  s.reset(new Sphere());
+
+  auto p = StripePattern(Color(1, 1, 1), Color(0, 0, 0));
+  p.set_transform(CreateScaling(2, 2, 2));
+
+  auto c = p.pattern_at_object(s, Tuple::point(0.5, 0, 0));
+  EXPECT_EQ(Color(1, 1, 1), c);
+}
+
+TEST(Sphere, StripesWithBothTransforms) {
+  auto s = std::shared_ptr<Shape>();
+  s.reset(new Sphere());
+  s->set_transform(CreateScaling(2, 2, 2));
+
+  auto p = StripePattern(Color(1, 1, 1), Color(0, 0, 0));
+  p.set_transform(CreateTranslation(0.5, 0, 0));
+
+  auto c = p.pattern_at_object(s, Tuple::point(2.5, 0, 0));
+  EXPECT_EQ(Color(1, 1, 1), c);
+}
+
+TEST(Sphere, SchlinkTotalInternalReflection) {
+  auto s = Sphere::Glass();
+
+  auto r = Ray(Tuple::point(0, 0, SQRT2_2), Tuple::vector(0, 1, 0));
+  auto xs = std::vector<Intersection>{Intersection(-SQRT2_2, s), Intersection(SQRT2_2, s)};
+  auto comps = ComputedIntersection(xs[1], r, xs);
+  auto ref = comps.schlick();
+  EXPECT_EQ(1.0, ref);
+}
+
+TEST(Sphere, SchlinkPerpendicularRay) {
+  auto s = Sphere::Glass();
+
+  auto r = Ray(Tuple::point(0, 0, 0), Tuple::vector(0, 1, 0));
+  auto xs = std::vector<Intersection>{Intersection(-1, s), Intersection(1, s)};
+  auto comps = ComputedIntersection(xs[1], r, xs);
+  auto ref = comps.schlick();
+  EXPECT_NEAR(0.04, ref, EPSILON);
+}
+
+TEST(Sphere, SchlinkN2Greater) {
+  auto s = Sphere::Glass();
+
+  auto r = Ray(Tuple::point(0, 0.99, -2), Tuple::vector(0, 0, 1));
+  auto xs = std::vector<Intersection>{Intersection(1.8589, s)};
+  auto comps = ComputedIntersection(xs[0], r, xs);
+  auto ref = comps.schlick();
+  EXPECT_NEAR(0.48873, ref, EPSILON);
 }

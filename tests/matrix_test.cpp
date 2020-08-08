@@ -11,6 +11,7 @@
 
 #include "../tuple.h"
 #include "gtest/gtest.h"
+#include "test_common.h"
 
 TEST(Matrix, Create4x4) {
   Matrix m{MatrixData4{{{1, 2, 3, 4},
@@ -213,25 +214,6 @@ TEST(Matrix, IsInvertible) {
   }}};
   ASSERT_EQ(0, determinant(*(b.TEST_get_data())));
   ASSERT_FALSE(b.is_invertible());
-}
-
-bool matrix_is_near(Matrix a, Matrix b, float abs) {
-  for (int row = 0; row < a.size(); ++row) {
-    for (int col = 0; col < a.size(); ++col) {
-      if (std::abs(a.get(row, col) - b.get(row, col)) > abs) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
-bool point_is_near(Tuple a, Tuple b, float abs) {
-  std::cout << "A: " << a << std::endl;
-  std::cout << "B: " << b << std::endl;
-
-  return ((std::abs(a.x - b.x) < abs) && (std::abs(a.y - b.y) < abs) &&
-          (std::abs(a.z - b.z) < abs) && (a.w == b.w));
 }
 
 TEST(Matrix, Inverse1) {

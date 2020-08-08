@@ -20,6 +20,6 @@ TEST(Light, SurfaceInShadow) {
   auto light = PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1));
   auto in_shadow = true;
   auto m = Material();
-  auto result = m.lighting(light, position, eyev, normalv, in_shadow);
+  auto result = m.lighting(nullptr, light, position, eyev, normalv, in_shadow);
   EXPECT_EQ(Color(0.1, 0.1, 0.1), result);
 }

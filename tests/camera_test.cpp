@@ -4,11 +4,7 @@
 
 #include "../world.h"
 #include "gtest/gtest.h"
-
-bool tuple_is_near(Tuple a, Tuple b) {
-  return abs(a.x - b.x) < EPSILON && abs(a.y - b.y) < EPSILON &&
-         abs(a.x - b.x) < EPSILON && abs(a.w - b.w) < EPSILON;
-}
+#include "test_common.h"
 
 TEST(Camera, Create) {
   auto c = Camera(160, 120, PI_2);

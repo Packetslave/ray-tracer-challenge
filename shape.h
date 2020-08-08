@@ -121,6 +121,24 @@ struct ComputedIntersection {
       }
     }
   }
+  double schlick() const {
+    auto cos = dot(eyev, normalv);
+
+    if (n1 > n2) {
+      auto n = n1 / n2;
+      auto sin2_t = n * n * (1.0 - cos * cos);
+
+      if (sin2_t > 1.0) {
+        return 1.0;
+      }
+
+      auto cos_t = sqrt(1.0 - sin2_t);
+      cos = cos_t;
+    }
+
+    auto r0 = pow(((n1 - n2) / (n1 + n2)), 2);
+    return r0 + (1 - r0) * pow(1 - cos, 5);
+  }
 
   std::shared_ptr<Shape> object;
   double t;

@@ -1,11 +1,9 @@
 //
 // Created by Brian Landers on 7/27/20.
 //
+#pragma once
 
 #include "shape.h"
-
-#ifndef RAY_TRACING2_PLANE_H
-#define RAY_TRACING2_PLANE_H
 
 class Plane : public Shape {
   bool compare(const Shape&) const noexcept override { return true; }
@@ -23,5 +21,3 @@ class Plane : public Shape {
     return Tuple::vector(0, 1, 0);
   }
 };
-
-#endif  // RAY_TRACING2_PLANE_H

@@ -58,15 +58,4 @@ std::ostream &operator<<(std::ostream &out, const std::vector<T> &v) {
   return out;
 }
 
-std::optional<Intersection> Hit(const std::vector<Intersection> &v) {
-  std::vector<Intersection> sorted = v;
-  std::sort(sorted.begin(), sorted.end(),
-            [](const auto &a, const auto &b) { return a.t() < b.t(); });
-
-  for (const auto &i : sorted) {
-    if (i.t() >= 0) {
-      return i;
-    }
-  }
-  return {};
-}
+std::optional<Intersection> Hit(const std::vector<Intersection> &v);

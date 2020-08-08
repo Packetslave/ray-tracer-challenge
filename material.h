@@ -2,6 +2,7 @@
 
 #include "color.h"
 #include "light.h"
+#include "pattern.h"
 
 class Material {
  public:
@@ -13,7 +14,8 @@ class Material {
         shininess_(200.0),
         reflective_(0.0),
         transparency_(0.0),
-        refractive_(1.0) {}
+        refractive_(1.0),
+        pattern_(nullptr){}
 
   Color color() const { return color_; }
   double ambient() const { return ambient_; }
@@ -23,6 +25,7 @@ class Material {
   double reflective() const { return reflective_; }
   double transparency() const { return transparency_; }
   double refractive() const { return refractive_; }
+  const Pattern* pattern() const { return pattern_; }
 
   void set_color(const Color &c) { color_ = c; }
   void set_ambient(const double d) { ambient_ = d; }
@@ -32,10 +35,12 @@ class Material {
   void set_reflective(const double d) { reflective_ = d; }
   void set_transparency(const double d) { transparency_ = d; }
   void set_refractive(const double d) { refractive_ = d; }
+  void set_pattern(const Pattern& p) { pattern_ = &p; }
 
-  Color lighting(PointLight light, Tuple point, Tuple eye_v, Tuple normal_v,
+  Color lighting(std::shared_ptr<Shape> obj, PointLight light, Tuple point, Tuple eye_v, Tuple normal_v,
                  bool in_shadow) {
-    Color effective = this->color() * light.intensity();
+    Color c = pattern_ == nullptr ? color_ : pattern_->pattern_at_object(obj, point);
+    Color effective = c * light.intensity();
     Tuple light_v = (light.position() - point).normalize();
     Tuple ambient = effective * this->ambient();
 
@@ -66,6 +71,7 @@ class Material {
   double reflective_;
   double transparency_;
   double refractive_;
+  const Pattern* pattern_;
 };
 
 inline bool operator==(const Material &a, const Material &b) {

@@ -12,3 +12,16 @@ bool Shape::operator==(const Shape &other) const noexcept {
 bool Shape::operator!=(const Shape &other) const noexcept {
   return !(*this == other);
 }
+
+std::optional<Intersection> Hit(const std::vector<Intersection> &v) {
+  std::vector<Intersection> sorted = v;
+  std::sort(sorted.begin(), sorted.end(),
+            [](const auto &a, const auto &b) { return a.t() < b.t(); });
+
+  for (const auto &i : sorted) {
+    if (i.t() >= 0) {
+      return i;
+    }
+  }
+  return {};
+}

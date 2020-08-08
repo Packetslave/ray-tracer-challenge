@@ -31,6 +31,10 @@ int main() {
   mf.set_color(Color(1, 0.9, 0.9));
   mf.set_specular(0.4);
   mf.set_reflective(0.9);
+
+  auto pattern = StripePattern(Color(1, 1, 1), Color(0, 0, 0));
+  mf.set_pattern(pattern);
+
   floor->set_material(mf);
   world.add(floor);
 
