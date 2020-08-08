@@ -17,6 +17,7 @@ target_sources(Tests PRIVATE
         ray_test.cpp
         shape_test.cpp
         sphere_test.cpp
+        triangle_test.cpp
         tuple_test.cpp
         world_test.cpp
 )

@@ -35,6 +35,7 @@ target_sources(raytrace_lib PRIVATE
         shape.cpp
         sphere.cpp
         timer.cpp
+        triangle.cpp
         tuple.cpp
         world.cpp
 )
