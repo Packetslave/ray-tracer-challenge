@@ -2,6 +2,10 @@
 
 #include "canvas.h"
 #include "color.h"
+#include "folly/executors/CPUThreadPoolExecutor.h"
+#include "folly/experimental/coro/FutureUtil.h"
+#include "folly/experimental/coro/Task.h"
+//#include "folly/experimental/coro/Collect.h"
 #include "matrix.h"
 #include "ray.h"
 #include "tuple.h"
@@ -48,14 +52,51 @@ class Camera {
   Canvas render(World w) {
     auto out = Canvas(hsize_, vsize_);
 
+    size_t total = vsize_ * hsize_;
+    size_t current = 0;
+
     for (int y = 0; y < vsize_ - 1; ++y) {
+      float pct = (float)current / total;
+      std::cout << "Now rendering pixel " << current << " of " << total << " ("
+                << pct << ")" << std::endl;
       for (int x = 0; x < hsize_ - 1; ++x) {
         auto r = ray_for_pixel(x, y);
         auto c = w.color_at(r);
         out.write_pixel(x, y, c);
+        current++;
       }
     }
     return out;
+  }
+
+  folly::coro::Task<std::vector<Color>> process_row(World& w, size_t y) {
+    if (y % 100 == 0) {
+      std::cout << "Executing for row " << y << std::endl;
+    }
+    std::vector<Color> out;
+    for (int x = 0; x < hsize_ - 1; ++x) {
+      auto r = ray_for_pixel(x, y);
+      auto c = w.color_at(r);
+      out.push_back(c);
+    }
+    co_return out;
+  }
+
+  folly::coro::Task<Canvas> multi_render(World w) {
+    auto out = Canvas(hsize_, vsize_);
+    std::vector<folly::SemiFuture<std::vector<Color>>> futs;
+    for (int y = 0; y < vsize_ - 1; ++y) {
+      futs.push_back(process_row(w, y).semi());
+    }
+
+    std::vector<folly::Try<std::vector<Color>>> results = co_await folly::collectAll(futs.begin(), futs.end());
+
+    for (int y = 0; y < vsize()- 1; ++y) {
+      for (int x = 0; x < hsize() - 1; ++x) {
+        out.write_pixel(x, y, results[y].value()[x]);
+      }
+    }
+    co_return out;
   }
 
  private:

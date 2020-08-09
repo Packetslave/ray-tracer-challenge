@@ -12,6 +12,7 @@ target_sources(Tests PRIVATE
         light_test.cpp
         material_test.cpp
         matrix_test.cpp
+        obj_file_test.cpp
         pattern_test.cpp
         plane_test.cpp
         ray_test.cpp

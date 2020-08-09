@@ -5,11 +5,12 @@ project(ray-tracing2 VERSION 1.0 LANGUAGES CXX)
 
 # Pick the C++ standard to compile with.
 # Abseil currently supports C++11, C++14, and C++17.
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 #set(FOLLY_ROOT_DIR /Users/blanders/.brew)
 #find_package(folly)
 #include_directories(${FOLLY_INCLUDE_DIR})
+
 
 find_package(fmt REQUIRED)
 
@@ -31,6 +32,7 @@ target_sources(raytrace_lib PRIVATE
         matrix.cpp
         pattern.cpp
         plane.cpp
+        obj_file.cpp
         ray.cpp
         shape.cpp
         sphere.cpp
@@ -39,7 +41,7 @@ target_sources(raytrace_lib PRIVATE
         tuple.cpp
         world.cpp
 )
-target_link_libraries(raytrace_lib fmt::fmt)
+target_link_libraries(raytrace_lib fmt::fmt ${FOLLY_LIBRARIES})
 
 add_executable(raytrace1 raytrace1.cpp)
 target_link_libraries(raytrace1 raytrace_lib)
@@ -58,3 +60,6 @@ target_link_libraries(raytrace5 raytrace_lib)
 
 add_executable(raytrace6 raytrace6.cpp)
 target_link_libraries(raytrace6 raytrace_lib)
+
+add_executable(raytrace7 raytrace7.cpp)
+target_link_libraries(raytrace7 raytrace_lib)

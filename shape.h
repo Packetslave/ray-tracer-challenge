@@ -191,14 +191,31 @@ class Group : public Shape {
 
   size_t size() const { return children_.size(); }
 
-  void add(const std::shared_ptr<Shape>& s) {
-    s->set_parent(this);
+  template <typename T>
+  void add(const std::shared_ptr<T>& s) {
     children_.push_back(s);
+
+    // need to fix parent in shape's children
+    if constexpr (std::is_same_v<T, Group>) {
+      for (auto& c : s->children()) {
+        c->set_parent(s.get());
+      }
+    }
+
+    s->set_parent(this);
   }
 
   bool contains(const std::shared_ptr<Shape>& s) {
     return std::find(children_.begin(), children_.end(), s) != children_.end();
   }
+
+  template <typename T>
+  std::shared_ptr<T> child(size_t idx) {
+    return std::dynamic_pointer_cast<T>(children_[idx]);
+  }
+
+  std::vector<std::shared_ptr<Shape>> children() { return children_; }
+
  private:
   std::vector<std::shared_ptr<Shape>> children_;
 };
