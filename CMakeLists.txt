@@ -7,15 +7,11 @@ project(ray-tracing2 VERSION 1.0 LANGUAGES CXX)
 # Abseil currently supports C++11, C++14, and C++17.
 set(CMAKE_CXX_STANDARD 20)
 
-#set(FOLLY_ROOT_DIR /Users/blanders/.brew)
-#find_package(folly)
-#include_directories(${FOLLY_INCLUDE_DIR})
-
-
-find_package(fmt REQUIRED)
-
-#set(absl_DIR external/abseil-cpp)
 find_package(absl REQUIRED)
+find_package(fmt REQUIRED)
+find_package(folly)
+find_package(gflags REQUIRED)
+find_package(glog REQUIRED)
 
 enable_testing()
 add_subdirectory(tests)
