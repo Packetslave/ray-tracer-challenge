@@ -4,8 +4,10 @@
 
 #pragma once
 
-class Tuple;
-class Matrix;
+#include <cmath>
+
+#include "../tuple.h"
+#include "../matrix.h"
 
 bool vector_is_near(Tuple a, Tuple b, float abs);
 bool tuple_is_near(Tuple a, Tuple b);

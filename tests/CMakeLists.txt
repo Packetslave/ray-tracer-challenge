@@ -5,6 +5,7 @@ include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 add_executable(Tests "")
 target_sources(Tests PRIVATE
         test_common.cpp
+        bounding_box_test.cpp
         camera_test.cpp
         canvas_test.cpp
         color_test.cpp

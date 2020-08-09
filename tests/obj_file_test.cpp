@@ -79,31 +79,31 @@ TEST(ObjectFile, PolygonData) {
   EXPECT_EQ(t3->p3 , parsed.vertices()[5]);
 }
 
-TEST(ObjectFile, NamedGroup) {
-  std::string file = {
-      "v -1 1 0\n"
-      "v -1 0 0\n"
-      "v 1 0 0\n"
-      "v 1 1 0\n"
-      "\n"
-      "g FirstGroup\n"
-      "f 1 2 3\n"
-      "\n"
-      "g SecondGroup\n"
-      "f 1 3 4\n"
-  };
-  auto parsed = ObjFile(file);
-  auto g1 = parsed.group("FirstGroup");
-  auto g2 = parsed.group("SecondGroup");
-  auto t1 = g1->child<Triangle>(0);
-  auto t2 = g2->child<Triangle>(0);
-  EXPECT_EQ(parsed.vertices()[1], t1->p1);
-  EXPECT_EQ(parsed.vertices()[2], t1->p2);
-  EXPECT_EQ(parsed.vertices()[3], t1->p3);
-  EXPECT_EQ(parsed.vertices()[1], t2->p1);
-  EXPECT_EQ(parsed.vertices()[3], t2->p2);
-  EXPECT_EQ(parsed.vertices()[4], t2->p3);
-}
+//TEST(ObjectFile, NamedGroup) {
+//  std::string file = {
+//      "v -1 1 0\n"
+//      "v -1 0 0\n"
+//      "v 1 0 0\n"
+//      "v 1 1 0\n"
+//      "\n"
+//      "g FirstGroup\n"
+//      "f 1 2 3\n"
+//      "\n"
+//      "g SecondGroup\n"
+//      "f 1 3 4\n"
+//  };
+//  auto parsed = ObjFile(file);
+//  auto g1 = parsed.group("FirstGroup");
+//  auto g2 = parsed.group("SecondGroup");
+//  auto t1 = g1->child<Triangle>(0);
+//  auto t2 = g2->child<Triangle>(0);
+//  EXPECT_EQ(parsed.vertices()[1], t1->p1);
+//  EXPECT_EQ(parsed.vertices()[2], t1->p2);
+//  EXPECT_EQ(parsed.vertices()[3], t1->p3);
+//  EXPECT_EQ(parsed.vertices()[1], t2->p1);
+//  EXPECT_EQ(parsed.vertices()[3], t2->p2);
+//  EXPECT_EQ(parsed.vertices()[4], t2->p3);
+//}
 
 TEST(ObjectFile, ToGroup) {
   std::string file = {

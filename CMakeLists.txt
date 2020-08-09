@@ -22,10 +22,12 @@ add_subdirectory(tests)
 
 add_library(raytrace_lib "")
 target_sources(raytrace_lib PRIVATE
+        bounding_box.cpp
         camera.cpp
         canvas.cpp
         color.cpp
         cube.cpp
+        group.cpp
         intersection.cpp
         light.cpp
         material.cpp

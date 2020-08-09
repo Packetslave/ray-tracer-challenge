@@ -9,6 +9,7 @@
 
 #include "folly/Conv.h"
 #include "folly/String.h"
+#include "group.h"
 #include "shape.h"
 #include "triangle.h"
 #include "tuple.h"

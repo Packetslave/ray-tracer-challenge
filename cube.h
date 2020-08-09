@@ -11,9 +11,9 @@ class Cube : public Shape {
  public:
   bool compare(const Shape&) const noexcept override { return true; }
   std::vector<Intersection> local_intersect(const Ray& r) override {
-    auto [xtmin, xtmax] = check_axis(r.origin().x, r.direction().x);
     auto [ytmin, ytmax] = check_axis(r.origin().y, r.direction().y);
     auto [ztmin, ztmax] = check_axis(r.origin().z, r.direction().z);
+    auto [xtmin, xtmax] = check_axis(r.origin().x, r.direction().x);
 
     auto tmin = std::max({xtmin, ytmin, ztmin});
     auto tmax = std::min({xtmax, ytmax, ztmax});

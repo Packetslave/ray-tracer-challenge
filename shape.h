@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "bounding_box.h"
 #include "intersection.h"
 #include "material.h"
 #include "matrix.h"
@@ -68,6 +69,12 @@ class Shape : public std::enable_shared_from_this<Shape> {
     }
     return world_normal;
   };
+
+  BoundingBox parent_space_bounds() {
+    return bounds_of()->transform(transform_);
+  }
+
+  virtual BoundingBox* bounds_of() { return nullptr; };
 
  protected:
   Matrix transform_;
@@ -162,60 +169,4 @@ struct ComputedIntersection {
   bool inside;
   double n1;
   double n2;
-};
-
-class Group : public Shape {
- public:
-  bool compare(const Shape&) const noexcept override { return true; }
-
-  std::vector<Intersection> local_intersect(const Ray& r) override {
-    std::vector<Intersection> out;
-
-    for (const auto& i : children_) {
-      auto result = i->intersects(r);
-      for (const auto& j : result) {
-        out.push_back(j);
-      }
-    }
-
-    std::sort(out.begin(), out.end(), [](const auto& a, const auto& b) {
-      return a.t() < b.t();
-    });
-
-    return out;
-  };
-
-  Tuple local_normal_at(const Tuple& p) override {
-    return Tuple::vector(0, 0, 0);
-  }
-
-  size_t size() const { return children_.size(); }
-
-  template <typename T>
-  void add(const std::shared_ptr<T>& s) {
-    children_.push_back(s);
-
-    // need to fix parent in shape's children
-    if constexpr (std::is_same_v<T, Group>) {
-      for (auto& c : s->children()) {
-        c->set_parent(s.get());
-      }
-    }
-
-    s->set_parent(this);
-  }
-
-  bool contains(const std::shared_ptr<Shape>& s) {
-    return std::find(children_.begin(), children_.end(), s) != children_.end();
-  }
-
-  template <typename T>
-  std::shared_ptr<T> child(size_t idx) {
-    return std::dynamic_pointer_cast<T>(children_[idx]);
-  }
-
-  std::vector<std::shared_ptr<Shape>> children() { return children_; }
-
- private:
-  std::vector<std::shared_ptr<Shape>> children_;
 };

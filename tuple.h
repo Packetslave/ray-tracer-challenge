@@ -65,6 +65,14 @@ Tuple operator-(const Tuple& rhs);
 
 bool operator==(Tuple const& lhs, Tuple const& rhs);
 
-double dot(const Tuple& a, const Tuple& b);
+inline double dot(const Tuple& a, const Tuple& b) {
+  return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+}
 
-Tuple cross(const Tuple& a, const Tuple& b);
+inline Tuple cross(const Tuple& a, const Tuple& b) {
+  return Tuple::vector(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z,
+                       a.x * b.y - a.y * b.x);
+}
+
+const static Tuple POSITIVE_INF(INFINITY, INFINITY, INFINITY, 1);
+const static Tuple NEGATIVE_INF(-INFINITY, -INFINITY, -INFINITY, 1);

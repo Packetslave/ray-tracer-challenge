@@ -42,7 +42,7 @@ int main() {
   auto world = World();
   world.set_light(PointLight(Tuple::point(-10, 10, -10), Color(1, 1, 1)));
 
-  auto file = read_file("/Users/blanders/Downloads/astronaut1.obj");
+  auto file = read_file("/Users/blanders/tmp/teapot.obj");
   auto parsed = ObjFile(file, true);
   auto group = parsed.to_group();
   group->set_transform(CreateRotationY(-PI));

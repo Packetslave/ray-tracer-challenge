@@ -2,6 +2,7 @@
 // Created by Brian Landers on 8/8/20.
 //
 
+#include "bounding_box.h"
 #include "shape.h"
 
 #pragma once
@@ -15,7 +16,11 @@ class Triangle : public Shape {
         p3{p3},
         e1{p2 - p1},
         e2{p3 - p1},
-        normal{cross(e2, e1).normalize()} {}
+        normal{cross(e2, e1).normalize()} {
+    box_.add(p1);
+    box_.add(p2);
+    box_.add(p3);
+  }
 
   bool compare(const Shape&) const noexcept override { return true; }
 
@@ -44,6 +49,11 @@ class Triangle : public Shape {
 
   Tuple local_normal_at(const Tuple& p) override { return normal; }
 
+  BoundingBox* bounds_of() override {
+    return &box_;
+  }
+
   Tuple p1, p2, p3;
   Tuple e1, e2, normal;
+  BoundingBox box_;
 };
