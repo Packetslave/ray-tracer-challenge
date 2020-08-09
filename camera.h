@@ -74,10 +74,10 @@ class Camera {
       std::cout << "Executing for row " << y << std::endl;
     }
     std::vector<Color> out;
+    out.reserve(hsize_);
+
     for (int x = 0; x < hsize_ - 1; ++x) {
-      auto r = ray_for_pixel(x, y);
-      auto c = w.color_at(r);
-      out.push_back(c);
+      out.push_back(w.color_at(ray_for_pixel(x, y)));
     }
     co_return out;
   }

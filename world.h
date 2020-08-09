@@ -66,7 +66,7 @@ class World {
 
   int size() const { return objects_.size(); }
 
-  void add(const std::shared_ptr<Shape> s) { objects_.push_back(s); };
+  void add(const std::shared_ptr<Shape>& s) { objects_.push_back(s); };
 
   bool contains(const Shape& s) const {
     for (const auto& i : objects_) {
@@ -113,7 +113,7 @@ class World {
     if (remaining <= 0) {
       return Color(0, 0, 0);
     }
-    if (!comps.object->material()->reflective()) {
+    if (comps.object->material()->reflective() < EPSILON) {
       return Color(0, 0, 0);
     }
     auto reflect_ray = Ray(comps.over_point, comps.reflectv);

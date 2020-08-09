@@ -81,8 +81,8 @@ class Shape : public std::enable_shared_from_this<Shape> {
 };
 
 struct ComputedIntersection {
-  ComputedIntersection(Intersection hit, Ray r,
-                       std::vector<Intersection> xs = {})
+  ComputedIntersection(const Intersection& hit, const Ray& r,
+                       const std::vector<Intersection>& xs = {})
       : object(hit.object()),
         t(hit.t()),
         point(r.position(t)),
