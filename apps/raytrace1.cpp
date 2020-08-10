@@ -2,28 +2,17 @@
 // Created by Brian Landers on 2019-01-11.
 //
 
-#include "canvas.h"
-#include "light.h"
-#include "material.h"
-#include "sphere.h"
-#include "timer.h"
-#include "tuple.h"
+#include "../core/canvas.h"
+#include "../core/tuple.h"
+#include "../shapes/sphere.h"
 
 int main() {
-  Timer t("Total Runtime");
-
-  int canvas_pixels = 400;
+  int canvas_pixels = 100;
   Canvas out(canvas_pixels, canvas_pixels);
   Color red(1, 0, 0);
   Color black(0, 0, 0);
 
   Sphere s;
-  s.set_material(Material());
-
-  auto light_position = Tuple::point(-10, 10, -10);
-  auto light_color = Color(1, 1, 1);
-  auto light = PointLight(light_position, light_color);
-
   const auto origin = Tuple::point(0, 0, -5);
   int wall_z = 10;
 
@@ -43,20 +32,12 @@ int main() {
       Ray r(origin, Tuple::vector(direction).normalize());
 
       auto xs = s.intersects(r);
-      auto hit = Hit(xs);
-
-      if (hit) {
-        auto point = r.position(hit->t());
-        auto normal = hit->object()->normal_at(point);
-        auto eye = -r.direction();
-        auto color = hit->object()->material()->lighting(light, point, eye,
-                                                         normal, false);
-
-        out.write_pixel(x, y, color);
+      if (Hit(xs)) {
+        out.write_pixel(x, y, red);
       } else {
         out.write_pixel(x, y, black);
       }
     }
   }
-  out.save("/tmp/raytrace2.ppm");
+  out.save("/tmp/raytrace1.ppm");
 }

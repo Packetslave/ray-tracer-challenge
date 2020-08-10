@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include "bounding_box.h"
-#include "intersection.h"
-#include "material.h"
-#include "matrix.h"
-#include "ray.h"
+#include "../core/bounding_box.h"
+#include "../core/intersection.h"
+#include "../core/material.h"
+#include "../core/matrix.h"
+#include "../core/ray.h"
 
 #define WARN(msg)                                          \
   fprintf(stderr, "warning: %s:%d: ", __FILE__, __LINE__); \
@@ -90,6 +90,29 @@ class Shape : public std::enable_shared_from_this<Shape> {
  private:
   Tuple objectToWorld(const Tuple &point) { return this->transform_ * point; };
 
+};
+
+class TestShape : public Shape {
+public:
+    TestShape()
+            : Shape(),
+              saved_ray_{Ray(Tuple::point(0, 0, 0), Tuple::vector(0, 0, 0))} {}
+
+    Ray saved_ray() const { return saved_ray_; }
+
+    IntersectionVector local_intersect(const Ray& r) override {
+        saved_ray_ = r;
+        return {};
+    }
+
+    Tuple local_normal_at(const Tuple& p) override {
+        return Tuple::vector(p.x, p.y, p.z);
+    }
+
+    bool compare(const Shape&) const noexcept override { return true; }
+
+private:
+    Ray saved_ray_;
 };
 
 struct ComputedIntersection {

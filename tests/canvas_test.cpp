@@ -1,6 +1,6 @@
-#include "../canvas.h"
+#include "../core/canvas.h"
 
-#include "../color.h"
+#include "../core/color.h"
 #include "gtest/gtest.h"
 
 // TODO: replace folly with absl

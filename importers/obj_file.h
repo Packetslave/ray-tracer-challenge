@@ -7,12 +7,12 @@
 #include <string>
 #include <unordered_map>
 
+#include "../core/tuple.h"
+#include "../shapes/group.h"
+#include "../shapes/shape.h"
+#include "../shapes/triangle.h"
 #include "folly/Conv.h"
 #include "folly/String.h"
-#include "group.h"
-#include "shape.h"
-#include "triangle.h"
-#include "tuple.h"
 
 size_t parse_face(const std::string& f) {
   size_t slash = f.find('/');

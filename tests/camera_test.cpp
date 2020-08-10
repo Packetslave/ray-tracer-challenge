@@ -1,8 +1,8 @@
-#include "../camera.h"
+#include "../core/camera.h"
 
 #include <cmath>
 
-#include "../world.h"
+#include "../core/world.h"
 #include "gtest/gtest.h"
 #include "test_common.h"
 

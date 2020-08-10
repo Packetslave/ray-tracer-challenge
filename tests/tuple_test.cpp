@@ -2,7 +2,7 @@
 // Created by Brian Landers on 7/25/20.
 //
 
-#include "../tuple.h"
+#include "../core/tuple.h"
 
 #include "gtest/gtest.h"
 

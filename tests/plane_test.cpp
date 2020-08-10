@@ -2,9 +2,9 @@
 // Created by Brian Landers on 7/27/20.
 //
 
-#include "../plane.h"
+#include "../shapes/plane.h"
 
-#include "../shape.h"
+#include "../shapes/shape.h"
 #include "gtest/gtest.h"
 
 TEST(PlaneTest, NormalIsConstant) {

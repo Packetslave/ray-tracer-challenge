@@ -2,7 +2,8 @@
 // Created by Brian Landers on 8/8/20.
 //
 
-#include "../triangle.h"
+#include "../shapes/triangle.h"
+
 #include "gtest/gtest.h"
 
 TEST(Triangle, Create) {

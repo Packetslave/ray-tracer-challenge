@@ -1,5 +1,6 @@
 #include "pattern.h"
-#include "shape.h"
+
+#include "../shapes/shape.h"
 
 Color Pattern::pattern_at_object(const std::shared_ptr<Shape>& obj, Tuple point) const {
   auto obj_point = obj->transform().inverse() * point;

@@ -5,11 +5,11 @@
 //
 // Created by Brian Landers on 2018-12-07.
 //
-#include "../matrix.h"
+#include "../core/matrix.h"
 
 #include <iostream>
 
-#include "../tuple.h"
+#include "../core/tuple.h"
 #include "gtest/gtest.h"
 #include "test_common.h"
 

@@ -2,12 +2,12 @@
 // Created by Brian Landers on 2019-01-10.
 //
 
-#include "../sphere.h"
+#include "../shapes/sphere.h"
 
-#include "../material.h"
-#include "../matrix.h"
-#include "../ray.h"
-#include "../tuple.h"
+#include "../core/material.h"
+#include "../core/matrix.h"
+#include "../core/ray.h"
+#include "../core/tuple.h"
 #include "gtest/gtest.h"
 #include "test_common.h"
 

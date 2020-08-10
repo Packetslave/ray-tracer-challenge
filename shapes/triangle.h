@@ -2,7 +2,7 @@
 // Created by Brian Landers on 8/8/20.
 //
 
-#include "bounding_box.h"
+#include "../core/bounding_box.h"
 #include "shape.h"
 
 #pragma once

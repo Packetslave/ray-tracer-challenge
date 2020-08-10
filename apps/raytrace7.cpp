@@ -2,21 +2,21 @@
 // Created by Brian Landers on 2019-01-11.
 //
 
-#include "camera.h"
-#include "canvas.h"
-#include "cube.h"
+#include "../core/camera.h"
+#include "../core/canvas.h"
+#include "../core/light.h"
+#include "../core/material.h"
+#include "../core/matrix.h"
+#include "../core/tuple.h"
+#include "../core/world.h"
+#include "../importers/obj_file.h"
+#include "../shapes/cube.h"
+#include "../shapes/plane.h"
+#include "../shapes/sphere.h"
+#include "../utils/timer.h"
 #include "folly/executors/CPUThreadPoolExecutor.h"
 #include "folly/executors/ThreadedExecutor.h"
 #include "folly/experimental/coro/BlockingWait.h"
-#include "light.h"
-#include "material.h"
-#include "matrix.h"
-#include "obj_file.h"
-#include "plane.h"
-#include "sphere.h"
-#include "timer.h"
-#include "tuple.h"
-#include "world.h"
 
 auto read_file(std::string_view path) -> std::string {
   constexpr auto read_size = std::size_t{4096};

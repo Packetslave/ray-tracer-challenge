@@ -2,8 +2,9 @@
 // Created by Brian Landers on 8/7/20.
 //
 
-#include "../color.h"
-#include "../pattern.h"
+#include "../core/pattern.h"
+
+#include "../core/color.h"
 #include "gtest/gtest.h"
 
 TEST(Pattern, StripePattern) {

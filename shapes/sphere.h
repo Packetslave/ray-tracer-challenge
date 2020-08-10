@@ -3,10 +3,10 @@
 #include <optional>
 #include <vector>
 
+#include "../core/intersection.h"
+#include "../core/material.h"
+#include "../core/ray.h"
 #include "folly/Optional.h"
-#include "intersection.h"
-#include "material.h"
-#include "ray.h"
 #include "shape.h"
 
 class Sphere : public Shape {

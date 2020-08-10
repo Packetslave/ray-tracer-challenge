@@ -18,46 +18,46 @@ add_subdirectory(tests)
 
 add_library(raytrace_lib "")
 target_sources(raytrace_lib PRIVATE
-        bounding_box.cpp
-        camera.cpp
-        canvas.cpp
-        color.cpp
-        cube.cpp
-        group.cpp
-        intersection.cpp
-        light.cpp
-        material.cpp
-        matrix.cpp
-        pattern.cpp
-        plane.cpp
-        obj_file.cpp
-        ray.cpp
-        shape.cpp
-        sphere.cpp
-        timer.cpp
-        triangle.cpp
-        tuple.cpp
-        world.cpp
+        core/bounding_box.cpp
+        core/camera.cpp
+        core/canvas.cpp
+        core/color.cpp
+        core/intersection.cpp
+        core/light.cpp
+        core/material.cpp
+        core/matrix.cpp
+        core/pattern.cpp
+        importers/obj_file.cpp
+        core/ray.cpp
+        utils/timer.cpp
+        core/tuple.cpp
+        core/world.cpp
+        shapes/cube.cpp
+        shapes/group.cpp
+        shapes/plane.cpp
+        shapes/shape.cpp
+        shapes/sphere.cpp
+        shapes/triangle.cpp
 )
 target_link_libraries(raytrace_lib fmt::fmt ${FOLLY_LIBRARIES})
 
-add_executable(raytrace1 raytrace1.cpp)
+add_executable(raytrace1 apps/raytrace1.cpp)
 target_link_libraries(raytrace1 raytrace_lib)
 
-add_executable(raytrace2 raytrace2.cpp)
+add_executable(raytrace2 apps/raytrace2.cpp)
 target_link_libraries(raytrace2 raytrace_lib)
 
-add_executable(raytrace3 raytrace3.cpp)
+add_executable(raytrace3 apps/raytrace3.cpp)
 target_link_libraries(raytrace3 raytrace_lib)
 
-add_executable(raytrace4 raytrace4.cpp)
+add_executable(raytrace4 apps/raytrace4.cpp)
 target_link_libraries(raytrace4 raytrace_lib)
 
-add_executable(raytrace5 raytrace5.cpp)
+add_executable(raytrace5 apps/raytrace5.cpp)
 target_link_libraries(raytrace5 raytrace_lib)
 
-add_executable(raytrace6 raytrace6.cpp)
+add_executable(raytrace6 apps/raytrace6.cpp)
 target_link_libraries(raytrace6 raytrace_lib)
 
-add_executable(raytrace7 raytrace7.cpp)
+add_executable(raytrace7 apps/raytrace7.cpp)
 target_link_libraries(raytrace7 raytrace_lib)

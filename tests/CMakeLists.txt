@@ -10,6 +10,7 @@ target_sources(Tests PRIVATE
         canvas_test.cpp
         color_test.cpp
         cube_test.cpp
+        group_test.cpp
         light_test.cpp
         material_test.cpp
         matrix_test.cpp

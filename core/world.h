@@ -2,10 +2,10 @@
 
 #include <optional>
 
+#include "../shapes/sphere.h"
 #include "intersection.h"
 #include "light.h"
 #include "ray.h"
-#include "sphere.h"
 
 class World {
  public:

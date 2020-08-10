@@ -2,10 +2,10 @@
 // Created by Brian Landers on 8/8/20.
 //
 
-#include "../obj_file.h"
+#include "../importers/obj_file.h"
 
-#include "../triangle.h"
-#include "../tuple.h"
+#include "../core/tuple.h"
+#include "../shapes/triangle.h"
 #include "gtest/gtest.h"
 
 TEST(ObjectFile, Unrecognized) {

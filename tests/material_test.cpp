@@ -1,10 +1,10 @@
-#include "../material.h"
+#include "../core/material.h"
 
-#include "../color.h"
-#include "../light.h"
-#include "../matrix.h"
-#include "../tuple.h"
-#include "../sphere.h"
+#include "../core/color.h"
+#include "../core/light.h"
+#include "../core/matrix.h"
+#include "../core/tuple.h"
+#include "../shapes/sphere.h"
 #include "gtest/gtest.h"
 
 bool color_is_near(Color a, Color b, float abs) {

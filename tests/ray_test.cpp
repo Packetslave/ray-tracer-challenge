@@ -2,10 +2,10 @@
 // Created by Brian Landers on 2019-01-10.
 //
 
-#include "../ray.h"
+#include "../core/ray.h"
 
-#include "../matrix.h"
-#include "../tuple.h"
+#include "../core/matrix.h"
+#include "../core/tuple.h"
 #include "gtest/gtest.h"
 
 TEST(Ray, Create) {

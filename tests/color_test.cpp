@@ -1,6 +1,6 @@
-#include "../color.h"
+#include "../core/color.h"
 
-#include "../tuple.h"
+#include "../core/tuple.h"
 #include "gtest/gtest.h"
 
 class ColorTest : public ::testing::Test {};

@@ -1,7 +1,7 @@
 #include "test_common.h"
 
-#include "../tuple.h"
-#include "../matrix.h"
+#include "../core/matrix.h"
+#include "../core/tuple.h"
 
 bool vector_is_near(Tuple a, Tuple b, float abs) {
   std::cout << "A: " << a << std::endl;

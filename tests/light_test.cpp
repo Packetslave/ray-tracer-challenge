@@ -1,8 +1,8 @@
-#include "../light.h"
+#include "../core/light.h"
 
-#include "../color.h"
-#include "../material.h"
-#include "../tuple.h"
+#include "../core/color.h"
+#include "../core/material.h"
+#include "../core/tuple.h"
 #include "gtest/gtest.h"
 
 TEST(Light, PointLight) {

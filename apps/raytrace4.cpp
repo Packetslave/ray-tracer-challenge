@@ -2,16 +2,16 @@
 // Created by Brian Landers on 2019-01-11.
 //
 
-#include "camera.h"
-#include "canvas.h"
-#include "light.h"
-#include "material.h"
-#include "matrix.h"
-#include "plane.h"
-#include "sphere.h"
-#include "timer.h"
-#include "tuple.h"
-#include "world.h"
+#include "../core/camera.h"
+#include "../core/canvas.h"
+#include "../core/light.h"
+#include "../core/material.h"
+#include "../core/matrix.h"
+#include "../core/tuple.h"
+#include "../core/world.h"
+#include "../shapes/plane.h"
+#include "../shapes/sphere.h"
+#include "../utils/timer.h"
 
 int main() {
   Timer t("Total Time");

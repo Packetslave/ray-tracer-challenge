@@ -1,12 +1,12 @@
-#include "../bounding_box.h"
+#include "../core/bounding_box.h"
 
-#include "../group.h"
-#include "../sphere.h"
-#include "../tuple.h"
+#include "../core/tuple.h"
+#include "../shapes/group.h"
+#include "../shapes/sphere.h"
 #include "gtest/gtest.h"
 #include "test_common.h"
 
- TEST(BoundingBox, CreateEmpty) {
+TEST(BoundingBox, CreateEmpty) {
   auto box = BoundingBox();
   EXPECT_EQ(POSITIVE_INF, box.min());
   EXPECT_EQ(NEGATIVE_INF, box.max());

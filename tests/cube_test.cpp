@@ -1,8 +1,8 @@
-#include "gtest/gtest.h"
+#include "../shapes/cube.h"
 
-#include "../cube.h"
-#include "../ray.h"
-#include "../shape.h"
+#include "../core/ray.h"
+#include "../shapes/shape.h"
+#include "gtest/gtest.h"
 
 TEST(Cube, RayIntersects) {
   std::shared_ptr<Shape> s;

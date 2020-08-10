@@ -1,13 +1,13 @@
-#include "../world.h"
+#include "../core/world.h"
 
 #include <cmath>
 
-#include "../camera.h"
-#include "../light.h"
-#include "../material.h"
-#include "../plane.h"
-#include "../sphere.h"
-#include "../tuple.h"
+#include "../core/camera.h"
+#include "../core/light.h"
+#include "../core/material.h"
+#include "../core/tuple.h"
+#include "../shapes/plane.h"
+#include "../shapes/sphere.h"
 #include "gtest/gtest.h"
 #include "test_common.h"
 
