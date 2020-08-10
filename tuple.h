@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <cfloat>
 #include <cmath>
 #include <ostream>
 
@@ -74,5 +75,5 @@ inline Tuple cross(const Tuple& a, const Tuple& b) {
                        a.x * b.y - a.y * b.x);
 }
 
-const static Tuple POSITIVE_INF(INFINITY, INFINITY, INFINITY, 1);
-const static Tuple NEGATIVE_INF(-INFINITY, -INFINITY, -INFINITY, 1);
+const static Tuple POSITIVE_INF(DBL_MAX, DBL_MAX, DBL_MAX, 1);
+const static Tuple NEGATIVE_INF(-DBL_MAX, -DBL_MAX, -DBL_MAX, 1);

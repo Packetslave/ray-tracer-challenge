@@ -5,16 +5,19 @@
 #pragma once
 #include "shape.h"
 
+
+using ShapeVector = std::vector<std::shared_ptr<Shape>>;
+
 class Group : public Shape {
  public:
   bool compare(const Shape&) const noexcept override { return true; }
 
-  std::vector<Intersection> local_intersect(const Ray& r) override {
+  IntersectionVector local_intersect(const Ray& r) override {
     if (!bounds_of()->intersects(r)) {
       return {};
     }
 
-    std::vector<Intersection> out;
+    IntersectionVector out;
 
     for (const auto& i : children_) {
       auto result = i->intersects(r);
@@ -63,15 +66,73 @@ class Group : public Shape {
   std::vector<std::shared_ptr<Shape>> children() { return children_; }
 
   BoundingBox* bounds_of() override {
-    if (updated_) {
-      box_.clear();
-      for (const auto& c : children_){
-        auto cbox = c->parent_space_bounds();
-        box_.add(cbox);
+    return bounds_of(true);
+  }
+
+  BoundingBox* bounds_of(bool use_cache)  {
+    if (!use_cache || updated_) {
+      BoundingBox new_box;
+      for (const auto& c : children_) {
+        auto cbox = c->parent_space_bounds_of();
+        new_box.add(*cbox);
       }
+      box_ = new_box;
       updated_ = false;
     }
     return &box_;
+  }
+
+  std::pair<ShapeVector, ShapeVector> partition_children() {
+    ShapeVector out_left;
+    ShapeVector out_right;
+
+    auto bounds = this->bounds_of();
+    auto [left, right] = bounds->split();
+
+    std::vector<std::shared_ptr<Shape>>::iterator it;
+
+    for (it = children_.begin(); it != children_.end(); /* no increment */) {
+      auto child_bounds = (*it)->parent_space_bounds_of();
+
+      if (left.contains(*child_bounds)) {
+        out_left.push_back(*it);
+        it = children_.erase(it);
+        updated_ = true;
+        continue;
+      }
+      if (right.contains(*child_bounds)) {
+        out_right.push_back(*it);
+        it = children_.erase(it);
+        updated_ = true;
+        continue;
+      }
+      ++it;
+    }
+
+    return { out_left, out_right };
+  }
+
+  void make_subgroup(ShapeVector shapes) {
+    auto g = std::make_shared<Group>();
+    for (const auto& s : shapes) {
+      g->add(s);
+    }
+    add(g);
+  }
+
+  void divide(const size_t threshold) override {
+    if (threshold <= children_.size()) {
+      auto [left, right] = partition_children();
+      if (! left.empty()) {
+        make_subgroup(left);
+      }
+      if (! right.empty()) {
+        make_subgroup(right);
+      }
+    }
+//    for (const auto& i : children_) {
+//      i->divide(threshold);
+//    }
   }
 
  private:

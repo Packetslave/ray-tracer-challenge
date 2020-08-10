@@ -24,7 +24,7 @@ class Triangle : public Shape {
 
   bool compare(const Shape&) const noexcept override { return true; }
 
-  std::vector<Intersection> local_intersect(const Ray& r) override  {
+  IntersectionVector local_intersect(const Ray& r) override  {
     auto dir_cross_e2 = cross(r.direction(), e2);
     auto det = dot(e1, dir_cross_e2);
     if (abs(det) < EPSILON) {

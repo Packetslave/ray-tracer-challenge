@@ -22,7 +22,7 @@ class Sphere : public Shape {
   explicit Sphere() : Shape() {}
 
   // FIXME: this can be optimized a fair bit
-  std::vector<Intersection> local_intersect(const Ray &r) override {
+  IntersectionVector local_intersect(const Ray &r) override {
     auto sphere_to_ray = r.origin() - Tuple::point(0, 0, 0);
     auto a = dot(r.direction(), r.direction());
     auto b = 2 * dot(r.direction(), sphere_to_ray);
@@ -30,10 +30,10 @@ class Sphere : public Shape {
     auto d = b * b - 4 * a * c;
 
     if (d < 0) {
-      return std::vector<Intersection>();
+      return IntersectionVector();
     }
 
-    std::vector<Intersection> out{
+    IntersectionVector out{
         Intersection((-b - sqrt(d)) / (2 * a), shared_from_this()),
         Intersection((-b + sqrt(d)) / (2 * a), shared_from_this())};
     return out;
@@ -45,7 +45,14 @@ class Sphere : public Shape {
     return normal;
   }
 
+  BoundingBox* bounds_of() override {
+    return &box_;
+  }
+
   bool compare(const Shape &) const noexcept override { return true; }
+
+ private:
+  BoundingBox box_ = { Tuple::point(-1, -1, -1), Tuple::point(1, 1, 1) };
 };
 
 template <typename T>
@@ -58,4 +65,4 @@ std::ostream &operator<<(std::ostream &out, const std::vector<T> &v) {
   return out;
 }
 
-std::optional<Intersection> Hit(const std::vector<Intersection> &v);
+std::optional<Intersection> Hit(const IntersectionVector &v);

@@ -5,6 +5,9 @@
 #include "camera.h"
 #include "canvas.h"
 #include "cube.h"
+#include "folly/executors/CPUThreadPoolExecutor.h"
+#include "folly/executors/ThreadedExecutor.h"
+#include "folly/experimental/coro/BlockingWait.h"
 #include "light.h"
 #include "material.h"
 #include "matrix.h"
@@ -14,9 +17,6 @@
 #include "timer.h"
 #include "tuple.h"
 #include "world.h"
-#include "folly/experimental/coro/BlockingWait.h"
-#include "folly/executors/CPUThreadPoolExecutor.h"
-#include "folly/executors/ThreadedExecutor.h"
 
 auto read_file(std::string_view path) -> std::string {
   constexpr auto read_size = std::size_t{4096};
@@ -40,27 +40,17 @@ int main() {
       Tuple::point(0, 1.5, -5), Tuple::point(0, 1, 0), Tuple::vector(0, 1, 0)));
 
   auto world = World();
-  world.set_light(PointLight(Tuple::point(-10, 10, -10), Color(1, 1, 1)));
+  world.set_light(PointLight(Tuple::point(-10, 10, -10), Color(1, 0.5, 1)));
 
-  auto file = read_file("/Users/blanders/tmp/teapot.obj");
-  auto parsed = ObjFile(file, true);
-  auto group = parsed.to_group();
-  group->set_transform(CreateRotationY(-PI));
-  world.add(group);
-
-//  std::shared_ptr<Shape> middle;
-//  middle.reset(new Sphere());
-//
-//  middle->set_transform(CreateTranslation(-0.5, 1, 0.5));
-//  auto mm = Material();
-//  mm.set_color(Color(0.1, 1, 1.0));
-//  middle->set_material(mm);
-//
-//  std::shared_ptr<Group> g;
-//  g.reset(new Group());
-//  g->add(middle);
-//
-//  world.add(g);
+  auto file = read_file("/Users/blanders/Downloads/bunny.obj");
+  {
+    Timer t2("Building model");
+    auto parsed = ObjFile(file, true);
+    auto group = parsed.to_group();
+    group->set_transform(CreateRotationY(-PI));
+    group->divide(2500);
+    world.add(group);
+  }
 
   //auto ex = folly::ThreadedExecutor();
   auto ex = folly::CPUThreadPoolExecutor(20);

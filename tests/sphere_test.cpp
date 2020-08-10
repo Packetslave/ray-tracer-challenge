@@ -230,7 +230,7 @@ TEST(Sphere, FindingN1andN2) {
   c->material()->set_refractive(2.5);
 
   auto r = Ray(Tuple::point(0, 0, -4), Tuple::vector(0, 0, 1));
-  auto xs = std::vector<Intersection>{{
+  auto xs = IntersectionVector{{
       Intersection(2, a),
       Intersection(2.75, b),
       Intersection(3.25, c),
@@ -253,7 +253,7 @@ TEST(Sphere, UnderPoint) {
   auto shape = Sphere::Glass();
   shape->set_transform(CreateTranslation(0, 0, 1));
   auto i = Intersection(5, shape);
-  auto xs = std::vector<Intersection>{i};
+  auto xs = IntersectionVector{i};
   auto comps = ComputedIntersection(i, r, xs);
   EXPECT_TRUE(comps.under_point.z > EPSILON / 2);
   EXPECT_TRUE(comps.point.z < comps.under_point.z);
@@ -296,7 +296,7 @@ TEST(Sphere, SchlinkTotalInternalReflection) {
   auto s = Sphere::Glass();
 
   auto r = Ray(Tuple::point(0, 0, SQRT2_2), Tuple::vector(0, 1, 0));
-  auto xs = std::vector<Intersection>{Intersection(-SQRT2_2, s), Intersection(SQRT2_2, s)};
+  auto xs = IntersectionVector{Intersection(-SQRT2_2, s), Intersection(SQRT2_2, s)};
   auto comps = ComputedIntersection(xs[1], r, xs);
   auto ref = comps.schlick();
   EXPECT_EQ(1.0, ref);
@@ -306,7 +306,7 @@ TEST(Sphere, SchlinkPerpendicularRay) {
   auto s = Sphere::Glass();
 
   auto r = Ray(Tuple::point(0, 0, 0), Tuple::vector(0, 1, 0));
-  auto xs = std::vector<Intersection>{Intersection(-1, s), Intersection(1, s)};
+  auto xs = IntersectionVector{Intersection(-1, s), Intersection(1, s)};
   auto comps = ComputedIntersection(xs[1], r, xs);
   auto ref = comps.schlick();
   EXPECT_NEAR(0.04, ref, EPSILON);
@@ -316,8 +316,15 @@ TEST(Sphere, SchlinkN2Greater) {
   auto s = Sphere::Glass();
 
   auto r = Ray(Tuple::point(0, 0.99, -2), Tuple::vector(0, 0, 1));
-  auto xs = std::vector<Intersection>{Intersection(1.8589, s)};
+  auto xs = IntersectionVector{Intersection(1.8589, s)};
   auto comps = ComputedIntersection(xs[0], r, xs);
   auto ref = comps.schlick();
   EXPECT_NEAR(0.48873, ref, EPSILON);
+}
+
+TEST(Sphere, BoundingBox) {
+  auto s = Sphere();
+  auto box = s.bounds_of();
+  EXPECT_EQ(Tuple::point(-1, -1, -1), box->min());
+  EXPECT_EQ(Tuple::point(1, 1, 1), box->max());
 }

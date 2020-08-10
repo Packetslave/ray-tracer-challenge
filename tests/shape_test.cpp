@@ -17,7 +17,7 @@ class TestShape : public Shape {
 
   Ray saved_ray() const { return saved_ray_; }
 
-  std::vector<Intersection> local_intersect(const Ray& r) override {
+  IntersectionVector local_intersect(const Ray& r) override {
     saved_ray_ = r;
     return {};
   }
@@ -216,4 +216,76 @@ TEST(Groups, NormalOnChild) {
 
   auto n = s->normal_at(Tuple::point(1.7321, 1.1547, -5.5774));
   EXPECT_EQ(Tuple::vector(0.2857, 0.4286, -0.8571), n);
+}
+
+TEST(Groups, MakeSubgroup) {
+  auto s1 = std::make_shared<Sphere>();
+  auto s2 = std::make_shared<Sphere>();
+  auto g = Group();
+  g.make_subgroup({s1, s2});
+  EXPECT_EQ(1, g.size());
+
+  auto g2 = g.child<Group>(0);
+  EXPECT_NE(nullptr, g2);
+  ASSERT_EQ(2, g2->size());
+  EXPECT_EQ(s1, g2->child<Sphere>(0));
+  EXPECT_EQ(s2, g2->child<Sphere>(1));
+}
+
+TEST(Groups, Divide) {
+  auto s1 = std::make_shared<Sphere>();
+  s1->set_transform(CreateTranslation(-2, -2, 0));
+  auto s2 = std::make_shared<Sphere>();
+  s2->set_transform(CreateTranslation(-2, 2, 0));
+  auto s3 = std::make_shared<Sphere>();
+  s3->set_transform(CreateScaling(4, 4, 4));
+  auto g = Group();
+
+  g.add(s1);
+  g.add(s2);
+  g.add(s3);
+  g.divide(1);
+
+  ASSERT_EQ(2, g.children().size());
+  EXPECT_EQ(s3, g.child<Sphere>(0));
+  auto subgroup = g.child<Group>(1);
+  EXPECT_EQ(2, subgroup->children().size());
+
+  ASSERT_EQ(1, subgroup->child<Group>(0)->size());
+  EXPECT_EQ(s1, subgroup->child<Group>(0)->child<Sphere>(0));
+
+  ASSERT_EQ(1, subgroup->child<Group>(1)->size());
+  EXPECT_EQ(s2, subgroup->child<Group>(1)->child<Sphere>(0));
+}
+
+TEST(Groups, DivideTooFewChildren) {
+  auto s1 = std::make_shared<Sphere>();
+  s1->set_transform(CreateTranslation(-2, 0, 0));
+  auto s2 = std::make_shared<Sphere>();
+  s2->set_transform(CreateTranslation(2, 1, 0));
+  auto s3 = std::make_shared<Sphere>();
+  s3->set_transform(CreateTranslation(2, -1, 0));
+
+  auto subgroup = std::make_shared<Group>();
+  subgroup->add(s1);
+  subgroup->add(s2);
+  subgroup->add(s3);
+
+  auto s4 = std::make_shared<Sphere>();
+
+  auto g = std::make_shared<Group>();
+  g->add(subgroup);
+  g->add(s4);
+
+  subgroup->divide(3);
+
+  ASSERT_EQ(2, g->children().size());
+  EXPECT_EQ(subgroup, g->child<Group>(0));
+  EXPECT_EQ(s4, g->child<Sphere>(1));
+
+  ASSERT_EQ(2, subgroup->size());
+  EXPECT_EQ(s1, subgroup->child<Group>(0)->child<Sphere>(0));
+  ASSERT_EQ(2, subgroup->child<Group>(1)->size());
+  EXPECT_EQ(s2, subgroup->child<Group>(1)->child<Sphere>(0));
+  EXPECT_EQ(s3, subgroup->child<Group>(1)->child<Sphere>(1));
 }

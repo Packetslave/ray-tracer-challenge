@@ -44,7 +44,7 @@ class Shape : public std::enable_shared_from_this<Shape> {
 
   void set_material(const Material &m) { material_ = m; }
 
-  std::vector<Intersection> intersects(const Ray &r) {
+  IntersectionVector intersects(const Ray &r) {
     auto local_ray = r.transform(inverse_);
     return local_intersect(local_ray);
   };
@@ -56,7 +56,14 @@ class Shape : public std::enable_shared_from_this<Shape> {
     return world_normal;
   }
 
-  virtual std::vector<Intersection> local_intersect(const Ray &r) = 0;
+  BoundingBox* parent_space_bounds_of() {
+    parent_box_ = bounds_of()->transform(transform_);
+    return &parent_box_;
+  }
+
+  virtual BoundingBox* bounds_of() { return &box_; }
+
+  virtual IntersectionVector local_intersect(const Ray &r) = 0;
   virtual Tuple local_normal_at(const Tuple &p) = 0;
   Tuple worldToObject(const Tuple &point);
   Tuple normalToWorld(const Tuple &normalVector) {
@@ -70,13 +77,11 @@ class Shape : public std::enable_shared_from_this<Shape> {
     return world_normal;
   };
 
-  BoundingBox parent_space_bounds() {
-    return bounds_of()->transform(transform_);
-  }
-
-  virtual BoundingBox* bounds_of() { return nullptr; };
+  virtual void divide(const size_t threshold) {}
 
  protected:
+  BoundingBox box_;
+  BoundingBox parent_box_;
   Matrix transform_;
   Matrix inverse_;
   Material material_;
@@ -89,7 +94,7 @@ class Shape : public std::enable_shared_from_this<Shape> {
 
 struct ComputedIntersection {
   ComputedIntersection(const Intersection& hit, const Ray& r,
-                       const std::vector<Intersection>& xs = {})
+                       const IntersectionVector& xs = {})
       : object(hit.object()),
         t(hit.t()),
         point(r.position(t)),

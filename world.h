@@ -81,8 +81,8 @@ class World {
   folly::Optional<PointLight> light() { return light_; }
   void set_light(const PointLight& p) { light_ = p; }
 
-  std::vector<Intersection> intersect(const Ray& r) {
-    std::vector<Intersection> out;
+  IntersectionVector intersect(const Ray& r) {
+    IntersectionVector out;
     out.reserve(objects_.size() * 3);
 
     for (auto& o : objects_) {

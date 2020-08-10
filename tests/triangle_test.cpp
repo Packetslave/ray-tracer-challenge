@@ -67,3 +67,13 @@ TEST(Triangle, Hits) {
   EXPECT_EQ(1, xs.size());
   EXPECT_EQ(2, xs[0].t());
 }
+
+TEST(Triangle, BoundingBox) {
+  auto p1 = Tuple::point(-3, 7, 2);
+  auto p2 = Tuple::point(6, 2, -4);
+  auto p3 = Tuple::point(2, -1, -1);
+  auto shape = Triangle(p1, p2, p3);
+  auto box = shape.bounds_of();
+  EXPECT_EQ(Tuple::point(-3, -1, -4), box->min());
+  EXPECT_EQ(Tuple::point(6, 7, 2), box->max());
+}

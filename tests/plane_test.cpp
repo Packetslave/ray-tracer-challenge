@@ -68,3 +68,10 @@ TEST(PlaneTest, PrecomputeReflection) {
   auto comps = ComputedIntersection(i, r);
   EXPECT_EQ(Tuple::vector(0, SQRT2_2, SQRT2_2), comps.reflectv);
 }
+
+TEST(PlaneTest, BoundingBox) {
+  auto s = Plane();
+  auto box = s.bounds_of();
+  EXPECT_EQ(Tuple::point(-DBL_MAX, 0, -DBL_MAX), box->min());
+  EXPECT_EQ(Tuple::point(DBL_MAX, 0, DBL_MAX), box->max());
+}

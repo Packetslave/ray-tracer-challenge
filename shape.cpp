@@ -21,8 +21,8 @@ Tuple Shape::worldToObject(const Tuple &point) {
   return this->transform().inverse() * p;
 };
 
-std::optional<Intersection> Hit(const std::vector<Intersection> &v) {
-  std::vector<Intersection> sorted = v;
+std::optional<Intersection> Hit(const IntersectionVector &v) {
+  IntersectionVector sorted = v;
   std::sort(sorted.begin(), sorted.end(),
             [](const auto &a, const auto &b) { return a.t() < b.t(); });
 

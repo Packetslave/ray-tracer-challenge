@@ -8,8 +8,11 @@
 //#include "folly/experimental/coro/Collect.h"
 #include "matrix.h"
 #include "ray.h"
+#include "timer.h"
 #include "tuple.h"
 #include "world.h"
+
+using Result = std::tuple<size_t, size_t, Color>;
 
 class Camera {
  public:
@@ -82,6 +85,19 @@ class Camera {
     co_return out;
   }
 
+  folly::coro::Task<std::vector<Result>> process_chunk(World& w, size_t x, size_t y, size_t block_size) {
+    std::vector<Result> out;
+    if ((x * y) % 100 == 0) {
+      std::cout << "processing chunk (" << x << ", " << y << ") - block size " << block_size << std::endl;
+    }
+    for (size_t y2 = y; y2 < y + block_size; ++y2) {
+      for (size_t x2 = x; x2 < x + block_size; ++x2) {
+        out.push_back({x2, y2, w.color_at(ray_for_pixel(x2, y2))});
+      }
+    }
+    co_return out;
+  }
+
   folly::coro::Task<Canvas> multi_render(World w) {
     auto out = Canvas(hsize_, vsize_);
     std::vector<folly::SemiFuture<std::vector<Color>>> futs;
@@ -94,6 +110,33 @@ class Camera {
     for (int y = 0; y < vsize()- 1; ++y) {
       for (int x = 0; x < hsize() - 1; ++x) {
         out.write_pixel(x, y, results[y].value()[x]);
+      }
+    }
+    co_return out;
+  }
+
+  folly::coro::Task<std::vector<Result>> multi_render2(World w, size_t block_size) {
+    std::vector<folly::SemiFuture<std::vector<Result>>> futs;
+
+    {
+      Timer t("creating futures");
+      size_t i = 0;
+      for (int x = 0; x < hsize_ - 1; x += block_size) {
+        for (int y = 0; y < vsize_ - 1; y += block_size) {
+          futs.push_back(process_chunk(w, x, y, block_size).semi());
+        }
+      }
+    }
+
+    auto result = co_await folly::collectAll(futs.begin(), futs.end());
+
+    std::vector<Result> out;
+    {
+      Timer t("collecting results");
+      for (const auto& rtry : result) {
+        for (const auto& r : rtry.value()) {
+          out.push_back(r);
+        }
       }
     }
     co_return out;
