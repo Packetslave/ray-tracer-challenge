@@ -40,21 +40,30 @@ int main() {
       Tuple::point(0, 1.5, -5), Tuple::point(0, 1, 0), Tuple::vector(0, 1, 0)));
 
   auto world = World();
-  world.set_light(PointLight(Tuple::point(-10, 10, -10), Color(1, 1, 1)));
+  world.set_light(PointLight(Tuple::point(-10, 10, -10), Color(0.8, 0.8, 1)));
 
-  auto file = read_file("/Users/blanders/tmp/astronaut1.obj");
+  auto floor = std::make_shared<Plane>();
+  floor->set_transform(CreateScaling(10, -0.01, 10));
+  auto mf = Material();
+  mf.set_color(Color(0.9, 0, 0));
+  mf.set_specular(0.5);
+  mf.set_reflective(0.25);
+  floor->set_material(mf);
+  world.add(floor);
+
+  auto file = read_file("/Users/blanders/tmp/teapot.obj");
   std::shared_ptr<Group> group;
   std::shared_ptr<ObjFile> parsed;
   {
     Timer t2("Building model");
     parsed = std::make_shared<ObjFile>(file, true);
     group = parsed->to_group();
-    //group->set_transform(CreateRotationY(-PI));
+    group->set_transform(CreateRotationX(-PI_2) * CreateTranslation(0, 0, 0.5));
   }
 
   {
     Timer t3("Optimizing model");
-    //group->divide(100);
+    group->divide(50);
     std::cout << "Size after divide(): " << group->size(/* recurse */ true) << std::endl;
   }
 

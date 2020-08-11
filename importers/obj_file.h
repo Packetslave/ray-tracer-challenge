@@ -44,8 +44,8 @@ class ObjFile {
  public:
   explicit ObjFile(const std::string& blob, bool normalize = false)
       : ignored_{},
-        vertices_{Tuple::point(999, 999, 999)},
-        normals_{Tuple::vector(999, 999, 999)},
+        vertices_{Tuple::point(0, 0, 0)},
+        normals_{Tuple::vector(0, 0, 0)},
         faces_{},
         default_group_(std::make_shared<Group>()),
         named_groups_({}) {
