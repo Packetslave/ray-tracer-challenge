@@ -137,7 +137,7 @@ struct ComputedIntersection {
     over_point = point + normalv * EPSILON;
     under_point = point - normalv * EPSILON;
 
-    std::vector<std::shared_ptr<Shape>> containers;
+    std::vector<Shape*> containers;
     for (const auto &i : xs) {
       if (i == hit) {
         if (containers.empty()) {
@@ -149,7 +149,7 @@ struct ComputedIntersection {
       }
       auto it =
           std::find_if(std::begin(containers), std::end(containers),
-                       [&i](const auto &c) { return *c.get() == *i.object(); });
+                       [&i](const auto &c) { return c == i.object(); });
       if (it != containers.end()) {
         containers.erase(it);
       } else {
@@ -167,6 +167,7 @@ struct ComputedIntersection {
       }
     }
   }
+
   double schlick() const {
     auto cos = dot(eyev, normalv);
 
@@ -186,7 +187,7 @@ struct ComputedIntersection {
     return r0 + (1 - r0) * pow(1 - cos, 5);
   }
 
-  std::shared_ptr<Shape> object;
+  Shape* object;
   double t;
   Tuple point;
   Tuple eyev;

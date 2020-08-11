@@ -40,9 +40,9 @@ class BoundingBox {
   }
 
   bool intersects(const Ray& r) {
-    auto [ytmin, ytmax] = check_axis(r.origin().y, r.direction().y);
-    auto [ztmin, ztmax] = check_axis(r.origin().z, r.direction().z);
-    auto [xtmin, xtmax] = check_axis(r.origin().x, r.direction().x);
+    auto [ytmin, ytmax] = check_axis(r.origin().y, r.direction().y, min_.y, max_.y);
+    auto [ztmin, ztmax] = check_axis(r.origin().z, r.direction().z, min_.z, max_.z);
+    auto [xtmin, xtmax] = check_axis(r.origin().x, r.direction().x, min_.x, max_.x);
 
     auto tmin = std::max({xtmin, ytmin, ztmin});
     auto tmax = std::min({xtmax, ytmax, ztmax});
@@ -87,9 +87,9 @@ class BoundingBox {
     return new_bbox;
   }
 
-  std::pair<double, double> check_axis(const double origin, const double direction) {
-    auto tmin_num = (min_.x - origin);
-    auto tmax_num = (max_.x - origin);
+  std::pair<double, double> check_axis(const double origin, const double direction, const double min, const double max) {
+    auto tmin_num = (min - origin);
+    auto tmax_num = (max - origin);
 
     double tmin, tmax;
     if (abs(direction) >= EPSILON) {

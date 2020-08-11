@@ -40,17 +40,24 @@ int main() {
       Tuple::point(0, 1.5, -5), Tuple::point(0, 1, 0), Tuple::vector(0, 1, 0)));
 
   auto world = World();
-  world.set_light(PointLight(Tuple::point(-10, 10, -10), Color(1, 0.5, 1)));
+  world.set_light(PointLight(Tuple::point(-10, 10, -10), Color(1, 1, 1)));
 
   auto file = read_file("/Users/blanders/Downloads/bunny.obj");
+  std::shared_ptr<Group> group;
+  std::shared_ptr<ObjFile> parsed;
   {
     Timer t2("Building model");
-    auto parsed = ObjFile(file, true);
-    auto group = parsed.to_group();
+    parsed = std::make_shared<ObjFile>(file, true);
+    group = parsed->to_group();
     group->set_transform(CreateRotationY(-PI));
-    group->divide(2500);
-    world.add(group);
   }
+
+  {
+    Timer t3("Optimizing model");
+    group->divide(5000);
+  }
+
+  world.add(group);
 
   //auto ex = folly::ThreadedExecutor();
   auto ex = folly::CPUThreadPoolExecutor(20);

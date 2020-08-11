@@ -37,7 +37,7 @@ class Material {
   void set_refractive(const double d) { refractive_ = d; }
   void set_pattern(const Pattern& p) { pattern_ = &p; }
 
-  Color lighting(const std::shared_ptr<Shape>& obj, PointLight light, Tuple point, Tuple eye_v, Tuple normal_v,
+  Color lighting(Shape* obj, PointLight light, Tuple point, Tuple eye_v, Tuple normal_v,
                  bool in_shadow) {
     Color c = pattern_ == nullptr ? color_ : pattern_->pattern_at_object(obj, point);
     Color effective = c * light.intensity();

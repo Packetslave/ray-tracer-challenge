@@ -54,7 +54,7 @@ TEST(World, HitIntersectionOutside) {
   auto shape = std::shared_ptr<Shape>();
   shape.reset(new Sphere());
 
-  auto i = Intersection(4, shape);
+  auto i = Intersection(4, shape.get());
   auto comps = ComputedIntersection(i, r);
   ASSERT_FALSE(comps.inside);
 }
@@ -64,7 +64,7 @@ TEST(World, HitIntersectionInside) {
   auto shape = std::shared_ptr<Shape>();
   shape.reset(new Sphere());
 
-  auto i = Intersection(1, shape);
+  auto i = Intersection(1, shape.get());
   auto comps = ComputedIntersection(i, r);
 
   EXPECT_EQ(Tuple::point(0, 0, 1), comps.point);
@@ -78,7 +78,7 @@ TEST(World, ShadeIntersectionOutside) {
   auto r = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
   auto shape = w.get_object(0);
 
-  auto i = Intersection(4, shape);
+  auto i = Intersection(4, shape.get());
   auto comps = ComputedIntersection(i, r);
   auto c = w.shade_hit(comps);
   EXPECT_EQ(Color(0.38066, 0.47583, 0.2855), c);
@@ -91,7 +91,7 @@ TEST(World, ShadeIntersectionInside) {
   auto r = Ray(Tuple::point(0, 0, 0), Tuple::vector(0, 0, 1));
   auto shape = w.get_object(1);
 
-  auto i = Intersection(0.5, shape);
+  auto i = Intersection(0.5, shape.get());
   auto comps = ComputedIntersection(i, r);
   auto c = w.shade_hit(comps);
   EXPECT_EQ(Color(0.90498, 0.90498, 0.90498), c);
@@ -207,7 +207,7 @@ TEST(Shadows, ShadeHitGivenShadow) {
   w.add(s2);
 
   auto r = Ray(Tuple::point(0, 0, 5), Tuple::vector(0, 0, 1));
-  auto i = Intersection(4, s2);
+  auto i = Intersection(4, s2.get());
 
   auto comps = ComputedIntersection(i, r);
   auto c = w.shade_hit(comps);
@@ -219,7 +219,7 @@ TEST(Shadows, HitOffset) {
   auto r = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
   auto s = std::make_shared<Sphere>();
   s->set_transform((CreateTranslation(0, 0, 1)));
-  auto i = Intersection(5, s);
+  auto i = Intersection(5, s.get());
   auto comps = ComputedIntersection(i, r);
   EXPECT_TRUE(comps.over_point.z < -EPSILON / 2);
   EXPECT_TRUE(comps.point.z > comps.over_point.z);
@@ -230,7 +230,7 @@ TEST(Reflect, NonReflectiveMaterial) {
   auto r = Ray(Tuple::point(0, 0, 0), Tuple::vector(0, 0, 1));
   auto s = w.get_object(1);
   s->material()->set_ambient(1);
-  auto i = Intersection(1, s);
+  auto i = Intersection(1, s.get());
   auto comps = ComputedIntersection(i, r);
   auto color = w.reflected_color(comps);
   EXPECT_EQ(Color(0, 0, 0), color);
@@ -248,7 +248,7 @@ TEST(Reflect, ReflectiveMaterial) {
   w.add(s);
 
   auto r = Ray(Tuple::point(0, 0, -3), Tuple::vector(0, -SQRT2_2, SQRT2_2));
-  auto i = Intersection(sqrt(2), s);
+  auto i = Intersection(sqrt(2), s.get());
   auto comps = ComputedIntersection(i, r);
   auto color = w.reflected_color(comps);
   EXPECT_EQ(Color(0.19032, 0.2379, 0.14274), color);
@@ -264,7 +264,7 @@ TEST(Reflect, ShadeHit) {
   w.add(shape);
 
   auto r = Ray(Tuple::point(0, 0, -3), Tuple::vector(0, -SQRT2_2, SQRT2_2));
-  auto i = Intersection(sqrt(2), shape);
+  auto i = Intersection(sqrt(2), shape.get());
   auto comps = ComputedIntersection(i, r);
   auto color = w.shade_hit(comps);
   EXPECT_EQ(Color(0.87677, 0.92436, 0.82918), color);
@@ -301,7 +301,7 @@ TEST(Reflect, ColorAtMaxRecursion) {
   w.add(plane);
 
   auto r = Ray(Tuple::point(0, 0, -3), Tuple::vector(0, -SQRT2_2, SQRT2_2));
-  auto i = Intersection(sqrt(2), plane);
+  auto i = Intersection(sqrt(2), plane.get());
   auto comps = ComputedIntersection(i, r);
   auto color = w.reflected_color(comps, 0);
   EXPECT_EQ(Color(0, 0, 0), color);
@@ -312,7 +312,7 @@ TEST(Refract, RefractedColorOpaqueSurface) {
   auto shape = w.get_object(0);
   auto r = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
   auto xs =
-      IntersectionVector{Intersection(4, shape), Intersection(5, shape)};
+      IntersectionVector{Intersection(4, shape.get()), Intersection(5, shape.get())};
   auto comps = ComputedIntersection(xs[0], r, xs);
   auto c = w.refracted_color(comps, 5);
   EXPECT_EQ(Color(0, 0, 0), c);
@@ -326,7 +326,7 @@ TEST(Refract, RefractedColorMaxDepth) {
 
   auto r = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
   auto xs =
-      IntersectionVector{Intersection(4, shape), Intersection(5, shape)};
+      IntersectionVector{Intersection(4, shape.get()), Intersection(5, shape.get())};
 
   auto comps = ComputedIntersection(xs[0], r, xs);
   auto c = w.refracted_color(comps, 0);
@@ -340,8 +340,8 @@ TEST(Refract, RefractedColorTotalInternal) {
   shape->material()->set_refractive(1.5);
 
   auto r = Ray(Tuple::point(0, 0, SQRT2_2), Tuple::vector(0, 1, 0));
-  auto xs = IntersectionVector{Intersection(-SQRT2_2, shape),
-                                      Intersection(SQRT2_2, shape)};
+  auto xs = IntersectionVector{Intersection(-SQRT2_2, shape.get()),
+                                      Intersection(SQRT2_2, shape.get())};
 
   auto comps = ComputedIntersection(xs[1], r, xs);
   auto c = w.refracted_color(comps, 5);
@@ -361,10 +361,10 @@ TEST(Refract, RefractedColor) {
   b->material()->set_refractive(1.5);
 
   auto r = Ray(Tuple::point(0, 0, 0.1), Tuple::vector(0, 1, 0));
-  auto xs = IntersectionVector{Intersection(-0.9899, a),
-                                      Intersection(-0.4899, b),
-                                      Intersection(0.4899, b),
-                                      Intersection(0.9899, a)};
+  auto xs = IntersectionVector{Intersection(-0.9899, a.get()),
+                                      Intersection(-0.4899, b.get()),
+                                      Intersection(0.4899, b.get()),
+                                      Intersection(0.9899, a.get())};
 
   auto comps = ComputedIntersection(xs[2], r, xs);
   auto c = w.refracted_color(comps, 5);
@@ -393,7 +393,7 @@ TEST(Refract, ShadeHit) {
   ball->set_material(m2);
   w.add(ball);
   auto r = Ray(Tuple::point(0, 0, -3), Tuple::vector(0, -SQRT2_2, SQRT2_2));
-  auto xs = IntersectionVector{ Intersection(sqrt(2), floor)};
+  auto xs = IntersectionVector{ Intersection(sqrt(2), floor.get())};
   auto comps = ComputedIntersection(xs[0], r, xs);
   auto color = w.shade_hit(comps, 5);
   EXPECT_EQ(Color(0.93642, 0.68642, 0.68642), color);
@@ -424,7 +424,7 @@ TEST(Refract, ShadeHitWIthReflectiveAndTransParent) {
   ball->set_material(m2);
   w.add(ball);
 
-  auto xs = IntersectionVector{ Intersection(sqrt(2), floor)};
+  auto xs = IntersectionVector{ Intersection(sqrt(2), floor.get())};
   auto comps = ComputedIntersection(xs[0], r, xs);
   auto color = w.shade_hit(comps, 5);
   EXPECT_EQ(Color(0.93391, 0.69643, 0.69243), color);

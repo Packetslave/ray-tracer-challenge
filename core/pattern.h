@@ -18,7 +18,7 @@ class Pattern {
   void set_transform(Matrix t) { transform_ = t; }
   Matrix transform() const { return transform_; }
 
-  Color pattern_at_object(const std::shared_ptr<Shape>& obj, Tuple point) const;
+  Color pattern_at_object(Shape* obj, Tuple point) const;
   Matrix transform_;
 };
 

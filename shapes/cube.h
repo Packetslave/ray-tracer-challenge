@@ -21,7 +21,7 @@ class Cube : public Shape {
     if (tmin > tmax) {
       return {};
     }
-    return { Intersection(tmin, shared_from_this()), Intersection(tmax, shared_from_this())};
+    return { Intersection(tmin, this), Intersection(tmax, this)};
   };
 
   Tuple local_normal_at(const Tuple& p) override {

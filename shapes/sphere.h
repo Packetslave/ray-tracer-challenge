@@ -34,8 +34,9 @@ class Sphere : public Shape {
     }
 
     IntersectionVector out{
-        Intersection((-b - sqrt(d)) / (2 * a), shared_from_this()),
-        Intersection((-b + sqrt(d)) / (2 * a), shared_from_this())};
+        Intersection((-b - sqrt(d)) / (2 * a), this),
+        Intersection((-b + sqrt(d)) / (2 * a), this),
+    };
     return out;
   }
 

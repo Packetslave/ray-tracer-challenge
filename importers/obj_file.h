@@ -72,6 +72,7 @@ class ObjFile {
       //        continue;
       //      }
 
+      std::cout << "Ignored: " << line << std::endl;
       ignored_++;
     }  // lines
 

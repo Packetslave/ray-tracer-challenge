@@ -45,7 +45,7 @@ TEST(PlaneTest, IntersectAbove) {
   auto xs = plane->local_intersect(r);
   ASSERT_EQ(1, xs.size());
   ASSERT_EQ(1, xs[0].t());
-  ASSERT_EQ(plane, xs[0].object());
+  ASSERT_EQ(plane.get(), xs[0].object());
 }
 
 TEST(PlaneTest, IntersectBelow) {
@@ -56,7 +56,7 @@ TEST(PlaneTest, IntersectBelow) {
   auto xs = plane->local_intersect(r);
   ASSERT_EQ(1, xs.size());
   ASSERT_EQ(1, xs[0].t());
-  ASSERT_EQ(plane, xs[0].object());
+  ASSERT_EQ(plane.get(), xs[0].object());
 }
 
 TEST(PlaneTest, PrecomputeReflection) {
@@ -64,7 +64,7 @@ TEST(PlaneTest, PrecomputeReflection) {
   s.reset(new Plane());
 
   auto r = Ray(Tuple::point(0, 1, -1), Tuple::vector(0, -SQRT2_2, SQRT2_2));
-  auto i = Intersection(SQRT2_2, s);
+  auto i = Intersection(SQRT2_2, s.get());
   auto comps = ComputedIntersection(i, r);
   EXPECT_EQ(Tuple::vector(0, SQRT2_2, SQRT2_2), comps.reflectv);
 }

@@ -15,7 +15,7 @@ class Plane : public Shape {
       return out;
     }
     auto t = -r.origin().y / r.direction().y;
-    return {Intersection(t, shared_from_this())};
+    return {Intersection(t, this)};
   };
 
   Tuple local_normal_at(const Tuple& p) override {

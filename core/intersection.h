@@ -16,10 +16,10 @@ class Shape;
 class Intersection {
 
  public:
-  Intersection(double t, std::shared_ptr<Shape> o) : t_(t), shape_(o) {}
+  Intersection(double t, Shape* o) : t_(t), shape_(o) {}
   double t() const { return t_; };
 
-  std::shared_ptr<Shape> object() const { return shape_; }
+  Shape* object() const { return shape_; }
 
   friend std::ostream &operator<<(std::ostream &os, const Intersection &rhs) {
     return os << "Intersection(" << rhs.t() << ")";
@@ -27,7 +27,7 @@ class Intersection {
 
  private:
   double t_;
-  std::shared_ptr<Shape> shape_;
+  Shape* shape_;
 };
 
 inline bool operator==(const Intersection &a, const Intersection &b) {

@@ -44,7 +44,7 @@ class Triangle : public Shape {
     }
 
     auto t = f * dot(e2, origin_cross_e1);
-    return { Intersection(t, shared_from_this()) };
+    return { Intersection(t, this) };
   };
 
   Tuple local_normal_at(const Tuple& p) override { return normal; }
