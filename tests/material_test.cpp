@@ -7,7 +7,7 @@
 #include "../shapes/sphere.h"
 #include "gtest/gtest.h"
 
-bool color_is_near(Color a, Color b, float abs) {
+bool color_is_near(Color a, Color b, double abs) {
   return ((std::abs(a.x - b.x) < abs) && (std::abs(a.y - b.y) < abs) &&
           (std::abs(a.z - b.z) < abs) && (a.w == b.w));
 }
@@ -15,10 +15,10 @@ bool color_is_near(Color a, Color b, float abs) {
 TEST(Material, Default) {
   auto m = Material();
   EXPECT_EQ(Color(1, 1, 1), m.color());
-  EXPECT_EQ(0.1, m.ambient());
-  EXPECT_EQ(0.9, m.diffuse());
-  EXPECT_EQ(0.9, m.specular());
-  EXPECT_EQ(200.0, m.shininess());
+  EXPECT_NEAR(0.1, m.ambient(), EPSILON);
+  EXPECT_NEAR(0.9, m.diffuse(), EPSILON);
+  EXPECT_NEAR(0.9, m.specular(), EPSILON);
+  EXPECT_NEAR(200.0, m.shininess(), EPSILON);
 }
 
 TEST(Material, EyeBetween) {

@@ -47,7 +47,7 @@ class Triangle : public Shape {
     return { Intersection(t, this) };
   };
 
-  Tuple local_normal_at(const Tuple& p) override { return normal; }
+  Tuple local_normal_at(const Tuple& p, const Intersection* i) override { return normal; }
 
   BoundingBox* bounds_of() override {
     return &box_;
@@ -56,4 +56,40 @@ class Triangle : public Shape {
   Tuple p1, p2, p3;
   Tuple e1, e2, normal;
   BoundingBox box_;
+};
+
+class SmoothTriangle : public Triangle {
+ public:
+  SmoothTriangle(const Tuple& p1, const Tuple& p2, const Tuple& p3, const Tuple& n1, const Tuple& n2, const Tuple& n3) : Triangle(p1, p2, p3), n1{n1}, n2{n2}, n3{n3} {
+
+  }
+
+  Tuple local_normal_at(const Tuple& p, const Intersection* i) override {
+    return n2 * i->u + n3 * i->v + n1 * (1 - i->u - i->v);
+  }
+
+  IntersectionVector local_intersect(const Ray& r) override {
+    auto dir_cross_e2 = cross(r.direction(), e2);
+    auto det = dot(e1, dir_cross_e2);
+    if (abs(det) < EPSILON) {
+      return {};
+    }
+    auto f = 1.0 / det;
+    auto p1_to_origin = r.origin() - p1;
+    auto u = f * dot(p1_to_origin, dir_cross_e2);
+    if (u < 0 || u > 1) {
+      return {};
+    }
+
+    auto origin_cross_e1 = cross(p1_to_origin, e1);
+    auto v = f * dot(r.direction(), origin_cross_e1);
+    if (v < 0 || (u + v) > 1) {
+      return {};
+    }
+
+    auto t = f * dot(e2, origin_cross_e1);
+    return { Intersection(t, this, u, v) };
+  }
+
+  Tuple n1, n2, n3;
 };

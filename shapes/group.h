@@ -5,7 +5,6 @@
 #pragma once
 #include "shape.h"
 
-
 using ShapeVector = std::vector<std::shared_ptr<Shape>>;
 
 class Group : public Shape {
@@ -26,36 +25,48 @@ class Group : public Shape {
       }
     }
 
-    std::sort(out.begin(), out.end(), [](const auto& a, const auto& b) {
-      return a.t() < b.t();
-    });
+    std::sort(out.begin(), out.end(),
+              [](const auto& a, const auto& b) { return a.t() < b.t(); });
 
     return out;
   };
 
-  Tuple local_normal_at(const Tuple& p) override {
+  Tuple local_normal_at(const Tuple& p, const Intersection* i) override {
     return Tuple::vector(0, 0, 0);
   }
 
-  size_t size() const { return children_.size(); }
+  size_t size(bool recurse = false) const override {
+    if (!recurse) {
+      return children_.size();
+    }
+    size_t count = 0;
+    for (const auto& c : children_) {
+      count += c->size(recurse);
+    }
+    return count;
+  }
 
   template <typename T>
   void add(const std::shared_ptr<T>& s) {
-    children_.push_back(s);
-
-    // need to fix parent in shape's children
-    if constexpr (std::is_same_v<T, Group>) {
-      for (auto& c : s->children()) {
-        c->set_parent(s.get());
-      }
-    }
-
     s->set_parent(this);
+    children_.push_back(s);
     updated_ = true;
+
+    //    // need to fix parent in shape's children
+    //    if constexpr (std::is_same_v<T, Group>) {
+    //      for (auto& c : s->children()) {
+    //        c->set_parent(s.get());
+    //      }
+    //    }
   }
 
-  bool contains(const std::shared_ptr<Shape>& s) {
-    return std::find(children_.begin(), children_.end(), s) != children_.end();
+  virtual bool contains(const std::shared_ptr<Shape> obj) const override {
+    for (const auto& c : children_) {
+      if (c->contains(obj)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   template <typename T>
@@ -65,12 +76,10 @@ class Group : public Shape {
 
   std::vector<std::shared_ptr<Shape>> children() { return children_; }
 
-  BoundingBox* bounds_of() override {
-    return bounds_of(true);
-  }
+  BoundingBox* bounds_of() override { return bounds_of(true); }
 
-  BoundingBox* bounds_of(bool use_cache)  {
-    if (!use_cache || updated_) {
+  BoundingBox* bounds_of(bool use_cache) {
+    if (updated_ || !use_cache) {
       BoundingBox new_box;
       for (const auto& c : children_) {
         auto cbox = c->parent_space_bounds_of();
@@ -90,6 +99,7 @@ class Group : public Shape {
     auto [left, right] = bounds->split();
 
     std::vector<std::shared_ptr<Shape>>::iterator it;
+    updated_ = true;
 
     for (it = children_.begin(); it != children_.end(); /* no increment */) {
       auto child_bounds = (*it)->parent_space_bounds_of();
@@ -97,46 +107,46 @@ class Group : public Shape {
       if (left.contains(*child_bounds)) {
         out_left.push_back(*it);
         it = children_.erase(it);
-        updated_ = true;
         continue;
       }
       if (right.contains(*child_bounds)) {
         out_right.push_back(*it);
         it = children_.erase(it);
-        updated_ = true;
         continue;
       }
       ++it;
     }
 
-    return { out_left, out_right };
+    return {out_left, out_right};
   }
 
-  void make_subgroup(ShapeVector shapes) {
+  void make_subgroup(const ShapeVector& shapes) {
     auto g = std::make_shared<Group>();
     for (const auto& s : shapes) {
       g->add(s);
     }
     add(g);
+    updated_ = true;
   }
 
   void divide(const size_t threshold) override {
     if (threshold <= children_.size()) {
       auto [left, right] = partition_children();
-      if (! left.empty()) {
+      if (!left.empty()) {
         make_subgroup(left);
       }
-      if (! right.empty()) {
+      if (!right.empty()) {
         make_subgroup(right);
       }
     }
-//    for (const auto& i : children_) {
-//      i->divide(threshold);
-//    }
+    for (const auto& i : children_) {
+      i->divide(threshold);
+    }
+    updated_ = true;
   }
 
  private:
   BoundingBox box_;
   bool updated_ = true;
-  std::vector<std::shared_ptr<Shape>> children_;
+  std::vector<std::shared_ptr<Shape>> children_ = {};
 };

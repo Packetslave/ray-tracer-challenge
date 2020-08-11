@@ -18,7 +18,7 @@ class Plane : public Shape {
     return {Intersection(t, this)};
   };
 
-  Tuple local_normal_at(const Tuple& p) override {
+  Tuple local_normal_at(const Tuple& p, const Intersection* i) override {
     return Tuple::vector(0, 1, 0);
   }
 

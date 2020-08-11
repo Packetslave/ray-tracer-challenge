@@ -40,7 +40,7 @@ class Sphere : public Shape {
     return out;
   }
 
-  Tuple local_normal_at(const Tuple &p) override {
+  Tuple local_normal_at(const Tuple &p, const Intersection* i) override {
     auto normal = p - Tuple::point(0, 0, 0);
     // normal.w = 0;
     return normal;

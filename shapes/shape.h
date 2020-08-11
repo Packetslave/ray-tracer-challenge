@@ -49,9 +49,9 @@ class Shape : public std::enable_shared_from_this<Shape> {
     return local_intersect(local_ray);
   };
 
-  Tuple normal_at(const Tuple &p) {
+  Tuple normal_at(const Tuple &p, const Intersection* i = nullptr) {
     auto local_point = worldToObject(p);
-    auto local_normal = local_normal_at(local_point);
+    auto local_normal = local_normal_at(local_point, i);
     auto world_normal = normalToWorld(local_normal);
     return world_normal;
   }
@@ -61,10 +61,13 @@ class Shape : public std::enable_shared_from_this<Shape> {
     return &parent_box_;
   }
 
+  virtual size_t size(bool recurse = false) const { return 1; }
+  virtual bool contains(const std::shared_ptr<Shape> obj) const { return false; }
+
   virtual BoundingBox* bounds_of() { return &box_; }
 
   virtual IntersectionVector local_intersect(const Ray &r) = 0;
-  virtual Tuple local_normal_at(const Tuple &p) = 0;
+  virtual Tuple local_normal_at(const Tuple &p, const Intersection* i) = 0;
   Tuple worldToObject(const Tuple &point);
   Tuple normalToWorld(const Tuple &normalVector) {
     Tuple world_normal = this->inverse_.transpose() * normalVector;
@@ -105,7 +108,7 @@ public:
         return {};
     }
 
-    Tuple local_normal_at(const Tuple& p) override {
+    Tuple local_normal_at(const Tuple& p, const Intersection* i) override {
         return Tuple::vector(p.x, p.y, p.z);
     }
 
@@ -122,7 +125,7 @@ struct ComputedIntersection {
         t(hit.t()),
         point(r.position(t)),
         eyev(-r.direction()),
-        normalv(object->normal_at(point)),
+        normalv(object->normal_at(point, &hit)),
         over_point(Tuple::point(0, 0, 0)),
         under_point(Tuple::point(0, 0, 0)),
         reflectv(Tuple::vector(0, 0, 0)),

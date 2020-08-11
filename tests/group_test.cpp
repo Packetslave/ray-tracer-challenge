@@ -31,47 +31,47 @@ auto xs = g.local_intersect(r);
 EXPECT_EQ(0, xs.size());
 }
 
-//TEST(Groups, IntersectRayNotEmpty) {
-//  auto g = Group();
-//
-//  std::shared_ptr<Shape> s1;
-//  s1.reset(new Sphere());
-//
-//  std::shared_ptr<Shape> s2;
-//  s2.reset(new Sphere());
-//  s2->set_transform(CreateTranslation(0, 0, -3));
-//
-//  std::shared_ptr<Shape> s3;
-//  s3.reset(new Sphere());
-//  s3->set_transform(CreateTranslation(5, 0, 0));
-//
-//  g.add(s1);
-//  g.add(s2);
-//  g.add(s3);
-//
-//  auto r = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
-//  auto xs = g.local_intersect(r);
-//
-//  EXPECT_EQ(4, xs.size());
-//  EXPECT_EQ(s2, xs[0].object());
-//  EXPECT_EQ(s2, xs[1].object());
-//  EXPECT_EQ(s1, xs[2].object());
-//  EXPECT_EQ(s1, xs[3].object());
-//}
+TEST(Groups, IntersectRayNotEmpty) {
+  auto g = Group();
 
-//TEST(Groups, IntersectTransformed) {
-//  auto g = Group();
-//  g.set_transform(CreateScaling(2, 2, 2));
-//
-//  std::shared_ptr<Shape> s;
-//  s.reset(new Sphere());
-//  s->set_transform(CreateTranslation(5, 0, 0));
-//  g.add(s);
-//
-//  auto r = Ray(Tuple::point(10, 0, -10), Tuple::vector(0, 0, 1));
-//  auto xs = g.intersects(r);
-//  EXPECT_EQ(2, xs.size());
-//}
+  std::shared_ptr<Shape> s1;
+  s1.reset(new Sphere());
+
+  std::shared_ptr<Shape> s2;
+  s2.reset(new Sphere());
+  s2->set_transform(CreateTranslation(0, 0, -3));
+
+  std::shared_ptr<Shape> s3;
+  s3.reset(new Sphere());
+  s3->set_transform(CreateTranslation(5, 0, 0));
+
+  g.add(s1);
+  g.add(s2);
+  g.add(s3);
+
+  auto r = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
+  auto xs = g.local_intersect(r);
+
+  EXPECT_EQ(4, xs.size());
+  EXPECT_EQ(*s2, *(xs[0].object()));
+  EXPECT_EQ(*s2, *(xs[1].object()));
+  EXPECT_EQ(*s1, *(xs[2].object()));
+  EXPECT_EQ(*s1, *(xs[3].object()));
+}
+
+TEST(Groups, IntersectTransformed) {
+  auto g = Group();
+  g.set_transform(CreateScaling(2, 2, 2));
+
+  std::shared_ptr<Shape> s;
+  s.reset(new Sphere());
+  s->set_transform(CreateTranslation(5, 0, 0));
+  g.add(s);
+
+  auto r = Ray(Tuple::point(10, 0, -10), Tuple::vector(0, 0, 1));
+  auto xs = g.intersects(r);
+  EXPECT_EQ(2, xs.size());
+}
 
 TEST(Groups, WorldToObject) {
 auto g1 = Group();
@@ -146,29 +146,38 @@ EXPECT_EQ(s2, g2->child<Sphere>(1));
 }
 
 TEST(Groups, Divide) {
-//auto s1 = std::make_shared<Sphere>();
-//s1->set_transform(CreateTranslation(-2, -2, 0));
-//auto s2 = std::make_shared<Sphere>();
-//s2->set_transform(CreateTranslation(-2, 2, 0));
-//auto s3 = std::make_shared<Sphere>();
-//s3->set_transform(CreateScaling(4, 4, 4));
-//auto g = Group();
-//
-//g.add(s1);
-//g.add(s2);
-//g.add(s3);
-//g.divide(1);
-//
-//ASSERT_EQ(2, g.children().size());
-//EXPECT_EQ(s3, g.child<Sphere>(0));
-//auto subgroup = g.child<Group>(1);
-//EXPECT_EQ(2, subgroup->children().size());
-//
-//ASSERT_EQ(1, subgroup->child<Group>(0)->size());
-//EXPECT_EQ(s1, subgroup->child<Group>(0)->child<Sphere>(0));
-//
-//ASSERT_EQ(1, subgroup->child<Group>(1)->size());
-//EXPECT_EQ(s2, subgroup->child<Group>(1)->child<Sphere>(0));
+  auto s1 = std::make_shared<Sphere>();
+  s1->set_transform(CreateTranslation(-2, -2, 0));
+
+  auto s2 = std::make_shared<Sphere>();
+  s2->set_transform(CreateTranslation(-2, 2, 0));
+
+  auto s3 = std::make_shared<Sphere>();
+  s3->set_transform(CreateScaling(4, 4, 4));
+
+  auto g = Group();
+  g.add(s1);
+  g.add(s2);
+  g.add(s3);
+  g.divide(1);
+
+  ASSERT_EQ(2, g.children().size());
+  ASSERT_NE(nullptr, g.child<Sphere>(0));
+  EXPECT_EQ(s3, g.child<Sphere>(0));
+
+  auto subgroup = g.child<Group>(1);
+  ASSERT_NE(nullptr, subgroup);
+  EXPECT_EQ(2, subgroup->children().size());
+
+  auto sub0 = subgroup->child<Group>(0);
+  ASSERT_NE(nullptr, sub0);
+  ASSERT_EQ(1, sub0->size());
+  EXPECT_EQ(s1, sub0->child<Sphere>(0));
+
+  auto sub1 = subgroup->child<Group>(1);
+  ASSERT_NE(nullptr, sub1);
+  ASSERT_EQ(1, sub1->size());
+  EXPECT_EQ(s2, sub1->child<Sphere>(0));
 }
 
 TEST(Groups, DivideTooFewChildren) {

@@ -59,7 +59,7 @@ class Camera {
     size_t current = 0;
 
     for (int y = 0; y < vsize_ - 1; ++y) {
-      float pct = (float)current / total;
+      double pct = (double)current / total;
       std::cout << "Now rendering pixel " << current << " of " << total << " ("
                 << pct << ")" << std::endl;
       for (int x = 0; x < hsize_ - 1; ++x) {

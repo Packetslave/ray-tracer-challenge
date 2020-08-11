@@ -42,19 +42,20 @@ int main() {
   auto world = World();
   world.set_light(PointLight(Tuple::point(-10, 10, -10), Color(1, 1, 1)));
 
-  auto file = read_file("/Users/blanders/Downloads/bunny.obj");
+  auto file = read_file("/Users/blanders/tmp/astronaut1.obj");
   std::shared_ptr<Group> group;
   std::shared_ptr<ObjFile> parsed;
   {
     Timer t2("Building model");
     parsed = std::make_shared<ObjFile>(file, true);
     group = parsed->to_group();
-    group->set_transform(CreateRotationY(-PI));
+    //group->set_transform(CreateRotationY(-PI));
   }
 
   {
     Timer t3("Optimizing model");
-    group->divide(5000);
+    //group->divide(100);
+    std::cout << "Size after divide(): " << group->size(/* recurse */ true) << std::endl;
   }
 
   world.add(group);
@@ -63,5 +64,6 @@ int main() {
   auto ex = folly::CPUThreadPoolExecutor(20);
   auto task = camera.multi_render(world);
   auto canvas = folly::coro::blockingWait(std::move(task).scheduleOn(&ex));
+  //auto canvas = camera.render(world);
   canvas.save("/tmp/raytrace7.ppm");
 }

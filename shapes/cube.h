@@ -24,7 +24,7 @@ class Cube : public Shape {
     return { Intersection(tmin, this), Intersection(tmax, this)};
   };
 
-  Tuple local_normal_at(const Tuple& p) override {
+  Tuple local_normal_at(const Tuple& p, const Intersection* i) override {
     auto maxc = std::max({abs(p.x), abs(p.y), abs(p.z)});
     if (maxc == abs(p.x)) {
       return Tuple::vector(p.x, 0, 0);

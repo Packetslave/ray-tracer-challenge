@@ -14,19 +14,38 @@
 #include "folly/Conv.h"
 #include "folly/String.h"
 
-size_t parse_face(const std::string& f) {
-  size_t slash = f.find('/');
-  if (slash == -1) {
-    return folly::to<size_t>(f);
+struct FaceVertex {
+  size_t v_index;
+  size_t t_index;
+  size_t n_index;
+};
+
+FaceVertex parse_face(const std::string& f) {
+  std::vector<std::string> tokens;
+  folly::split("/", f, tokens, false);
+
+  size_t vi = folly::to<size_t>(tokens[0]);
+  size_t ti = -1;
+  size_t ni = -1;
+
+  if (tokens.size() > 1) {
+    if (!tokens[1].empty()) {
+      ti = folly::to<size_t>(tokens[1]);
+    }
+    if (!tokens[2].empty()) {
+      ni = folly::to<size_t>(tokens[2]);
+    }
   }
-  return folly::to<size_t>(f.substr(0, slash));
+
+  return {vi, ti, ni};
 }
 
 class ObjFile {
  public:
   explicit ObjFile(const std::string& blob, bool normalize = false)
       : ignored_{},
-        vertices_{Tuple::point(0, 0, 0)},
+        vertices_{Tuple::point(999, 999, 999)},
+        normals_{Tuple::vector(999, 999, 999)},
         faces_{},
         default_group_(std::make_shared<Group>()),
         named_groups_({}) {
@@ -39,28 +58,39 @@ class ObjFile {
       std::vector<std::string> tokens;
       folly::split(" ", line, tokens, true);
 
-      if (tokens[0] == "v") {
+      if (tokens[0] == "v") {  // vertex
         vertices_.emplace_back(folly::to<double>(tokens[1]),
                                folly::to<double>(tokens[2]),
                                folly::to<double>(tokens[3]), 1);
         continue;
       }
 
+      if (tokens[0] == "vn") {  // normal
+        normals_.emplace_back(folly::to<double>(tokens[1]),
+                              folly::to<double>(tokens[2]),
+                              folly::to<double>(tokens[3]), 0);
+        continue;
+      }
+
       if (tokens[0] == "f") {
+        auto parsed1 = parse_face(tokens[1]);
+        auto parsed2 = parse_face(tokens[2]);
+        auto parsed3 = parse_face(tokens[3]);
+
         if (tokens.size() == 4) {
-          faces_.push_back({
-              parse_face(tokens[1]),
-              parse_face(tokens[2]),
-              parse_face(tokens[3]),
-          });
+          faces_.push_back({parsed1, parsed2, parsed3});
           continue;
         }
 
         for (size_t i = 2; i < tokens.size() - 1; ++i) {
+          auto parsed1 = parse_face(tokens[1]);
+          auto parsed2 = parse_face(tokens[i]);
+          auto parsed3 = parse_face(tokens[i + 1]);
+
           faces_.push_back({
-              parse_face(tokens[1]),
-              parse_face(tokens[i]),
-              parse_face(tokens[i + 1]),
+              parsed1,
+              parsed2,
+              parsed3,
           });
         }
         continue;
@@ -115,10 +145,24 @@ class ObjFile {
     }
 
     for (const auto& f : faces_) {
-      std::shared_ptr<Triangle> t(
-          new Triangle(vertices_[f[0]], vertices_[f[1]], vertices_[f[2]]));
+      if (f[0].n_index == -1) {
+        std::shared_ptr<Triangle> t(new Triangle(vertices_[f[0].v_index],
+                                                 vertices_[f[1].v_index],
+                                                 vertices_[f[2].v_index]));
+        default_group_->add(t);
+        continue;
+      }
+      std::shared_ptr<SmoothTriangle> t(
+          new SmoothTriangle(vertices_[f[0].v_index], vertices_[f[1].v_index],
+                             vertices_[f[2].v_index], normals_[f[0].n_index],
+                             normals_[f[1].n_index], normals_[f[2].n_index]));
       default_group_->add(t);
+      continue;
     }
+    std::cout << "Done parsing: " << vertices_.size() << " points, "
+              << normals_.size() << " normals, " << faces_.size() << " faces, "
+              << default_group_->children().size() << " children in default group."
+              << std::endl;
   }
 
   std::shared_ptr<Group> group(const std::string& name) {
@@ -131,6 +175,7 @@ class ObjFile {
   uint32_t ignored() const { return ignored_; }
 
   std::vector<Tuple> vertices() const { return vertices_; }
+  std::vector<Tuple> normals() const { return normals_; }
 
   std::shared_ptr<Group> default_group() { return default_group_; }
 
@@ -150,7 +195,8 @@ class ObjFile {
  private:
   uint32_t ignored_;
   std::vector<Tuple> vertices_;
-  std::vector<std::vector<size_t>> faces_;
+  std::vector<Tuple> normals_;
+  std::vector<std::array<FaceVertex, 3>> faces_;
   std::unordered_map<std::string, std::shared_ptr<Group>> named_groups_;
   std::shared_ptr<Group> default_group_;
   std::string current_group_;

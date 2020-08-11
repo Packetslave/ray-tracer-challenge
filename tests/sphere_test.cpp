@@ -135,21 +135,21 @@ TEST(Sphere, DefaultTransform) {
 TEST(Sphere, NormalX) {
   std::shared_ptr<Shape> s;
   s.reset(new Sphere());
-  auto n = s->local_normal_at(Tuple::point(1, 0, 0));
+  auto n = s->local_normal_at(Tuple::point(1, 0, 0), nullptr);
   ASSERT_EQ(Tuple::vector(1, 0, 0), n);
 }
 
 TEST(Sphere, NormalY) {
   std::shared_ptr<Shape> s;
   s.reset(new Sphere());
-  auto n = s->local_normal_at(Tuple::point(0, 1, 0));
+  auto n = s->local_normal_at(Tuple::point(0, 1, 0), nullptr);
   ASSERT_EQ(Tuple::vector(0, 1, 0), n);
 }
 
 TEST(Sphere, NormalZ) {
   std::shared_ptr<Shape> s;
   s.reset(new Sphere());
-  auto n = s->local_normal_at(Tuple::point(0, 0, 1));
+  auto n = s->local_normal_at(Tuple::point(0, 0, 1), nullptr);
   ASSERT_EQ(Tuple::vector(0, 0, 1), n);
 }
 

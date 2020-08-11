@@ -64,7 +64,7 @@ TEST(Cube, CubeNormal) {
   };
 
   for (const auto& [point, normal] : tests) {
-    auto n = s->local_normal_at(point);
+    auto n = s->local_normal_at(point, nullptr);
     EXPECT_EQ(normal, n);
   }
 }
