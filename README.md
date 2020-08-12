@@ -1,8 +1,8 @@
 # ray-tracer-challenge
 
-Working through the book "The Ray Tracer Challenge" by Jamis Buck. 
+Working through the book "[The Ray Tracer Challenge](https://www.raytracerchallenge.com)" by Jamis Buck. 
 
-![alt text](https://i.imgur.com/4llS5hm.jpg)
+![test render](https://i.imgur.com/4llS5hm.jpg)
 
 ### Status
 
@@ -14,8 +14,15 @@ Working through the book "The Ray Tracer Challenge" by Jamis Buck.
 
 ### Stuff to do
 
-* clean up the code / tests
-* basic anti-aliasing (see "Ray Tracing in One Weekend", chapter 6)
-* bonus chapter on area lights
-* multiple lights
-* bonus chapter on texture mapping
+- [ ] clean up the code / tests
+- [ ] basic anti-aliasing (see "Ray Tracing in One Weekend", chapter 6)
+- [ ] multiple lights
+- [ ] bonus chapter on area lights
+- [ ] add MTL file support for materials
+- [ ] implement vertex textures from OBJ files
+
+### Maybe
+
+- [ ] bonus chapter on texture mapping
+- [ ] use https://github.com/vilya/minipbrt to load a subset of pbrt scene files
+- [ ] implement Pixar's USD (universal scene description) format
