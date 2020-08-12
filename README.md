@@ -1,6 +1,6 @@
 # ray-tracer-challenge
 
-Working through the book "[The Ray Tracer Challenge](https://www.raytracerchallenge.com)" by Jamis Buck. 
+Working through the book "[The Ray Tracer Challenge](http://www.raytracerchallenge.com)" by Jamis Buck. 
 
 ![test render](https://i.imgur.com/4llS5hm.jpg)
 
