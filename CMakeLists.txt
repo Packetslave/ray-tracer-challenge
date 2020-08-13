@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 find_package(absl REQUIRED)
 find_package(fmt REQUIRED)
-find_package(folly)
+find_package(folly REQUIRED)
 find_package(gflags REQUIRED)
 find_package(glog REQUIRED)
 
@@ -27,6 +27,7 @@ target_sources(raytrace_lib PRIVATE
         core/material.cpp
         core/matrix.cpp
         core/pattern.cpp
+        external/minipbrt/minipbrt.cpp
         importers/obj_file.cpp
         core/ray.cpp
         utils/timer.cpp
@@ -60,4 +61,7 @@ add_executable(raytrace6 apps/raytrace6.cpp)
 target_link_libraries(raytrace6 raytrace_lib)
 
 add_executable(raytrace7 apps/raytrace7.cpp)
-target_link_libraries(raytrace7 raytrace_lib)
+target_link_libraries(raytrace7 PUBLIC raytrace_lib)
+
+add_executable(render apps/render.cpp)
+target_link_libraries(render PUBLIC raytrace_lib)

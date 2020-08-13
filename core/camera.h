@@ -72,6 +72,70 @@ class Camera {
     return out;
   }
 
+  folly::coro::Task<Canvas> multi_render_sampled(World w, size_t samples) {
+    auto origin = inverse_ * Tuple::point(0, 0, 0);
+    auto out = Canvas(hsize_, vsize_);
+    std::vector<folly::SemiFuture<Pixel>> futs;
+    for (int y = 0; y < vsize_ - 1; ++y) {
+      for (int x = 0; x < hsize_ - 1; ++x) {
+        futs.push_back(process_pixel(w, x, y, origin, samples).semi());
+      }
+    }
+    std::vector<folly::Try<Pixel>> results =
+        co_await folly::collectAll(futs.begin(), futs.end());
+
+    for (const auto& p : results) {
+      out.write_pixel(p->x, p->y, p->c);
+    }
+    co_return out;
+  }
+
+  struct Pixel {
+    size_t x;
+    size_t y;
+    Color c;
+  };
+
+  folly::coro::Task<Pixel> process_pixel(World& w, size_t x, size_t y,
+                                         const Tuple& origin, int samples) {
+    if (x == 0 && int(y) % 100 == 0) {
+      std::cout << "Executing for row " << y << std::endl;
+    }
+    Color c_out(0, 0, 0);
+
+    // Cheat and look for misses
+    auto r = ray_for_pixel(x, y);
+    auto hit = w.intersect(r);
+    if (hit.empty()) {
+      co_return {x, y, c_out};
+    }
+
+    for (double i = 0; i < samples; ++i) {
+      double xoff = x + 0.5;
+      double yoff = y + 0.5;
+
+      double rx = drand48();
+      double ry = drand48();
+
+      xoff += (0.5 - rx);
+      yoff += (0.5 - ry);
+
+      xoff *= pixel_size();
+      yoff *= pixel_size();
+
+      double worldX = half_width_ - xoff;
+      double worldY = half_height_ - yoff;
+
+      auto pixel = inverse_ * Tuple::point(worldX, worldY, -1);
+      auto direction = (pixel - origin).normalize();
+
+      auto r = Ray(origin, direction);
+      c_out += w.color_at(r);
+    }
+    c_out = c_out * (1.0 / samples);
+    co_return {x, y, c_out};
+  }
+
   folly::coro::Task<std::vector<Color>> process_row(World& w, size_t y) {
     if (y % 100 == 0) {
       std::cout << "Executing for row " << y << std::endl;
@@ -85,10 +149,13 @@ class Camera {
     co_return out;
   }
 
-  folly::coro::Task<std::vector<Result>> process_chunk(World& w, size_t x, size_t y, size_t block_size) {
+  folly::coro::Task<std::vector<Result>> process_chunk(World& w, size_t x,
+                                                       size_t y,
+                                                       size_t block_size) {
     std::vector<Result> out;
     if ((x * y) % 100 == 0) {
-      std::cout << "processing chunk (" << x << ", " << y << ") - block size " << block_size << std::endl;
+      std::cout << "processing chunk (" << x << ", " << y << ") - block size "
+                << block_size << std::endl;
     }
     for (size_t y2 = y; y2 < y + block_size; ++y2) {
       for (size_t x2 = x; x2 < x + block_size; ++x2) {
@@ -105,9 +172,10 @@ class Camera {
       futs.push_back(process_row(w, y).semi());
     }
 
-    std::vector<folly::Try<std::vector<Color>>> results = co_await folly::collectAll(futs.begin(), futs.end());
+    std::vector<folly::Try<std::vector<Color>>> results =
+        co_await folly::collectAll(futs.begin(), futs.end());
 
-    for (int y = 0; y < vsize()- 1; ++y) {
+    for (int y = 0; y < vsize() - 1; ++y) {
       for (int x = 0; x < hsize() - 1; ++x) {
         out.write_pixel(x, y, results[y].value()[x]);
       }
@@ -115,7 +183,8 @@ class Camera {
     co_return out;
   }
 
-  folly::coro::Task<std::vector<Result>> multi_render2(World w, size_t block_size) {
+  folly::coro::Task<std::vector<Result>> multi_render2(World w,
+                                                       size_t block_size) {
     std::vector<folly::SemiFuture<std::vector<Result>>> futs;
 
     {

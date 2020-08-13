@@ -1,7 +1,7 @@
 #pragma once
 
 #include <array>
-#include <cfloat>
+#include <cdouble>
 #include <cmath>
 #include <ostream>
 

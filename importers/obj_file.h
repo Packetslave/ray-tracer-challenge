@@ -7,12 +7,15 @@
 #include <string>
 #include <unordered_map>
 
+#include "../core/camera.h"
+#include "../core/light.h"
 #include "../core/tuple.h"
 #include "../shapes/group.h"
 #include "../shapes/shape.h"
 #include "../shapes/triangle.h"
 #include "folly/Conv.h"
 #include "folly/String.h"
+#include "file.h"
 
 struct FaceVertex {
   size_t v_index;
@@ -40,15 +43,14 @@ FaceVertex parse_face(const std::string& f) {
   return {vi, ti, ni};
 }
 
-class ObjFile {
+class ObjFile : public File {
  public:
   explicit ObjFile(const std::string& blob, bool normalize = false)
-      : ignored_{},
+      : File(blob, normalize),
+        ignored_{},
         vertices_{Tuple::point(0, 0, 0)},
         normals_{Tuple::vector(0, 0, 0)},
-        faces_{},
-        default_group_(std::make_shared<Group>()),
-        named_groups_({}) {
+        faces_{} {
     std::vector<std::string> lines;
     folly::split("\n", blob, lines, true);
     for (const auto& line : lines) {
@@ -83,24 +85,18 @@ class ObjFile {
         }
 
         for (size_t i = 2; i < tokens.size() - 1; ++i) {
-          auto parsed1 = parse_face(tokens[1]);
-          auto parsed2 = parse_face(tokens[i]);
-          auto parsed3 = parse_face(tokens[i + 1]);
+          auto parsedt1 = parse_face(tokens[1]);
+          auto parsedt2 = parse_face(tokens[i]);
+          auto parsedt3 = parse_face(tokens[i + 1]);
 
           faces_.push_back({
-              parsed1,
-              parsed2,
-              parsed3,
+              parsedt1,
+              parsedt2,
+              parsedt3,
           });
         }
         continue;
       }
-      //
-      //      if (tokens[0] == "g") {
-      //        named_groups_[tokens[1]] = std::make_shared<Group>();
-      //        current_group_ = tokens[1];
-      //        continue;
-      //      }
 
       std::cout << "Ignored: " << line << std::endl;
       ignored_++;
@@ -161,9 +157,12 @@ class ObjFile {
     }
     std::cout << "Done parsing: " << vertices_.size() << " points, "
               << normals_.size() << " normals, " << faces_.size() << " faces, "
-              << default_group_->children().size() << " children in default group."
-              << std::endl;
+              << default_group_->children().size()
+              << " children in default group." << std::endl;
   }
+
+  Camera* camera() const override { throw std::runtime_error("not implemented"); }
+  PointLight* light() const override { throw std::runtime_error("not implemented"); }
 
   std::shared_ptr<Group> group(const std::string& name) {
     if (named_groups_.find(name) == named_groups_.end()) {
@@ -179,25 +178,9 @@ class ObjFile {
 
   std::shared_ptr<Group> default_group() { return default_group_; }
 
-  std::shared_ptr<Group> to_group() {
-    auto group = std::make_shared<Group>();
-    for (auto& c : default_group_->children()) {
-      c->set_parent(group.get());
-      group->add(c);
-    }
-
-    for (const auto& [k, v] : named_groups_) {
-      group->add<Group>(v);
-    }
-    return group;
-  }
-
  private:
   uint32_t ignored_;
   std::vector<Tuple> vertices_;
   std::vector<Tuple> normals_;
   std::vector<std::array<FaceVertex, 3>> faces_;
-  std::unordered_map<std::string, std::shared_ptr<Group>> named_groups_;
-  std::shared_ptr<Group> default_group_;
-  std::string current_group_;
 };

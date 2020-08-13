@@ -51,19 +51,20 @@ int main() {
   floor->set_material(mf);
   world.add(floor);
 
-  auto file = read_file("/Users/blanders/tmp/teapot.obj");
+  auto file = read_file("/Users/blanders/downloads/bunny.obj");
   std::shared_ptr<Group> group;
   std::shared_ptr<ObjFile> parsed;
   {
     Timer t2("Building model");
     parsed = std::make_shared<ObjFile>(file, true);
     group = parsed->to_group();
-    group->set_transform(CreateRotationX(-PI_2) * CreateTranslation(0, 0, 0.5));
+    //group->set_transform(CreateRotationX(-PI_2) * CreateTranslation(0, 0, 0.5));
+    group->set_transform(CreateTranslation(0, 1, 0) * CreateRotationY(-PI_3));
   }
 
   {
     Timer t3("Optimizing model");
-    group->divide(50);
+    group->divide(500);
     std::cout << "Size after divide(): " << group->size(/* recurse */ true) << std::endl;
   }
 
@@ -71,7 +72,7 @@ int main() {
 
   //auto ex = folly::ThreadedExecutor();
   auto ex = folly::CPUThreadPoolExecutor(20);
-  auto task = camera.multi_render(world);
+  auto task = camera.multi_render_sampled(world, 16);
   auto canvas = folly::coro::blockingWait(std::move(task).scheduleOn(&ex));
   //auto canvas = camera.render(world);
   canvas.save("/tmp/raytrace7.ppm");

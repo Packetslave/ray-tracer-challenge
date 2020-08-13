@@ -6,7 +6,7 @@
 
 Matrix view_transform(const Tuple& from, const Tuple& to, const Tuple& up) {
   auto forward = (to - from).normalize();
-  auto left = cross(forward, up.normalize());
+  auto left = cross(forward, up.normalize()).normalize();
   auto true_up = cross(left, forward);
 
   // clang-format off

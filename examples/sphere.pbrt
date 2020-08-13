@@ -1,0 +1,20 @@
+# A PBRT scene description for a simple sphere
+
+LookAt 0    1.5  -5  # eye
+       0    1     0  # look at point
+       0    1     0  # up vector
+
+Camera "perspective" "float fov" 45
+
+Film "image" "string filename" "/tmp/render.ppm"
+     "integer xresolution" [1600] "integer yresolution" [1200]
+
+WorldBegin
+    LightSource "point" "rgb I" [1.0 1.0 1.0]
+                        "point from" [-10.0 10.0 -10.0]
+
+    AttributeBegin
+        Translate -0.5  1.0  0.5
+        Shape "sphere"
+    AttributeEnd
+WorldEnd
