@@ -7,7 +7,7 @@
 #include "../core/tuple.h"
 #include "../shapes/triangle.h"
 #include "gtest/gtest.h"
-#include "obj_file.h"
+#include "../importers/obj_file.h"
 
 TEST(ObjectFile, Unrecognized) {
   std::string gibberish = {
