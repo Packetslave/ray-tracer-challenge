@@ -37,7 +37,7 @@ TEST(CanvasTest, SetPixels) {
   auto red = Color(1, 0, 0);
 
   // When write_pixel(c, 2, 3, red)
-  c.write_pixel(2, 3, red);
+  c.write_pixel(Pixel{2, 3, red});
 
   // Then pixel_at(c, 2, 3) = red
   EXPECT_EQ(red, c.pixel_at(2, 3));
@@ -81,13 +81,13 @@ TEST(CanvasTest, GeneratePPM) {
   auto c3 = Color(-0.5, 0, 1);
 
   // When write_pixel(c, 0, 0, c1)
-  c.write_pixel(0, 0, c1);
+  c.write_pixel(Pixel{0, 0, c1});
 
   // And write_pixel(c, 2, 1, c2)
-  c.write_pixel(2, 1, c2);
+  c.write_pixel(Pixel{2, 1, c2});
 
   // And write_pixel(c, 4, 2, c3)
-  c.write_pixel(4, 2, c3);
+  c.write_pixel(Pixel{4, 2, c3});
 
   // And ppm ← canvas_to_ppm(c)
   auto ppm = c.to_ppm();
@@ -112,9 +112,9 @@ TEST(CanvasTest, SplitLongLines) {
   auto c = Canvas(10, 2);
 
   // When every pixel of c is set to color(1, 0.8, 0.6)
-  for (int y = 0; y < 2; ++y) {
-    for (int x = 0; x < 10; ++x) {
-      c.write_pixel(x, y, Color(1, 0.8, 0.6));
+  for (size_t y = 0; y < 2; ++y) {
+    for (size_t x = 0; x < 10; ++x) {
+      c.write_pixel(Pixel{x, y, Color(1, 0.8, 0.6)});
     }
   }
 

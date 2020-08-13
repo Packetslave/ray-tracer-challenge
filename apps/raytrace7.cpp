@@ -33,14 +33,12 @@ auto read_file(std::string_view path) -> std::string {
 }
 
 int main() {
-  Timer t("Total Time");
-
-  auto camera = Camera(1600, 1200, PI_3);
+  auto camera = Camera(100, 50, PI_3);
   camera.set_transform(view_transform(
-      Tuple::point(0, 1.5, -5), Tuple::point(0, 1, 0), Tuple::vector(0, 1, 0)));
+      Tuple::point(5, 10, -40), Tuple::point(0, 15, 0), Tuple::vector(0, 1, 0)));
 
   auto world = World();
-  world.set_light(PointLight(Tuple::point(-10, 10, -10), Color(0.8, 0.8, 1)));
+  world.set_light(PointLight(Tuple::point(-20, 20, -20), Color(0.8, 0.8, 0.8)));
 
   auto floor = std::make_shared<Plane>();
   floor->set_transform(CreateScaling(10, -0.01, 10));
@@ -51,29 +49,33 @@ int main() {
   floor->set_material(mf);
   world.add(floor);
 
-  auto file = read_file("/Users/blanders/downloads/bunny.obj");
+  auto file = read_file("/Users/blanders/Downloads/teapot.obj");
   std::shared_ptr<Group> group;
   std::shared_ptr<ObjFile> parsed;
-  {
-    Timer t2("Building model");
-    parsed = std::make_shared<ObjFile>(file, true);
-    group = parsed->to_group();
-    //group->set_transform(CreateRotationX(-PI_2) * CreateTranslation(0, 0, 0.5));
-    group->set_transform(CreateTranslation(0, 1, 0) * CreateRotationY(-PI_3));
-  }
 
-  {
-    Timer t3("Optimizing model");
-    group->divide(500);
-    std::cout << "Size after divide(): " << group->size(/* recurse */ true) << std::endl;
-  }
+
+    auto t = Timer("Building model");
+    parsed = std::make_shared<ObjFile>(file, false);
+    group = parsed->to_group();
+    // group->set_transform(CreateRotationX(-PI_2) * CreateTranslation(0, 0,
+    // 0.5));
+    group->set_transform(CreateTranslation(0, 20, 0) * CreateRotationY(-PI));
+    t.stop();
+
+  t = Timer("Optimizing model");
+    group->divide(50);
+    std::cout << "Size after divide(): " << group->size(/* recurse */ true)
+              << std::endl;
+  t.stop();
 
   world.add(group);
 
-  //auto ex = folly::ThreadedExecutor();
-  auto ex = folly::CPUThreadPoolExecutor(20);
-  auto task = camera.multi_render_sampled(world, 16);
-  auto canvas = folly::coro::blockingWait(std::move(task).scheduleOn(&ex));
-  //auto canvas = camera.render(world);
+  // auto ex = folly::ThreadedExecutor();
+//  auto ex = folly::CPUThreadPoolExecutor(20);
+  auto canvas = camera.multi_render_tbb(world, 4);
+  //auto canvas = folly::coro::blockingWait(std::move(task).scheduleOn(&ex));
+  // auto canvas = camera.render(world);
+  t = Timer("Saving to disk");
   canvas.save("/tmp/raytrace7.ppm");
+  t.stop();
 }

@@ -92,7 +92,7 @@ TEST(Material, DefaultTransparencyAndRefractive) {
   EXPECT_EQ(1.0, m.refractive());
 }
 
-TEST(Material, LightingWithPattern){
+TEST(Material, LightingWithPattern) {
   auto m = Material();
   auto p = StripePattern(Color(1, 1, 1), Color(0, 0, 0));
   m.set_pattern(p);
@@ -109,8 +109,10 @@ TEST(Material, LightingWithPattern){
 
   auto light = PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1));
 
-  auto c1 = m.lighting(s.get(), light, Tuple::point(0.9, 0, 0), eyev, normalv, false);
-  auto c2 = m.lighting(s.get(), light, Tuple::point(1.1, 0, 0), eyev, normalv, false);
+  auto c1 =
+      m.lighting(s.get(), light, Tuple::point(0.9, 0, 0), eyev, normalv, false);
+  auto c2 =
+      m.lighting(s.get(), light, Tuple::point(1.1, 0, 0), eyev, normalv, false);
   EXPECT_EQ(Color(1, 1, 1), c1);
   EXPECT_EQ(Color(0, 0, 0), c2);
 }

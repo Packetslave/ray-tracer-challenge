@@ -40,20 +40,18 @@ class Sphere : public Shape {
     return out;
   }
 
-  Tuple local_normal_at(const Tuple &p, const Intersection* i) override {
+  Tuple local_normal_at(const Tuple &p, const Intersection *i) override {
     auto normal = p - Tuple::point(0, 0, 0);
     // normal.w = 0;
     return normal;
   }
 
-  BoundingBox* bounds_of() override {
-    return &box_;
-  }
+  BoundingBox *bounds_of() override { return &box_; }
 
   bool compare(const Shape &) const noexcept override { return true; }
 
  private:
-  BoundingBox box_ = { Tuple::point(-1, -1, -1), Tuple::point(1, 1, 1) };
+  BoundingBox box_ = {Tuple::point(-1, -1, -1), Tuple::point(1, 1, 1)};
 };
 
 template <typename T>

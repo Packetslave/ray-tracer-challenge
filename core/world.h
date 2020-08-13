@@ -38,7 +38,8 @@ class World {
     auto shadowed = is_shadowed(comps.over_point);
 
     auto surface = comps.object->material()->lighting(
-        comps.object, *light_, comps.over_point, comps.eyev, comps.normalv, shadowed);
+        comps.object, *light_, comps.over_point, comps.eyev, comps.normalv,
+        shadowed);
 
     auto reflected = reflected_color(comps, remaining);
     auto refracted = refracted_color(comps, remaining);

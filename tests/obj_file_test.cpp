@@ -7,7 +7,7 @@
 #include "../core/tuple.h"
 #include "../shapes/triangle.h"
 #include "gtest/gtest.h"
-#include "obj_file.h"
+#include "../importers/obj_file.h"
 
 TEST(ObjectFile, Unrecognized) {
   std::string gibberish = {
@@ -15,8 +15,7 @@ TEST(ObjectFile, Unrecognized) {
       "who traveled much faster than light.\n"
       "She set out one day\n"
       "in a relative way,\n"
-      "and came back the previous night.\n"
-  };
+      "and came back the previous night.\n"};
   auto parsed = ObjFile(gibberish);
   EXPECT_EQ(5, parsed.ignored());
 }
@@ -26,8 +25,7 @@ TEST(ObjectFile, VertexData) {
       "v -1 1 0\n"
       "v -1.0000 0.5000 0.0000\n"
       "v 1 0 0\n"
-      "v 1 1 0\n"
-  };
+      "v 1 1 0\n"};
   auto parsed = ObjFile(file);
   EXPECT_EQ(5, parsed.vertices().size());
   EXPECT_EQ(Tuple::point(-1, 1, 0), parsed.vertices()[1]);
@@ -43,8 +41,7 @@ TEST(ObjectFile, TriangleData) {
       "v 1 0 0 \n"
       "v 1 1 0\n"
       "f 1 2 3\n"
-      "f 1 3 4\n"
-  };
+      "f 1 3 4\n"};
   auto parsed = ObjFile(file);
   auto g = parsed.default_group();
   auto t1 = g->child<Triangle>(0);
@@ -62,22 +59,21 @@ TEST(ObjectFile, PolygonData) {
       "v 1 0 0\n"
       "v 1 1 0\n"
       "v 0 2 0\n"
-      "f 1 2 3 4 5\n"
-  };
+      "f 1 2 3 4 5\n"};
   auto parsed = ObjFile(file);
   auto g = parsed.default_group();
   auto t1 = g->child<Triangle>(0);
   auto t2 = g->child<Triangle>(1);
   auto t3 = g->child<Triangle>(2);
-  EXPECT_EQ(t1->p1 , parsed.vertices()[1]);
-  EXPECT_EQ(t1->p2 , parsed.vertices()[2]);
-  EXPECT_EQ(t1->p3 , parsed.vertices()[3]);
-  EXPECT_EQ(t2->p1 , parsed.vertices()[1]);
-  EXPECT_EQ(t2->p2 , parsed.vertices()[3]);
-  EXPECT_EQ(t2->p3 , parsed.vertices()[4]);
-  EXPECT_EQ(t3->p1 , parsed.vertices()[1]);
-  EXPECT_EQ(t3->p2 , parsed.vertices()[4]);
-  EXPECT_EQ(t3->p3 , parsed.vertices()[5]);
+  EXPECT_EQ(t1->p1, parsed.vertices()[1]);
+  EXPECT_EQ(t1->p2, parsed.vertices()[2]);
+  EXPECT_EQ(t1->p3, parsed.vertices()[3]);
+  EXPECT_EQ(t2->p1, parsed.vertices()[1]);
+  EXPECT_EQ(t2->p2, parsed.vertices()[3]);
+  EXPECT_EQ(t2->p3, parsed.vertices()[4]);
+  EXPECT_EQ(t3->p1, parsed.vertices()[1]);
+  EXPECT_EQ(t3->p2, parsed.vertices()[4]);
+  EXPECT_EQ(t3->p3, parsed.vertices()[5]);
 }
 
 TEST(ObjectFile, DISABLED_NamedGroup) {
@@ -91,8 +87,7 @@ TEST(ObjectFile, DISABLED_NamedGroup) {
       "f 1 2 3\n"
       "\n"
       "g SecondGroup\n"
-      "f 1 3 4\n"
-  };
+      "f 1 3 4\n"};
   auto parsed = ObjFile(file);
   auto g1 = parsed.group("FirstGroup");
   auto g2 = parsed.group("SecondGroup");
@@ -117,17 +112,16 @@ TEST(ObjectFile, ToGroup) {
       "f 1 2 3\n"
       "\n"
       "g SecondGroup\n"
-      "f 1 3 4\n"
-  };
+      "f 1 3 4\n"};
   auto parsed = ObjFile(file);
   auto g = parsed.to_group();
 }
 
 TEST(ObjectFile, Normals) {
   std::string file = {
-    "vn 0 0 1\n"
-    "vn 0.707 0 -0.707\n"
-    "vn 1 2 3\n",
+      "vn 0 0 1\n"
+      "vn 0.707 0 -0.707\n"
+      "vn 1 2 3\n",
   };
   auto parsed = ObjFile(file);
   EXPECT_EQ(Tuple::vector(0, 0, 1), parsed.normals()[1]);
@@ -146,8 +140,7 @@ TEST(ObjectFile, FacesWithNormals) {
       "vn 0 1 0\n"
       "\n"
       "f 1//3 2//1 3//2\n"
-      "f 1/0/3 2/102/1 3/14/2\n"
-  };
+      "f 1/0/3 2/102/1 3/14/2\n"};
   auto parsed = ObjFile(file);
   auto g = parsed.to_group();
   ASSERT_EQ(2, g->children().size());

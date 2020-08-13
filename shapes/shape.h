@@ -32,8 +32,8 @@ class Shape : public std::enable_shared_from_this<Shape> {
   Matrix transform() { return transform_; }
   Matrix inverse() { return inverse_; }
 
-  Shape* parent() { return parent_; }
-  void set_parent(Shape* p) { parent_ = p; }
+  Shape *parent() { return parent_; }
+  void set_parent(Shape *p) { parent_ = p; }
 
   void set_transform(const Matrix &t) {
     transform_ = t;
@@ -49,25 +49,27 @@ class Shape : public std::enable_shared_from_this<Shape> {
     return local_intersect(local_ray);
   };
 
-  Tuple normal_at(const Tuple &p, const Intersection* i = nullptr) {
+  Tuple normal_at(const Tuple &p, const Intersection *i = nullptr) {
     auto local_point = worldToObject(p);
     auto local_normal = local_normal_at(local_point, i);
     auto world_normal = normalToWorld(local_normal);
     return world_normal;
   }
 
-  BoundingBox* parent_space_bounds_of() {
+  BoundingBox *parent_space_bounds_of() {
     parent_box_ = bounds_of()->transform(transform_);
     return &parent_box_;
   }
 
   virtual size_t size(bool recurse = false) const { return 1; }
-  virtual bool contains(const std::shared_ptr<Shape> obj) const { return false; }
+  virtual bool contains(const std::shared_ptr<Shape> obj) const {
+    return false;
+  }
 
-  virtual BoundingBox* bounds_of() { return &box_; }
+  virtual BoundingBox *bounds_of() { return &box_; }
 
   virtual IntersectionVector local_intersect(const Ray &r) = 0;
-  virtual Tuple local_normal_at(const Tuple &p, const Intersection* i) = 0;
+  virtual Tuple local_normal_at(const Tuple &p, const Intersection *i) = 0;
   Tuple worldToObject(const Tuple &point);
   Tuple normalToWorld(const Tuple &normalVector) {
     Tuple world_normal = this->inverse_.transpose() * normalVector;
@@ -88,39 +90,38 @@ class Shape : public std::enable_shared_from_this<Shape> {
   Matrix transform_;
   Matrix inverse_;
   Material material_;
-  Shape* parent_;
+  Shape *parent_;
 
  private:
   Tuple objectToWorld(const Tuple &point) { return this->transform_ * point; };
-
 };
 
 class TestShape : public Shape {
-public:
-    TestShape()
-            : Shape(),
-              saved_ray_{Ray(Tuple::point(0, 0, 0), Tuple::vector(0, 0, 0))} {}
+ public:
+  TestShape()
+      : Shape(),
+        saved_ray_{Ray(Tuple::point(0, 0, 0), Tuple::vector(0, 0, 0))} {}
 
-    Ray saved_ray() const { return saved_ray_; }
+  Ray saved_ray() const { return saved_ray_; }
 
-    IntersectionVector local_intersect(const Ray& r) override {
-        saved_ray_ = r;
-        return {};
-    }
+  IntersectionVector local_intersect(const Ray &r) override {
+    saved_ray_ = r;
+    return {};
+  }
 
-    Tuple local_normal_at(const Tuple& p, const Intersection* i) override {
-        return Tuple::vector(p.x, p.y, p.z);
-    }
+  Tuple local_normal_at(const Tuple &p, const Intersection *i) override {
+    return Tuple::vector(p.x, p.y, p.z);
+  }
 
-    bool compare(const Shape&) const noexcept override { return true; }
+  bool compare(const Shape &) const noexcept override { return true; }
 
-private:
-    Ray saved_ray_;
+ private:
+  Ray saved_ray_;
 };
 
 struct ComputedIntersection {
-  ComputedIntersection(const Intersection& hit, const Ray& r,
-                       const IntersectionVector& xs = {})
+  ComputedIntersection(const Intersection &hit, const Ray &r,
+                       const IntersectionVector &xs = {})
       : object(hit.object()),
         t(hit.t()),
         point(r.position(t)),
@@ -140,7 +141,7 @@ struct ComputedIntersection {
     over_point = point + normalv * EPSILON;
     under_point = point - normalv * EPSILON;
 
-    std::vector<Shape*> containers;
+    std::vector<Shape *> containers;
     for (const auto &i : xs) {
       if (i == hit) {
         if (containers.empty()) {
@@ -150,9 +151,8 @@ struct ComputedIntersection {
               containers[containers.size() - 1]->material()->refractive();
         }
       }
-      auto it =
-          std::find_if(std::begin(containers), std::end(containers),
-                       [&i](const auto &c) { return c == i.object(); });
+      auto it = std::find_if(std::begin(containers), std::end(containers),
+                             [&i](const auto &c) { return c == i.object(); });
       if (it != containers.end()) {
         containers.erase(it);
       } else {
@@ -190,7 +190,7 @@ struct ComputedIntersection {
     return r0 + (1 - r0) * pow(1 - cos, 5);
   }
 
-  Shape* object;
+  Shape *object;
   double t;
   Tuple point;
   Tuple eyev;

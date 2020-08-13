@@ -25,5 +25,6 @@ class Plane : public Shape {
   BoundingBox* bounds_of() override { return &box_; }
 
  private:
-  BoundingBox box_ = { Tuple::point(-DBL_MAX, 0, -DBL_MAX), Tuple::point(DBL_MAX, 0, DBL_MAX) };
+  BoundingBox box_ = {Tuple::point(-DBL_MAX, 0, -DBL_MAX),
+                      Tuple::point(DBL_MAX, 0, DBL_MAX)};
 };

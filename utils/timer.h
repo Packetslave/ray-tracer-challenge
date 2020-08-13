@@ -13,9 +13,11 @@ class Timer {
   static const int MILLISECONDS = 2;
 
   explicit Timer(std::string &&name, int resolution = SECONDS)
-      : name_(name), start_(hrc::now()), resolution_(resolution) {}
+      : name_(name), start_(hrc::now()), resolution_(resolution) {
+    std::cout << "START(" << name << ")" << std::endl;
+  }
 
-  ~Timer() {
+  void stop() {
     const auto t2 = hrc::now();
     const auto time_span =
         std::chrono::duration_cast<std::chrono::duration<double>>(t2 - start_);
@@ -31,7 +33,7 @@ class Timer {
     };
 
     std::cout << std::fixed << std::setprecision(10);
-    std::cout << name_ << ": " << t << " " << s << std::endl;
+    std::cout << "END(" << name_ << "): " << t << " " << s << std::endl;
   }
 
  private:

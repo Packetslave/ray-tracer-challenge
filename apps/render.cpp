@@ -74,10 +74,11 @@ int main(int argc, char* argv[]) {
     if (filename.ends_with(".obj")) {
       camera = std::make_unique<Camera>(1600, 1200, PI_3);
       camera->set_transform(view_transform(Tuple::point(0, 1.5, -5),
-                                          Tuple::point(0, 1, 0),
-                                          Tuple::vector(0, 1, 0)));
+                                           Tuple::point(0, 1, 0),
+                                           Tuple::vector(0, 1, 0)));
 
-      light = std::make_unique<PointLight>(Tuple::point(-10, 10, -10), Color(0.8, 0.8, 1));
+      light = std::make_unique<PointLight>(Tuple::point(-10, 10, -10),
+                                           Color(0.8, 0.8, 1));
       scene = std::make_unique<ObjFile>(filename, FLAGS_normalize_model);
     } else if (filename.ends_with(".pbrt")) {
       scene = std::make_unique<PBRTFile>(filename, FLAGS_normalize_model);

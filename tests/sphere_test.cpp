@@ -296,7 +296,8 @@ TEST(Sphere, SchlinkTotalInternalReflection) {
   auto s = Sphere::Glass();
 
   auto r = Ray(Tuple::point(0, 0, SQRT2_2), Tuple::vector(0, 1, 0));
-  auto xs = IntersectionVector{Intersection(-SQRT2_2, s.get()), Intersection(SQRT2_2, s.get())};
+  auto xs = IntersectionVector{Intersection(-SQRT2_2, s.get()),
+                               Intersection(SQRT2_2, s.get())};
   auto comps = ComputedIntersection(xs[1], r, xs);
   auto ref = comps.schlick();
   EXPECT_EQ(1.0, ref);
@@ -306,7 +307,8 @@ TEST(Sphere, SchlinkPerpendicularRay) {
   auto s = Sphere::Glass();
 
   auto r = Ray(Tuple::point(0, 0, 0), Tuple::vector(0, 1, 0));
-  auto xs = IntersectionVector{Intersection(-1, s.get()), Intersection(1, s.get())};
+  auto xs =
+      IntersectionVector{Intersection(-1, s.get()), Intersection(1, s.get())};
   auto comps = ComputedIntersection(xs[1], r, xs);
   auto ref = comps.schlick();
   EXPECT_NEAR(0.04, ref, EPSILON);

@@ -76,7 +76,8 @@ TEST(BoundingBox, PartitionChildren) {
   g->add(s2);
   g->add(s3);
 
-  std::pair<std::vector<std::shared_ptr<Shape>>, std::vector<std::shared_ptr<Shape>>> left_right = g->partition_children();
+  std::pair<ShapeVector, ShapeVector>
+      left_right = g->partition_children();
 
   ASSERT_EQ(1, g->children().size());
   EXPECT_EQ(s3, g->child<Sphere>(0));

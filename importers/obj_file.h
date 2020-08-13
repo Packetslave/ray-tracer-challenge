@@ -13,9 +13,9 @@
 #include "../shapes/group.h"
 #include "../shapes/shape.h"
 #include "../shapes/triangle.h"
+#include "file.h"
 #include "folly/Conv.h"
 #include "folly/String.h"
-#include "file.h"
 
 struct FaceVertex {
   size_t v_index;
@@ -161,8 +161,12 @@ class ObjFile : public File {
               << " children in default group." << std::endl;
   }
 
-  Camera* camera() const override { throw std::runtime_error("not implemented"); }
-  PointLight* light() const override { throw std::runtime_error("not implemented"); }
+  Camera* camera() const override {
+    throw std::runtime_error("not implemented");
+  }
+  PointLight* light() const override {
+    throw std::runtime_error("not implemented");
+  }
 
   std::shared_ptr<Group> group(const std::string& name) {
     if (named_groups_.find(name) == named_groups_.end()) {

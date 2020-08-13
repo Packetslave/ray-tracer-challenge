@@ -23,7 +23,7 @@ target_sources(Tests PRIVATE
         triangle_test.cpp
         tuple_test.cpp
         world_test.cpp
-)
+        )
 
 target_link_libraries(Tests gtest gtest_main)
 target_link_libraries(Tests raytrace_lib ${FOLLY_LIBRARIES})

@@ -27,7 +27,7 @@ std::optional<Intersection> Hit(const IntersectionVector &v) {
             [](const auto &a, const auto &b) { return a.t() < b.t(); });
 
   for (const auto &i : sorted) {
-    if (i.t() >= 0) {
+    if (i.t() >= 0.0f) {
       return i;
     }
   }

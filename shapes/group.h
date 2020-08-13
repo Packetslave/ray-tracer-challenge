@@ -4,8 +4,9 @@
 
 #pragma once
 #include "shape.h"
+#include <tbb/scalable_allocator.h>
 
-using ShapeVector = std::vector<std::shared_ptr<Shape>>;
+using ShapeVector = std::vector<std::shared_ptr<Shape>, tbb::scalable_allocator<std::shared_ptr<Shape>>>;
 
 class Group : public Shape {
  public:
@@ -74,7 +75,7 @@ class Group : public Shape {
     return std::dynamic_pointer_cast<T>(children_[idx]);
   }
 
-  std::vector<std::shared_ptr<Shape>> children() { return children_; }
+  ShapeVector children() { return children_; }
 
   BoundingBox* bounds_of() override { return bounds_of(true); }
 
@@ -98,7 +99,7 @@ class Group : public Shape {
     auto bounds = this->bounds_of();
     auto [left, right] = bounds->split();
 
-    std::vector<std::shared_ptr<Shape>>::iterator it;
+    ShapeVector::iterator it;
     updated_ = true;
 
     for (it = children_.begin(); it != children_.end(); /* no increment */) {
@@ -148,5 +149,5 @@ class Group : public Shape {
  private:
   BoundingBox box_;
   bool updated_ = true;
-  std::vector<std::shared_ptr<Shape>> children_ = {};
+  ShapeVector children_ = {};
 };

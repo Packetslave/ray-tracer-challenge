@@ -109,11 +109,11 @@ bool operator==(Tuple const& lhs, Tuple const& rhs) {
          eq(lhs.w, rhs.w);
 }
 
-//double dot(const Tuple& a, const Tuple& b) {
+// double dot(const Tuple& a, const Tuple& b) {
 //  return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
 //}
 
-//inline Tuple cross(const Tuple& a, const Tuple& b) {
+// inline Tuple cross(const Tuple& a, const Tuple& b) {
 //  return Tuple::vector(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z,
 //                       a.x * b.y - a.y * b.x);
 //}

@@ -32,17 +32,16 @@ class TestPattern : public Pattern {
 class SolidPattern : public Pattern {
  public:
   explicit SolidPattern(const Color& c) : Pattern(), color_{c} {}
-  Color pattern_at(const Tuple& point) const override {
-    return color_;
-  }
+  Color pattern_at(const Tuple& point) const override { return color_; }
+
  private:
   Color color_;
 };
 
-
 class StripePattern : public Pattern {
  public:
-  explicit StripePattern(const Color& a, const Color& b) : Pattern(), a{a}, b{b} {}
+  explicit StripePattern(const Color& a, const Color& b)
+      : Pattern(), a{a}, b{b} {}
 
   Color pattern_at(const Tuple& point) const override {
     if (int(floor(point.x)) % 2 == 0) {
@@ -57,7 +56,8 @@ class StripePattern : public Pattern {
 
 class GradientPattern : public Pattern {
  public:
-  explicit GradientPattern(const Color& a, const Color& b) : Pattern(), a{a}, b{b} {}
+  explicit GradientPattern(const Color& a, const Color& b)
+      : Pattern(), a{a}, b{b} {}
 
   Color pattern_at(const Tuple& point) const override {
     auto distance = b - a;
@@ -71,7 +71,8 @@ class GradientPattern : public Pattern {
 
 class RingPattern : public Pattern {
  public:
-  explicit RingPattern(const Color& a, const Color& b) : Pattern(), a{a}, b{b} {}
+  explicit RingPattern(const Color& a, const Color& b)
+      : Pattern(), a{a}, b{b} {}
 
   Color pattern_at(const Tuple& point) const override {
     if (int(floor(sqrt(point.x + point.z))) % 2 == 0) {
@@ -86,7 +87,8 @@ class RingPattern : public Pattern {
 
 class CheckPattern : public Pattern {
  public:
-  explicit CheckPattern(const Color& a, const Color& b) : Pattern(), a{a}, b{b} {}
+  explicit CheckPattern(const Color& a, const Color& b)
+      : Pattern(), a{a}, b{b} {}
 
   Color pattern_at(const Tuple& point) const override {
     if (int((abs(point.x) + abs(point.y) + abs(point.z))) % 2 == 0) {

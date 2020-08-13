@@ -27,18 +27,30 @@ int clamp(const double x, const double min, const double max) {
 }
 }  // namespace
 
+struct Pixel {
+  Pixel() : x{0}, y{0}, c{Color(0, 0, 0)} {}
+  explicit Pixel(size_t x, size_t y, const Color& c) : x{x}, y{y}, c{c} {}
+  size_t x;
+  size_t y;
+  Color c;
+};
+
 class Canvas {
  public:
   Canvas(int width, int height) : width_(width), height_(height) {
-    pixels_ =
-        std::make_unique<std::vector<Color>>(width * height, Color(0, 0, 0));
-  }
-  [[nodiscard]] Color pixel_at(int x, int y) const {
-    return (*pixels_)[index_of(x, y)];
+    pixels_ = std::make_unique<std::vector<Pixel>>(width * height);
   }
 
-  void write_pixel(int x, int y, const Color &c) {
-    (*pixels_)[index_of(x, y)] = c;
+  [[nodiscard]] Color pixel_at(int x, int y) const {
+    return pixels_->at(x*y).c;
+  }
+
+  void write_pixels(const std::vector<Pixel>& newpix) {
+    pixels_ = std::make_unique<std::vector<Pixel>>(newpix);
+  }
+
+  void write_pixel(const Pixel& p) {
+    pixels_->at(p.x * p.y) = p;
   }
 
   [[nodiscard]] int width() const { return width_; };
@@ -50,8 +62,8 @@ class Canvas {
     std::string row;
     int ctr = 0;
     for (const auto &i : *pixels_) {
-      row += fmt::format(kPPMElement, clamp(i.r(), 0, 255),
-                         clamp(i.g(), 0, 255), clamp(i.b(), 0, 255));
+      row += fmt::format(kPPMElement, clamp(i.c.r(), 0, 255),
+                         clamp(i.c.g(), 0, 255), clamp(i.c.b(), 0, 255));
 
       if (++ctr == width_) {
         // word wrap algorithm can almost certainly be improved
@@ -88,7 +100,7 @@ class Canvas {
 
  private:
   [[nodiscard]] size_t index_of(int x, int y) const { return width_ * y + x; }
-  std::unique_ptr<std::vector<Color>> pixels_;
+  std::unique_ptr<std::vector<Pixel>> pixels_;
   int width_;
   int height_;
 };

@@ -33,28 +33,32 @@ TEST(Triangle, Normal) {
 }
 
 TEST(Triangle, IntersectParallel) {
-  auto t = Triangle(Tuple::point(0, 1, 0), Tuple::point(-1, 0, 0), Tuple::point(1, 0, 0));
+  auto t = Triangle(Tuple::point(0, 1, 0), Tuple::point(-1, 0, 0),
+                    Tuple::point(1, 0, 0));
   auto r = Ray(Tuple::point(0, -1, -2), Tuple::vector(0, 1, 0));
   auto xs = t.local_intersect(r);
   EXPECT_EQ(0, xs.size());
 }
 
 TEST(Triangle, MissesP1P3) {
-  auto t = Triangle(Tuple::point(0, 1, 0), Tuple::point(-1, 0, 0), Tuple::point(1, 0, 0));
+  auto t = Triangle(Tuple::point(0, 1, 0), Tuple::point(-1, 0, 0),
+                    Tuple::point(1, 0, 0));
   auto r = Ray(Tuple::point(1, 1, -2), Tuple::vector(0, 0, 1));
   auto xs = t.local_intersect(r);
   EXPECT_EQ(0, xs.size());
 }
 
 TEST(Triangle, MissesP1P2) {
-  auto t = Triangle(Tuple::point(0, 1, 0), Tuple::point(-1, 0, 0), Tuple::point(1, 0, 0));
+  auto t = Triangle(Tuple::point(0, 1, 0), Tuple::point(-1, 0, 0),
+                    Tuple::point(1, 0, 0));
   auto r = Ray(Tuple::point(-1, 1, -2), Tuple::vector(0, 0, 1));
   auto xs = t.local_intersect(r);
   EXPECT_EQ(0, xs.size());
 }
 
 TEST(Triangle, MissesP2P3) {
-  auto t = Triangle(Tuple::point(0, 1, 0), Tuple::point(-1, 0, 0), Tuple::point(1, 0, 0));
+  auto t = Triangle(Tuple::point(0, 1, 0), Tuple::point(-1, 0, 0),
+                    Tuple::point(1, 0, 0));
   auto r = Ray(Tuple::point(0, -1, -2), Tuple::vector(0, 0, 1));
   auto xs = t.local_intersect(r);
   EXPECT_EQ(0, xs.size());
@@ -62,7 +66,8 @@ TEST(Triangle, MissesP2P3) {
 
 TEST(Triangle, Hits) {
   std::shared_ptr<Shape> t;
-  t.reset( new Triangle(Tuple::point(0, 1, 0), Tuple::point(-1, 0, 0), Tuple::point(1, 0, 0)));
+  t.reset(new Triangle(Tuple::point(0, 1, 0), Tuple::point(-1, 0, 0),
+                       Tuple::point(1, 0, 0)));
   auto r = Ray(Tuple::point(0, 0.5, -2), Tuple::vector(0, 0, 1));
   auto xs = t->local_intersect(r);
   EXPECT_EQ(1, xs.size());
@@ -93,7 +98,8 @@ TEST(SmoothTriangle, Normal) {
   EXPECT_EQ(Tuple::vector(-0.5547, 0.83205, 0), n);
 }
 
-TEST(SmoothTriangle, PrepareNormal) { auto p1 = Tuple::point(0, 1, 0);
+TEST(SmoothTriangle, PrepareNormal) {
+  auto p1 = Tuple::point(0, 1, 0);
   auto p2 = Tuple::point(-1, 0, 0);
   auto p3 = Tuple::point(1, 0, 0);
   auto n1 = Tuple::vector(0, 1, 0);

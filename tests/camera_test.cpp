@@ -72,7 +72,7 @@ TEST(Camera, RenderWorld) {
   auto up = Tuple::vector(0, 1, 0);
   auto vt = view_transform(from, to, up);
   c.set_transform(vt);
-  auto image = c.render(w);
+  auto image = c.multi_render_tbb(w, 1);
   auto expected = Color(0.38066, 0.47583, 0.2855);
   auto actual = image.pixel_at(5, 5);
   EXPECT_TRUE(tuple_is_near(expected, actual)) << expected << " != " << actual;

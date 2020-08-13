@@ -13,6 +13,10 @@ find_package(folly REQUIRED)
 find_package(gflags REQUIRED)
 find_package(glog REQUIRED)
 
+include(external/oneTBB/cmake/TBBGet.cmake)
+tbb_get(TBB_ROOT tbb_root CONFIG_DIR TBB_DIR)
+find_package(TBB REQUIRED)
+
 enable_testing()
 add_subdirectory(tests)
 
@@ -39,8 +43,8 @@ target_sources(raytrace_lib PRIVATE
         shapes/shape.cpp
         shapes/sphere.cpp
         shapes/triangle.cpp
-)
-target_link_libraries(raytrace_lib fmt::fmt ${FOLLY_LIBRARIES})
+        )
+target_link_libraries(raytrace_lib fmt::fmt ${FOLLY_LIBRARIES} ${TBB_IMPORTED_TARGETS})
 
 add_executable(raytrace1 apps/raytrace1.cpp)
 target_link_libraries(raytrace1 raytrace_lib)

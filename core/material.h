@@ -15,7 +15,7 @@ class Material {
         reflective_(0.0),
         transparency_(0.0),
         refractive_(1.0),
-        pattern_(nullptr){}
+        pattern_(nullptr) {}
 
   Color color() const { return color_; }
   double ambient() const { return ambient_; }
@@ -27,7 +27,7 @@ class Material {
   double refractive() const { return refractive_; }
   const Pattern* pattern() const { return pattern_; }
 
-  void set_color(const Color &c) { color_ = c; }
+  void set_color(const Color& c) { color_ = c; }
   void set_ambient(const double d) { ambient_ = d; }
   void set_diffuse(const double d) { diffuse_ = d; }
   void set_specular(const double d) { specular_ = d; }
@@ -37,9 +37,10 @@ class Material {
   void set_refractive(const double d) { refractive_ = d; }
   void set_pattern(const Pattern& p) { pattern_ = &p; }
 
-  Color lighting(Shape* obj, PointLight light, Tuple point, Tuple eye_v, Tuple normal_v,
-                 bool in_shadow) {
-    Color c = pattern_ == nullptr ? color_ : pattern_->pattern_at_object(obj, point);
+  Color lighting(Shape* obj, PointLight light, Tuple point, Tuple eye_v,
+                 Tuple normal_v, bool in_shadow) {
+    Color c =
+        pattern_ == nullptr ? color_ : pattern_->pattern_at_object(obj, point);
     Color effective = c * light.intensity();
     Tuple light_v = (light.position() - point).normalize();
     Tuple ambient = effective * this->ambient();
@@ -74,7 +75,7 @@ class Material {
   const Pattern* pattern_;
 };
 
-inline bool operator==(const Material &a, const Material &b) {
+inline bool operator==(const Material& a, const Material& b) {
   return a.color() == b.color() && a.ambient() == b.ambient() &&
          a.diffuse() == b.diffuse() && a.specular() == b.specular() &&
          a.shininess() == b.shininess() && a.reflective() == b.reflective() &&

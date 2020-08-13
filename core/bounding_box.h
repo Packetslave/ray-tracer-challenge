@@ -40,9 +40,12 @@ class BoundingBox {
   }
 
   bool intersects(const Ray& r) {
-    auto [ytmin, ytmax] = check_axis(r.origin().y, r.direction().y, min_.y, max_.y);
-    auto [ztmin, ztmax] = check_axis(r.origin().z, r.direction().z, min_.z, max_.z);
-    auto [xtmin, xtmax] = check_axis(r.origin().x, r.direction().x, min_.x, max_.x);
+    auto [ytmin, ytmax] =
+        check_axis(r.origin().y, r.direction().y, min_.y, max_.y);
+    auto [ztmin, ztmax] =
+        check_axis(r.origin().z, r.direction().z, min_.z, max_.z);
+    auto [xtmin, xtmax] =
+        check_axis(r.origin().x, r.direction().x, min_.x, max_.x);
 
     auto tmin = std::max({xtmin, ytmin, ztmin});
     auto tmax = std::min({xtmax, ytmax, ztmax});
@@ -51,7 +54,6 @@ class BoundingBox {
       return false;
     }
     return true;
-
   }
 
   void add(const BoundingBox& b2) {
@@ -81,13 +83,15 @@ class BoundingBox {
 
     auto new_bbox = BoundingBox();
 
-    for(const auto& p : {p1, p2, p3, p4, p5, p6, p7, p8}) {
+    for (const auto& p : {p1, p2, p3, p4, p5, p6, p7, p8}) {
       new_bbox.add(m * p);
     }
     return new_bbox;
   }
 
-  std::pair<double, double> check_axis(const double origin, const double direction, const double min, const double max) {
+  std::pair<double, double> check_axis(const double origin,
+                                       const double direction, const double min,
+                                       const double max) {
     auto tmin_num = (min - origin);
     auto tmax_num = (max - origin);
 
@@ -143,7 +147,7 @@ class BoundingBox {
     auto left = BoundingBox(min_, mid_max);
     auto right = BoundingBox(mid_min, max_);
 
-    return { left, right };
+    return {left, right};
   }
 
  private:

@@ -5,13 +5,13 @@
 #ifndef RAY_TRACING2_PBRT_FILE_H
 #define RAY_TRACING2_PBRT_FILE_H
 
-#include "../external/minipbrt/minipbrt.h"
-#include "../core/matrix.h"
-#include "file.h"
 #include "../core/camera.h"
 #include "../core/light.h"
+#include "../core/matrix.h"
+#include "../external/minipbrt/minipbrt.h"
 #include "../shapes/shape.h"
 #include "../shapes/sphere.h"
+#include "file.h"
 
 namespace {
 double degrees_to_radians(double degrees) { return (degrees * PI) / 180; }

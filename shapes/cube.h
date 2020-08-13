@@ -21,7 +21,7 @@ class Cube : public Shape {
     if (tmin > tmax) {
       return {};
     }
-    return { Intersection(tmin, this), Intersection(tmax, this)};
+    return {Intersection(tmin, this), Intersection(tmax, this)};
   };
 
   Tuple local_normal_at(const Tuple& p, const Intersection* i) override {
@@ -35,7 +35,8 @@ class Cube : public Shape {
     }
   }
 
-  std::pair<double, double> check_axis(const double origin, const double direction) {
+  std::pair<double, double> check_axis(const double origin,
+                                       const double direction) {
     auto tmin_num = (-1 - origin);
     auto tmax_num = (1 - origin);
 

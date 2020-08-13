@@ -9,13 +9,13 @@ TEST(Cube, RayIntersects) {
   s.reset(new Cube());
 
   std::vector<std::tuple<Tuple, Tuple, double, double>> tests{
-      { Tuple::point(5, 0.5, 0), Tuple::vector(-1, 0, 0), 4, 6 },
-      { Tuple::point(-5, 0.5, 0), Tuple::vector(1, 0, 0), 4, 6 },
-      { Tuple::point(0.5, 5, 0), Tuple::vector(0, -1, 0), 4, 6 },
-      { Tuple::point(0.5, -5, 0), Tuple::vector(0, 1, 0), 4, 6 },
-      { Tuple::point(0.5, 0, 5), Tuple::vector(0, 0, -1), 4, 6 },
-      { Tuple::point(0.5, 0, -5), Tuple::vector(0, 0, 1), 4, 6 },
-      { Tuple::point(0, 0.5, 0), Tuple::vector(0, 0, 1), -1, 1 },
+      {Tuple::point(5, 0.5, 0), Tuple::vector(-1, 0, 0), 4, 6},
+      {Tuple::point(-5, 0.5, 0), Tuple::vector(1, 0, 0), 4, 6},
+      {Tuple::point(0.5, 5, 0), Tuple::vector(0, -1, 0), 4, 6},
+      {Tuple::point(0.5, -5, 0), Tuple::vector(0, 1, 0), 4, 6},
+      {Tuple::point(0.5, 0, 5), Tuple::vector(0, 0, -1), 4, 6},
+      {Tuple::point(0.5, 0, -5), Tuple::vector(0, 0, 1), 4, 6},
+      {Tuple::point(0, 0.5, 0), Tuple::vector(0, 0, 1), -1, 1},
 
   };
 
@@ -33,13 +33,12 @@ TEST(Cube, RayMisses) {
   s.reset(new Cube());
 
   std::vector<std::tuple<Tuple, Tuple>> tests{
-      {Tuple::point(-2, 0, 0),   Tuple::vector(0.2673, 0.5345, 0.8018)},
-      {Tuple::point(0, -2, 0),   Tuple::vector(0.8018, 0.2673, 0.5345) },
-      {Tuple::point(0, 0, -2),   Tuple::vector(0.5345, 0.8018, 0.2673) },
-      {Tuple::point(2, 0, 2),    Tuple::vector(0, 0, -1)               },
-      {Tuple::point(0, 2, 2),    Tuple::vector(0, -1, 0)               },
-      {Tuple::point(2, 2, 0),    Tuple::vector(-1, 0, 0)               }
-  };
+      {Tuple::point(-2, 0, 0), Tuple::vector(0.2673, 0.5345, 0.8018)},
+      {Tuple::point(0, -2, 0), Tuple::vector(0.8018, 0.2673, 0.5345)},
+      {Tuple::point(0, 0, -2), Tuple::vector(0.5345, 0.8018, 0.2673)},
+      {Tuple::point(2, 0, 2), Tuple::vector(0, 0, -1)},
+      {Tuple::point(0, 2, 2), Tuple::vector(0, -1, 0)},
+      {Tuple::point(2, 2, 0), Tuple::vector(-1, 0, 0)}};
 
   for (const auto& [origin, direction] : tests) {
     auto r = Ray(origin, direction);
@@ -53,14 +52,14 @@ TEST(Cube, CubeNormal) {
   s.reset(new Cube());
 
   std::vector<std::tuple<Tuple, Tuple>> tests{
-      {Tuple::point(1, 0.5, -0.8),   Tuple::vector(1, 0, 0)  },
-      {Tuple::point(-1, -0.2, 0.9),  Tuple::vector(-1, 0, 0) },
-      {Tuple::point(-0.4, 1, -0.1),  Tuple::vector(0, 1, 0)  },
-      {Tuple::point(0.3, -1, -0.7),  Tuple::vector(0, -1, 0) },
-      {Tuple::point(-0.6, 0.3, 1),   Tuple::vector(0, 0, 1)  },
-      {Tuple::point(0.4, 0.4, -1),   Tuple::vector(0, 0, -1) },
-      {Tuple::point(1, 1, 1),        Tuple::vector(1, 0, 0)  },
-      {Tuple::point(-1, -1, -1),     Tuple::vector(-1, 0, 0) },
+      {Tuple::point(1, 0.5, -0.8), Tuple::vector(1, 0, 0)},
+      {Tuple::point(-1, -0.2, 0.9), Tuple::vector(-1, 0, 0)},
+      {Tuple::point(-0.4, 1, -0.1), Tuple::vector(0, 1, 0)},
+      {Tuple::point(0.3, -1, -0.7), Tuple::vector(0, -1, 0)},
+      {Tuple::point(-0.6, 0.3, 1), Tuple::vector(0, 0, 1)},
+      {Tuple::point(0.4, 0.4, -1), Tuple::vector(0, 0, -1)},
+      {Tuple::point(1, 1, 1), Tuple::vector(1, 0, 0)},
+      {Tuple::point(-1, -1, -1), Tuple::vector(-1, 0, 0)},
   };
 
   for (const auto& [point, normal] : tests) {
@@ -68,4 +67,3 @@ TEST(Cube, CubeNormal) {
     EXPECT_EQ(normal, n);
   }
 }
-
