@@ -35,10 +35,11 @@ class World {
   }
 
   Color shade_hit(const ComputedIntersection& comps, int remaining = 5) {
-    auto shadowed = is_shadowed(comps.over_point);
+    auto intensity = light_->intensity_at(comps.over_point, this);
 
     auto surface = comps.object->material()->lighting(
-        comps.object, *light_, comps.over_point, comps.eyev, comps.normalv, shadowed);
+        comps.object, *light_, comps.over_point, comps.eyev, comps.normalv,
+        intensity);
 
     auto reflected = reflected_color(comps, remaining);
     auto refracted = refracted_color(comps, remaining);
@@ -81,7 +82,7 @@ class World {
   folly::Optional<PointLight> light() { return light_; }
   void set_light(const PointLight& p) { light_ = p; }
 
-  IntersectionVector intersect(const Ray& r) {
+  IntersectionVector intersect(const Ray& r) const {
     IntersectionVector out;
     out.reserve(objects_.size() * 3);
 
@@ -97,8 +98,8 @@ class World {
     return out;
   }
 
-  bool is_shadowed(const Tuple& point) {
-    auto v = light_->position() - point;
+  bool is_shadowed(const Tuple& light_position, const Tuple& point) const {
+    auto v = light_position - point;
     auto distance = v.magnitude();
     auto direction = v.normalize();
 

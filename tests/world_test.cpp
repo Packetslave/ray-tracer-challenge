@@ -127,6 +127,31 @@ TEST(World, ColorAtBehind) {
   EXPECT_EQ(inner->material()->color(), c);
 }
 
+TEST(World, IsShadowed) {
+  auto w = World::default_world();
+  auto lp = Tuple::point(-10, -10, -10);
+
+  EXPECT_TRUE(w.is_shadowed(lp, Tuple::point(0, 0, 0)));
+  EXPECT_FALSE(w.is_shadowed(lp, Tuple::point(-10, -10, 10)));
+  EXPECT_TRUE(w.is_shadowed(lp, Tuple::point(10, 10, 10)));
+  EXPECT_FALSE(w.is_shadowed(lp, Tuple::point(-20, -20, -20)));
+  EXPECT_FALSE(w.is_shadowed(lp, Tuple::point(-5, -5, -5)));
+}
+
+TEST(World, LightingUsesIntensity) {
+  auto w = World::default_world();
+  w.set_light(PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1)));
+  auto shape = w.get_object(0);
+  shape->material()->set_ambient(0.1);
+  shape->material()->set_diffuse(0.9);
+  shape->material()->set_specular(0);
+  shape->material()->set_color(Color(1, 1, 1));
+  auto pt = Tuple::point(0, 0, -1);
+  auto eyev = Tuple::vector(0, 0, -1);
+  auto normalv = Tuple::vector(0, 0, -1);
+  //auto result = shape->material()->lighting(w.light(), pt, eyev, normalv, 0.5);
+  //EXPECT_EQ(Color(0.55, 0.55, 0.55), result);
+}
 TEST(ViewTransform, Default) {
   auto from = Tuple::point(0, 0, 0);
   auto to = Tuple::point(0, 0, -1);
@@ -175,25 +200,25 @@ TEST(ViewTransform, DISABLED_Arbitraty) {
 TEST(Shadows, NoShadowWhenNoCollinear) {
   auto w = World::default_world();
   auto p = Tuple::point(0, 10, 0);
-  EXPECT_FALSE(w.is_shadowed(p));
+  EXPECT_FALSE(w.is_shadowed(w.light()->position(), p));
 }
 
 TEST(Shadows, ShadowWhenObjectIsBetweenPointAndLight) {
   auto w = World::default_world();
   auto p = Tuple::point(10, -10, 10);
-  EXPECT_TRUE(w.is_shadowed(p));
+  EXPECT_TRUE(w.is_shadowed(w.light()->position(), p));
 }
 
 TEST(Shadows, NoShadowWhenObjectBehindLight) {
   auto w = World::default_world();
   auto p = Tuple::point(-20, 20, -20);
-  EXPECT_FALSE(w.is_shadowed(p));
+  EXPECT_FALSE(w.is_shadowed(w.light()->position(), p));
 }
 
 TEST(Shadows, NoShadowWhenObjectBehindPoint) {
   auto w = World::default_world();
   auto p = Tuple::point(-2, 2, -2);
-  EXPECT_FALSE(w.is_shadowed(p));
+  EXPECT_FALSE(w.is_shadowed(w.light()->position(), p));
 }
 
 TEST(Shadows, ShadeHitGivenShadow) {

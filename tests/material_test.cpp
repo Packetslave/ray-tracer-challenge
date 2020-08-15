@@ -4,6 +4,7 @@
 #include "../core/light.h"
 #include "../core/matrix.h"
 #include "../core/tuple.h"
+#include "../core/world.h"
 #include "../shapes/sphere.h"
 #include "gtest/gtest.h"
 
@@ -29,7 +30,7 @@ TEST(Material, EyeBetween) {
   auto n = Tuple::vector(0, 0, -1);
   auto l = PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1));
 
-  auto r = m.lighting(nullptr, l, p, e, n, false);
+  auto r = m.lighting(nullptr, l, p, e, n, 1.0);
   EXPECT_EQ(Color(1.9, 1.9, 1.9), r);
 }
 
@@ -41,7 +42,7 @@ TEST(Material, EyeBetween45) {
   auto n = Tuple::vector(0, 0, -1);
   auto l = PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1));
 
-  auto r = m.lighting(nullptr, l, p, e, n, false);
+  auto r = m.lighting(nullptr, l, p, e, n, 1.0);
   EXPECT_EQ(Color(1.0, 1.0, 1.0), r);
 }
 
@@ -53,7 +54,7 @@ TEST(Material, EyeOpposite45) {
   auto n = Tuple::vector(0, 0, -1);
   auto l = PointLight(Tuple::point(0, 10, -10), Color(1, 1, 1));
 
-  auto r = m.lighting(nullptr, l, p, e, n, false);
+  auto r = m.lighting(nullptr, l, p, e, n, 1.0);
   EXPECT_EQ(Color(0.7364, 0.7364, 0.7364), r);
 }
 
@@ -65,7 +66,7 @@ TEST(Material, EyeInPath) {
   auto n = Tuple::vector(0, 0, -1);
   auto l = PointLight(Tuple::point(0, 10, -10), Color(1, 1, 1));
 
-  auto r = m.lighting(nullptr, l, p, e, n, false);
+  auto r = m.lighting(nullptr, l, p, e, n, 1.0);
   EXPECT_TRUE(color_is_near(Color(1.6364, 1.6364, 1.6364), r, 0.0001));
 }
 
@@ -77,7 +78,7 @@ TEST(Material, LightBehind) {
   auto n = Tuple::vector(0, 0, -1);
   auto l = PointLight(Tuple::point(0, 0, 10), Color(1, 1, 1));
 
-  auto r = m.lighting(nullptr, l, p, e, n, false);
+  auto r = m.lighting(nullptr, l, p, e, n, 1.0);
   EXPECT_TRUE(color_is_near(Color(0.1, 0.1, 0.1), r, 0.0001));
 }
 
@@ -113,4 +114,26 @@ TEST(Material, LightingWithPattern){
   auto c2 = m.lighting(s.get(), light, Tuple::point(1.1, 0, 0), eyev, normalv, false);
   EXPECT_EQ(Color(1, 1, 1), c1);
   EXPECT_EQ(Color(0, 0, 0), c2);
+}
+
+TEST(Material, WithIntensity) {
+  auto w = World::default_world();
+  w.set_light(PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1)));
+  auto shape = w.get_object(0);
+  shape->material()->set_ambient(0.1);
+  shape->material()->set_diffuse(0.9);
+  shape->material()->set_specular(0);
+  shape->material()->set_color((Color(1, 1, 1)));
+  auto pt = Tuple::point(0, 0, -1);
+  auto eyev = Tuple::vector(0, 0, -1);
+  auto normalv = Tuple::vector(0, 0, -1);
+
+  auto result = shape->material()->lighting(shape.get(), *(w.light()), pt, eyev, normalv, 1.0);
+  EXPECT_EQ(Color(1, 1, 1), result);
+
+  result = shape->material()->lighting(shape.get(), *(w.light()), pt, eyev, normalv, 0.5);
+  EXPECT_EQ(Color(0.55, 0.55, 0.55), result);
+
+  result = shape->material()->lighting(shape.get(), *(w.light()), pt, eyev, normalv, 0.0);
+  EXPECT_EQ(Color(0.1, 0.1, 0.1), result);
 }

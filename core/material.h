@@ -37,9 +37,10 @@ class Material {
   void set_refractive(const double d) { refractive_ = d; }
   void set_pattern(const Pattern& p) { pattern_ = &p; }
 
-  Color lighting(Shape* obj, PointLight light, Tuple point, Tuple eye_v, Tuple normal_v,
-                 bool in_shadow) {
-    Color c = pattern_ == nullptr ? color_ : pattern_->pattern_at_object(obj, point);
+  Color lighting(Shape* obj, PointLight light, Tuple point, Tuple eye_v,
+                 Tuple normal_v, double intensity) {
+    Color c =
+        pattern_ == nullptr ? color_ : pattern_->pattern_at_object(obj, point);
     Color effective = c * light.intensity();
     Tuple light_v = (light.position() - point).normalize();
     Tuple ambient = effective * this->ambient();
@@ -59,7 +60,16 @@ class Material {
         specular = light.intensity() * this->specular() * f;
       }
     }
-    return in_shadow ? ambient : (ambient + diffuse + specular);
+    if (intensity == 1.0) {
+      return ambient + diffuse + specular;
+    }
+    if (intensity == 0.0) {
+      return ambient;
+    }
+
+    diffuse = diffuse * intensity;
+    specular = specular * intensity;
+    return ambient + diffuse + specular;
   }
 
  private:

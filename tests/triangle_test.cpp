@@ -65,7 +65,7 @@ TEST(Triangle, Hits) {
   t.reset( new Triangle(Tuple::point(0, 1, 0), Tuple::point(-1, 0, 0), Tuple::point(1, 0, 0)));
   auto r = Ray(Tuple::point(0, 0.5, -2), Tuple::vector(0, 0, 1));
   auto xs = t->local_intersect(r);
-  EXPECT_EQ(1, xs.size());
+  ASSERT_EQ(1, xs.size());
   EXPECT_EQ(2, xs[0].t());
 }
 
