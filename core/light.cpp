@@ -16,5 +16,5 @@ double AreaLight::intensity_at(const Tuple& point, const World* world) const {
       }
     }
   }
-  return total / samples_;
+  return total / sampleCount_;
 }

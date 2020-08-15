@@ -211,6 +211,19 @@ class Camera {
     co_return out;
   }
 
+  bool operator==(const Camera& rhs) const {
+    return (
+        hsize_ == rhs.hsize_ &&
+        vsize_ == rhs.vsize_ &&
+        abs(field_of_view_ - rhs.field_of_view_) < EPSILON &&
+        abs(half_height_ - rhs.half_height_) < EPSILON &&
+        abs(half_width_ - rhs.half_width_) < EPSILON &&
+        abs(pixel_size_ - rhs.pixel_size_) < EPSILON &&
+        transform_ == rhs.transform_ &&
+        inverse_ == rhs.inverse_
+    );
+  }
+
  private:
   int hsize_;
   int vsize_;

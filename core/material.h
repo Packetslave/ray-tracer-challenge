@@ -37,39 +37,42 @@ class Material {
   void set_refractive(const double d) { refractive_ = d; }
   void set_pattern(const Pattern& p) { pattern_ = &p; }
 
-  Color lighting(Shape* obj, PointLight light, Tuple point, Tuple eye_v,
+  Color lighting(Shape* obj, Light* light, Tuple point, Tuple eye_v,
                  Tuple normal_v, double intensity) {
     Color c =
         pattern_ == nullptr ? color_ : pattern_->pattern_at_object(obj, point);
-    Color effective = c * light.intensity();
-    Tuple light_v = (light.position() - point).normalize();
+
+    Color effective = c * light->intensity();
     Tuple ambient = effective * this->ambient();
+    auto samples = light->samples();
 
-    double ldn = dot(light_v, normal_v);
+    Color sum(0, 0, 0);
+    for (const auto& sample : samples) {
+      Color specular(0, 0, 0);
+      Color diffuse(0, 0, 0);
 
-    Color diffuse = Color(0, 0, 0);
-    Color specular = Color(0, 0, 0);
+      auto light_v = (sample - point).normalize();
+      auto lightDotNormal = dot(light_v, normal_v);
 
-    if (ldn >= 0) {
-      diffuse = effective * this->diffuse() * ldn;
-      Tuple reflect_v = (-light_v).reflect(normal_v);
-      double rde = dot(reflect_v, eye_v);
+      if (lightDotNormal < 0 or intensity == 0.0) {
+        // pass
+      } else {
+        diffuse = effective * this->diffuse_ * lightDotNormal;
 
-      if (rde > 0) {
-        double f = pow(rde, this->shininess());
-        specular = light.intensity() * this->specular() * f;
+        auto reflect_v = -light_v.reflect(normal_v);
+        auto reflectDotEye = dot(reflect_v, eye_v);
+
+        if (reflectDotEye <= 0) {
+          // pass
+        } else {
+          auto factor = pow(reflectDotEye, shininess_);
+          specular = light->intensity() * specular_ * factor;
+        }
       }
+      sum += diffuse;
+      sum += specular;
     }
-    if (intensity == 1.0) {
-      return ambient + diffuse + specular;
-    }
-    if (intensity == 0.0) {
-      return ambient;
-    }
-
-    diffuse = diffuse * intensity;
-    specular = specular * intensity;
-    return ambient + diffuse + specular;
+    return ambient + (sum / samples.size()) * intensity;
   }
 
  private:

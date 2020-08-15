@@ -26,8 +26,8 @@ class File {
     return group;
   }
   virtual ~File() = default;
-  virtual Camera* camera() const = 0;
-  virtual PointLight* light() const = 0;
+  virtual const Camera* camera() const = 0;
+  virtual const Light* light() const = 0;
 };
 
 #endif  // RAY_TRACING2_FILE_H

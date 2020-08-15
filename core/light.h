@@ -2,6 +2,7 @@
 
 #include "color.h"
 #include "tuple.h"
+#include <vector>
 
 class World;
 
@@ -21,6 +22,7 @@ class Light {
     return this->intensity_ == rhs.intensity_;
   }
 
+  virtual std::vector<Tuple> samples() const = 0;
   virtual double intensity_at(const Tuple& point, const World* world) const = 0;
 };
 
@@ -32,6 +34,8 @@ class PointLight : public Light {
       : Light(position, intensity) {}
 
   double intensity_at(const Tuple& point, const World* world) const override;
+
+  std::vector<Tuple> samples() const override { return { position_ }; }
 
   bool operator==(const PointLight& rhs) const {
     return this->intensity_ == rhs.intensity_ &&
@@ -46,7 +50,7 @@ class AreaLight : public Light {
   size_t usteps_;
   Tuple vvec_;
   size_t vsteps_;
-  size_t samples_;
+  size_t sampleCount_;
 
  public:
   AreaLight(const Tuple& corner, const Tuple& full_uvec, size_t usteps,
@@ -57,18 +61,28 @@ class AreaLight : public Light {
         uvec_(full_uvec / usteps),
         vsteps_(vsteps),
         vvec_(full_vvec / vsteps),
-        samples_(usteps * vsteps){}
+        sampleCount_(usteps * vsteps){}
 
   Tuple corner() const { return corner_; }
   Tuple uvec() const { return uvec_; }
   size_t usteps() const { return usteps_; }
   Tuple vvec() const { return vvec_; }
   size_t vsteps() const { return vsteps_; }
-  size_t samples() const { return samples_; }
 
+  std::vector<Tuple> samples() const override {
+    std::vector<Tuple> out;
+    for (size_t v = 0; v < vsteps_; ++v) {
+      for (size_t u = 0; u < usteps_; ++u) {
+        out.push_back(point_on(u, v));
+      }
+    }
+    return out;
+  }
   double intensity_at(const Tuple& point, const World* world) const override;
 
   Tuple point_on(double u, double v) const {
-    return corner_ + uvec_ * (u + 0.5) + vvec_ * (v + 0.5);
+    return corner_ +
+           uvec_ * (u + drand48()) +
+           vvec_ * (v + drand48());
   }
 };

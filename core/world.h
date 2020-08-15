@@ -12,7 +12,7 @@ class World {
   static World default_world() {
     World w;
 
-    PointLight light(Tuple::point(-10, 10, -10), Color(1, 1, 1));
+    Light* light = new PointLight(Tuple::point(-10, 10, -10), Color(1, 1, 1));
     w.set_light(light);
 
     std::shared_ptr<Shape> s1;
@@ -38,7 +38,7 @@ class World {
     auto intensity = light_->intensity_at(comps.over_point, this);
 
     auto surface = comps.object->material()->lighting(
-        comps.object, *light_, comps.over_point, comps.eyev, comps.normalv,
+        comps.object, light_, comps.over_point, comps.eyev, comps.normalv,
         intensity);
 
     auto reflected = reflected_color(comps, remaining);
@@ -79,8 +79,8 @@ class World {
   }
 
   // TODO: replace with std::optional
-  folly::Optional<PointLight> light() { return light_; }
-  void set_light(const PointLight& p) { light_ = p; }
+  Light* light() const { return light_; }
+  void set_light(Light* p) { light_ = p; }
 
   IntersectionVector intersect(const Ray& r) const {
     IntersectionVector out;
@@ -147,5 +147,5 @@ class World {
 
  private:
   std::vector<std::shared_ptr<Shape>> objects_;
-  folly::Optional<PointLight> light_;
+  Light* light_;
 };

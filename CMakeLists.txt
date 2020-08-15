@@ -12,6 +12,7 @@ find_package(fmt REQUIRED)
 find_package(folly REQUIRED)
 find_package(gflags REQUIRED)
 find_package(glog REQUIRED)
+find_package(yaml-cpp REQUIRED)
 
 enable_testing()
 add_subdirectory(tests)
@@ -40,7 +41,7 @@ target_sources(raytrace_lib PRIVATE
         shapes/sphere.cpp
         shapes/triangle.cpp
 )
-target_link_libraries(raytrace_lib fmt::fmt ${FOLLY_LIBRARIES})
+target_link_libraries(raytrace_lib fmt::fmt ${FOLLY_LIBRARIES} ${YAML_CPP_LIBRARIES})
 
 add_executable(raytrace1 apps/raytrace1.cpp)
 target_link_libraries(raytrace1 raytrace_lib)
@@ -62,6 +63,9 @@ target_link_libraries(raytrace6 raytrace_lib)
 
 add_executable(raytrace7 apps/raytrace7.cpp)
 target_link_libraries(raytrace7 PUBLIC raytrace_lib)
+
+add_executable(raytrace8 apps/raytrace8.cpp)
+target_link_libraries(raytrace8 PUBLIC raytrace_lib)
 
 add_executable(render apps/render.cpp)
 target_link_libraries(render PUBLIC raytrace_lib)
