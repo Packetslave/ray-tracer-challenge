@@ -10,9 +10,11 @@
 #include "color.h"
 #include "fmt/format.h"
 #include "folly/String.h"  // TODO: replace with absl
+#include <tbb/scalable_allocator.h>
 
 constexpr char const *kPPMHeader = "P3\n{} {}\n{}";
 constexpr char const *kPPMElement = "{} {} {}";
+using ColorVector = std::vector<Color, tbb::scalable_allocator<Color>>;
 
 namespace {
 int clamp(const double x, const double min, const double max) {
@@ -31,7 +33,7 @@ class Canvas {
  public:
   Canvas(int width, int height) : width_(width), height_(height) {
     pixels_ =
-        std::make_unique<std::vector<Color>>(width * height, Color(0, 0, 0));
+        std::make_unique<ColorVector>(width * height, Color(0, 0, 0));
   }
   [[nodiscard]] Color pixel_at(int x, int y) const {
     return (*pixels_)[index_of(x, y)];
@@ -88,7 +90,7 @@ class Canvas {
 
  private:
   [[nodiscard]] size_t index_of(int x, int y) const { return width_ * y + x; }
-  std::unique_ptr<std::vector<Color>> pixels_;
+  std::unique_ptr<ColorVector> pixels_;
   int width_;
   int height_;
 };

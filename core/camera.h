@@ -6,11 +6,16 @@
 #include "folly/experimental/coro/FutureUtil.h"
 #include "folly/experimental/coro/Task.h"
 //#include "folly/experimental/coro/Collect.h"
+#include <tbb/blocked_range2d.h>
+#include <tbb/parallel_for.h>
+#include "folly/Random.h"
+
 #include "../utils/timer.h"
 #include "matrix.h"
 #include "ray.h"
 #include "tuple.h"
 #include "world.h"
+#include "folly/Random.h"
 
 using Result = std::tuple<size_t, size_t, Color>;
 
@@ -72,6 +77,74 @@ class Camera {
     return out;
   }
 
+  Color process_pixel_tbb(World& w, size_t x, size_t y, const Tuple& origin,
+                          int samples) {
+    if (x == 0 && int(y) % 100 == 0) {
+      std::cout << "Executing for row " << y << std::endl;
+    }
+    Color c_out(0, 0, 0);
+
+    // Cheat and look for misses
+    auto r = ray_for_pixel(x, y);
+    auto hit = w.intersect(r);
+    if (hit.empty()) {
+      return c_out;
+    }
+
+    for (double i = 0; i < samples; ++i) {
+      double xoff = x + 0.5;
+      double yoff = y + 0.5;
+
+      double rx = folly::Random::randDouble01(); //drand48();
+      double ry = folly::Random::randDouble01(); //drand48();
+
+      xoff += (0.5 - rx);
+      yoff += (0.5 - ry);
+
+      xoff *= pixel_size();
+      yoff *= pixel_size();
+
+      double worldX = half_width_ - xoff;
+      double worldY = half_height_ - yoff;
+
+      auto pixel = inverse_ * Tuple::point(worldX, worldY, -1);
+      auto direction = (pixel - origin).normalize();
+
+      auto r = Ray(origin, direction);
+      c_out += w.color_at(r);
+    }
+    return c_out * (1.0 / samples);
+  }
+
+  Canvas multi_render_sampled_tbb(World w, size_t samples) {
+    auto origin = inverse_ * Tuple::point(0, 0, 0);
+    auto out = Canvas(hsize_, vsize_);
+
+    static tbb::auto_partitioner partitioner;
+    tbb::parallel_for(
+        tbb::blocked_range2d<size_t>(0, vsize() - 1,  0, hsize() - 1),
+        [&](const tbb::blocked_range2d<size_t>& r) {
+          for (size_t y = r.rows().begin(); y != r.rows().end(); ++y) {
+            for (size_t x = r.cols().begin(); x != r.cols().end(); ++x) {
+              out.write_pixel(x, y, process_pixel_tbb(w, x, y, origin, samples));
+            }
+          }
+        },
+        partitioner);
+    //    tbb::parallel_for(
+//        tbb::blocked_range<size_t>(0, vsize() - 1, 1),
+//        [&](tbb::blocked_range<size_t>& r) {
+//          for (size_t y = r.begin(); y != r.end(); ++y) {
+//            for (size_t x = 0; x < hsize() - 1; ++x) {
+//              auto c = process_pixel_tbb(w, x, y, origin, samples);
+//              out.write_pixel(x, y, c);
+//            }
+//          }
+//        },
+//        partitioner);
+    return out;
+  }
+
   folly::coro::Task<Canvas> multi_render_sampled(World w, size_t samples) {
     auto origin = inverse_ * Tuple::point(0, 0, 0);
     auto out = Canvas(hsize_, vsize_);
@@ -114,8 +187,8 @@ class Camera {
       double xoff = x + 0.5;
       double yoff = y + 0.5;
 
-      double rx = drand48();
-      double ry = drand48();
+      double rx = folly::Random::randDouble01(); //drand48();
+      double ry = folly::Random::randDouble01(); //drand48();
 
       xoff += (0.5 - rx);
       yoff += (0.5 - ry);
@@ -212,16 +285,12 @@ class Camera {
   }
 
   bool operator==(const Camera& rhs) const {
-    return (
-        hsize_ == rhs.hsize_ &&
-        vsize_ == rhs.vsize_ &&
-        abs(field_of_view_ - rhs.field_of_view_) < EPSILON &&
-        abs(half_height_ - rhs.half_height_) < EPSILON &&
-        abs(half_width_ - rhs.half_width_) < EPSILON &&
-        abs(pixel_size_ - rhs.pixel_size_) < EPSILON &&
-        transform_ == rhs.transform_ &&
-        inverse_ == rhs.inverse_
-    );
+    return (hsize_ == rhs.hsize_ && vsize_ == rhs.vsize_ &&
+            abs(field_of_view_ - rhs.field_of_view_) < EPSILON &&
+            abs(half_height_ - rhs.half_height_) < EPSILON &&
+            abs(half_width_ - rhs.half_width_) < EPSILON &&
+            abs(pixel_size_ - rhs.pixel_size_) < EPSILON &&
+            transform_ == rhs.transform_ && inverse_ == rhs.inverse_);
   }
 
  private:

@@ -12,6 +12,7 @@
 
 #include "ray.h"
 #include "tuple.h"
+#include <tbb/scalable_allocator.h>
 
 class Shape;
 class Intersection {
@@ -43,7 +44,7 @@ inline bool operator==(const Intersection &a, const Intersection &b) {
 //  struct IsRelocatable<Intersection> : boost::true_type {};
 //}
 
-using IntersectionVector = folly::small_vector<Intersection, 4>;
+using IntersectionVector = std::vector<Intersection, tbb::scalable_allocator<Intersection>>;
 //using IntersectionVector = std::vector<Intersection>;
 //using IntersectionVector = folly::fbvector<Intersection>;
 //using IntersectionVector = std::vector<Intersection, folly::SysArenaAllocator<Intersection>>;

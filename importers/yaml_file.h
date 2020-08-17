@@ -117,7 +117,7 @@ class YamlFile : public File {
 
       if (itype == "plane") {
         std::cout << "ADD: plane" << std::endl;
-        auto s = std::make_shared<Plane>();
+        auto s = std::make_unique<Plane>();
 
         if (auto t = item["transform"]) {
           auto transform = node_to_transform(t);
@@ -128,12 +128,13 @@ class YamlFile : public File {
           auto mat = node_to_material(m);
           s->set_material(mat);
         }
-        default_group_->add(s);
+        default_group_->add(s.get());
+        shapes_.push_back(std::move(s));
       }
 
       if (itype == "sphere") {
         std::cout << "ADD: sphere" << std::endl;
-        auto s = std::make_shared<Sphere>();
+        auto s = std::make_unique<Sphere>();
 
         if (auto t = item["transform"]) {
           auto transform = node_to_transform(t);
@@ -144,12 +145,13 @@ class YamlFile : public File {
           auto mat = node_to_material(m);
           s->set_material(mat);
         }
-        default_group_->add(s);
+        default_group_->add(s.get());
+        shapes_.push_back(std::move(s));
       }
 
       if (itype == "cube") {
         std::cout << "ADD: cube" << std::endl;
-        auto c = std::make_shared<Cube>();
+        auto c = std::make_unique<Cube>();
 
         if (auto t = item["transform"]) {
           auto transform = node_to_transform(t);
@@ -160,7 +162,8 @@ class YamlFile : public File {
           auto mat = node_to_material(m);
           c->set_material(mat);
         }
-        default_group_->add(c);
+        default_group_->add(c.get());
+        shapes_.push_back(std::move(c));
       }
     }
   }
@@ -177,4 +180,5 @@ class YamlFile : public File {
   YAML::Node root_;
   std::unique_ptr<Camera> camera_;
   std::unique_ptr<Light> light_;
+  std::vector<std::unique_ptr<Shape>> shapes_;
 };

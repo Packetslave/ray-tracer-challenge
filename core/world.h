@@ -15,8 +15,7 @@ class World {
     Light* light = new PointLight(Tuple::point(-10, 10, -10), Color(1, 1, 1));
     w.set_light(light);
 
-    std::shared_ptr<Shape> s1;
-    s1.reset(new Sphere());
+    auto s1 = new Sphere();
 
     auto m = Material();
     m.set_color(Color(0.8, 1.0, 0.6));
@@ -25,10 +24,7 @@ class World {
     s1->set_material(m);
     w.add(s1);
 
-    std::shared_ptr<Shape> s2;
-    s2.reset(new Sphere());
-
-    s2->set_transform(CreateScaling(0.5, 0.5, 0.5));
+    auto s2 = new Sphere();
     w.add(s2);
 
     return w;
@@ -63,11 +59,11 @@ class World {
     return Color(0, 0, 0);
   }
 
-  std::shared_ptr<Shape> get_object(int index) { return objects_[index]; }
+  Shape* get_object(int index) { return objects_[index]; }
 
   int size() const { return objects_.size(); }
 
-  void add(const std::shared_ptr<Shape>& s) { objects_.push_back(s); };
+  void add(Shape* s) { objects_.push_back(s); };
 
   bool contains(const Shape& s) const {
     for (const auto& i : objects_) {
@@ -146,6 +142,6 @@ class World {
   }
 
  private:
-  std::vector<std::shared_ptr<Shape>> objects_;
+  std::vector<Shape*> objects_;
   Light* light_;
 };

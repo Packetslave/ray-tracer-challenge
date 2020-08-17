@@ -142,17 +142,18 @@ class ObjFile : public File {
 
     for (const auto& f : faces_) {
       if (f[0].n_index == -1) {
-        std::shared_ptr<Triangle> t(new Triangle(vertices_[f[0].v_index],
+        auto t = std::make_unique<Triangle>(vertices_[f[0].v_index],
                                                  vertices_[f[1].v_index],
-                                                 vertices_[f[2].v_index]));
-        default_group_->add(t);
+                                                 vertices_[f[2].v_index]);
+        default_group_->add(t.get());
+        owned_shapes_.push_back(std::move(t));
         continue;
       }
-      std::shared_ptr<SmoothTriangle> t(
-          new SmoothTriangle(vertices_[f[0].v_index], vertices_[f[1].v_index],
+      auto t = std::make_unique<SmoothTriangle>(vertices_[f[0].v_index], vertices_[f[1].v_index],
                              vertices_[f[2].v_index], normals_[f[0].n_index],
-                             normals_[f[1].n_index], normals_[f[2].n_index]));
-      default_group_->add(t);
+                             normals_[f[1].n_index], normals_[f[2].n_index]);
+      default_group_->add(t.get());
+      owned_shapes_.push_back(std::move(t));
       continue;
     }
     std::cout << "Done parsing: " << vertices_.size() << " points, "
@@ -183,4 +184,5 @@ class ObjFile : public File {
   std::vector<Tuple> vertices_;
   std::vector<Tuple> normals_;
   std::vector<std::array<FaceVertex, 3>> faces_;
+  std::vector<std::unique_ptr<Shape>> owned_shapes_;
 };

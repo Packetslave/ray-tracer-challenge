@@ -4,6 +4,7 @@
 #include <cfloat>
 #include <cmath>
 #include <ostream>
+#include <tbb/scalable_allocator.h>
 
 static constexpr double EPSILON = 0.0001;
 
@@ -77,3 +78,5 @@ inline Tuple cross(const Tuple& a, const Tuple& b) {
 
 const static Tuple POSITIVE_INF(DBL_MAX, DBL_MAX, DBL_MAX, 1);
 const static Tuple NEGATIVE_INF(-DBL_MAX, -DBL_MAX, -DBL_MAX, 1);
+
+using TupleVector = std::vector<Tuple, tbb::scalable_allocator<Tuple>>;

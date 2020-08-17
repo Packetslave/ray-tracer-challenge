@@ -48,9 +48,18 @@ int main() {
   world.add(parsed_group);
 //
 //  //auto ex = folly::ThreadedExecutor();
-  auto ex = folly::CPUThreadPoolExecutor(20);
-  auto task = parsed_camera->multi_render_sampled(world, 8);
-  auto canvas = folly::coro::blockingWait(std::move(task).scheduleOn(&ex));
-//  auto canvas = camera.render(world);
-  canvas.save("/tmp/raytrace8.ppm");
+  //auto ex = folly::CPUThreadPoolExecutor(20);
+  //auto task = parsed_camera->multi_render_sampled(world, 8);
+  //auto canvas = folly::coro::blockingWait(std::move(task).scheduleOn(&ex));
+
+  std::unique_ptr<Canvas> c;
+  {
+    Timer render_t("Rendering");
+    auto canvas = parsed_camera->multi_render_sampled_tbb(world,8);
+    c = std::make_unique<Canvas>(std::move(canvas));
+  }
+  {
+    Timer save_t("Saving");
+    c->save("/tmp/raytrace8.ppm");
+  }
 }

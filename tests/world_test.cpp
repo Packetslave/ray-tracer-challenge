@@ -14,7 +14,7 @@
 TEST(World, Create) {
   auto w = World();
   EXPECT_EQ(0, w.size());
-  EXPECT_FALSE(w.light().has_value());
+  EXPECT_EQ(nullptr,w.light());
 }
 
 TEST(World, Default) {
@@ -31,7 +31,7 @@ TEST(World, Default) {
   s2.set_transform(CreateScaling(0.5, 0.5, 0.5));
 
   auto w = World::default_world();
-  EXPECT_EQ(light, w.light());
+  EXPECT_EQ(light, *((PointLight*)w.light()));
 
   EXPECT_TRUE(w.contains(s1));
   EXPECT_TRUE(w.contains(s2));
@@ -78,7 +78,7 @@ TEST(World, ShadeIntersectionOutside) {
   auto r = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
   auto shape = w.get_object(0);
 
-  auto i = Intersection(4, shape.get());
+  auto i = Intersection(4, shape);
   auto comps = ComputedIntersection(i, r);
   auto c = w.shade_hit(comps);
   EXPECT_EQ(Color(0.38066, 0.47583, 0.2855), c);
@@ -86,12 +86,13 @@ TEST(World, ShadeIntersectionOutside) {
 
 TEST(World, ShadeIntersectionInside) {
   auto w = World::default_world();
-  w.set_light(PointLight(Tuple::point(0, 0.25, 0), Color(1, 1, 1)));
+  auto light = PointLight(Tuple::point(0, 0.25, 0), Color(1, 1, 1));
+  w.set_light(&light);
 
   auto r = Ray(Tuple::point(0, 0, 0), Tuple::vector(0, 0, 1));
   auto shape = w.get_object(1);
 
-  auto i = Intersection(0.5, shape.get());
+  auto i = Intersection(0.5, shape);
   auto comps = ComputedIntersection(i, r);
   auto c = w.shade_hit(comps);
   EXPECT_EQ(Color(0.90498, 0.90498, 0.90498), c);
@@ -140,7 +141,8 @@ TEST(World, IsShadowed) {
 
 TEST(World, LightingUsesIntensity) {
   auto w = World::default_world();
-  w.set_light(PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1)));
+  auto light = PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1));
+  w.set_light(&light);
   auto shape = w.get_object(0);
   shape->material()->set_ambient(0.1);
   shape->material()->set_diffuse(0.9);
@@ -223,14 +225,15 @@ TEST(Shadows, NoShadowWhenObjectBehindPoint) {
 
 TEST(Shadows, ShadeHitGivenShadow) {
   auto w = World();
-  w.set_light(PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1)));
+  auto light = PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1));
+  w.set_light(&light);
 
   auto s1 = std::make_shared<Sphere>();
-  w.add(s1);
+  w.add(s1.get());
 
   auto s2 = std::make_shared<Sphere>();
   s2->set_transform(CreateTranslation(0, 0, 10));
-  w.add(s2);
+  w.add(s2.get());
 
   auto r = Ray(Tuple::point(0, 0, 5), Tuple::vector(0, 0, 1));
   auto i = Intersection(4, s2.get());
@@ -256,7 +259,7 @@ TEST(Reflect, NonReflectiveMaterial) {
   auto r = Ray(Tuple::point(0, 0, 0), Tuple::vector(0, 0, 1));
   auto s = w.get_object(1);
   s->material()->set_ambient(1);
-  auto i = Intersection(1, s.get());
+  auto i = Intersection(1, s);
   auto comps = ComputedIntersection(i, r);
   auto color = w.reflected_color(comps);
   EXPECT_EQ(Color(0, 0, 0), color);
@@ -271,7 +274,7 @@ TEST(Reflect, ReflectiveMaterial) {
   m.set_reflective(0.5);
   s->set_material(m);
   s->set_transform(CreateTranslation(0, -1, 0));
-  w.add(s);
+  w.add(s.get());
 
   auto r = Ray(Tuple::point(0, 0, -3), Tuple::vector(0, -SQRT2_2, SQRT2_2));
   auto i = Intersection(sqrt(2), s.get());
@@ -287,7 +290,7 @@ TEST(Reflect, ShadeHit) {
   shape.reset(new Plane());
   shape->material()->set_reflective(0.5);
   shape->set_transform(CreateTranslation(0, -1, 0));
-  w.add(shape);
+  w.add(shape.get());
 
   auto r = Ray(Tuple::point(0, 0, -3), Tuple::vector(0, -SQRT2_2, SQRT2_2));
   auto i = Intersection(sqrt(2), shape.get());
@@ -298,19 +301,20 @@ TEST(Reflect, ShadeHit) {
 
 TEST(Reflect, ColorAtMutuallyReflective) {
   auto w = World();
-  w.set_light(PointLight(Tuple::point(0, 0, 0), Color(1, 1, 1)));
+  auto light = PointLight(Tuple::point(0, 0, 0), Color(1, 1, 1));
+  w.set_light(&light);
 
   std::shared_ptr<Shape> lower;
   lower.reset(new Plane());
   lower->material()->set_reflective(1);
   lower->set_transform(CreateTranslation(0, -1, 0));
-  w.add(lower);
+  w.add(lower.get());
 
   std::shared_ptr<Shape> upper;
   upper.reset(new Plane());
   upper->material()->set_reflective(1);
   upper->set_transform(CreateTranslation(0, 1, 0));
-  w.add(upper);
+  w.add(upper.get());
 
   auto r = Ray(Tuple::point(0, 0, 0), Tuple::vector(0, 1, 0));
   auto c = w.color_at(r);
@@ -318,13 +322,14 @@ TEST(Reflect, ColorAtMutuallyReflective) {
 
 TEST(Reflect, ColorAtMaxRecursion) {
   auto w = World();
-  w.set_light(PointLight(Tuple::point(0, 0, 0), Color(1, 1, 1)));
+  auto light = PointLight(Tuple::point(0, 0, 0), Color(1, 1, 1));
+  w.set_light(&light);
 
   std::shared_ptr<Shape> plane;
   plane.reset(new Plane());
   plane->material()->set_reflective(0.5);
   plane->set_transform(CreateTranslation(0, -1, 0));
-  w.add(plane);
+  w.add(plane.get());
 
   auto r = Ray(Tuple::point(0, 0, -3), Tuple::vector(0, -SQRT2_2, SQRT2_2));
   auto i = Intersection(sqrt(2), plane.get());
@@ -338,7 +343,7 @@ TEST(Refract, RefractedColorOpaqueSurface) {
   auto shape = w.get_object(0);
   auto r = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
   auto xs =
-      IntersectionVector{Intersection(4, shape.get()), Intersection(5, shape.get())};
+      IntersectionVector{Intersection(4, shape), Intersection(5, shape)};
   auto comps = ComputedIntersection(xs[0], r, xs);
   auto c = w.refracted_color(comps, 5);
   EXPECT_EQ(Color(0, 0, 0), c);
@@ -352,7 +357,7 @@ TEST(Refract, RefractedColorMaxDepth) {
 
   auto r = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
   auto xs =
-      IntersectionVector{Intersection(4, shape.get()), Intersection(5, shape.get())};
+      IntersectionVector{Intersection(4, shape), Intersection(5, shape)};
 
   auto comps = ComputedIntersection(xs[0], r, xs);
   auto c = w.refracted_color(comps, 0);
@@ -366,8 +371,8 @@ TEST(Refract, RefractedColorTotalInternal) {
   shape->material()->set_refractive(1.5);
 
   auto r = Ray(Tuple::point(0, 0, SQRT2_2), Tuple::vector(0, 1, 0));
-  auto xs = IntersectionVector{Intersection(-SQRT2_2, shape.get()),
-                                      Intersection(SQRT2_2, shape.get())};
+  auto xs = IntersectionVector{Intersection(-SQRT2_2, shape),
+                                      Intersection(SQRT2_2, shape)};
 
   auto comps = ComputedIntersection(xs[1], r, xs);
   auto c = w.refracted_color(comps, 5);
@@ -387,10 +392,10 @@ TEST(Refract, RefractedColor) {
   b->material()->set_refractive(1.5);
 
   auto r = Ray(Tuple::point(0, 0, 0.1), Tuple::vector(0, 1, 0));
-  auto xs = IntersectionVector{Intersection(-0.9899, a.get()),
-                                      Intersection(-0.4899, b.get()),
-                                      Intersection(0.4899, b.get()),
-                                      Intersection(0.9899, a.get())};
+  auto xs = IntersectionVector{Intersection(-0.9899, a),
+                                      Intersection(-0.4899, b),
+                                      Intersection(0.4899, b),
+                                      Intersection(0.9899, a)};
 
   auto comps = ComputedIntersection(xs[2], r, xs);
   auto c = w.refracted_color(comps, 5);
@@ -407,7 +412,7 @@ TEST(Refract, ShadeHit) {
   m.set_transparency(0.5);
   m.set_refractive(1.5);
   floor->set_material(m);
-  w.add(floor);
+  w.add(floor.get());
 
   std::shared_ptr<Shape> ball;
   ball.reset(new Sphere());
@@ -417,7 +422,7 @@ TEST(Refract, ShadeHit) {
   m2.set_color(Color(1, 0, 0));
   m2.set_ambient(0.5);
   ball->set_material(m2);
-  w.add(ball);
+  w.add(ball.get());
   auto r = Ray(Tuple::point(0, 0, -3), Tuple::vector(0, -SQRT2_2, SQRT2_2));
   auto xs = IntersectionVector{ Intersection(sqrt(2), floor.get())};
   auto comps = ComputedIntersection(xs[0], r, xs);
@@ -438,7 +443,7 @@ TEST(Refract, ShadeHitWIthReflectiveAndTransParent) {
   m.set_transparency(0.5);
   m.set_refractive(1.5);
   floor->set_material(m);
-  w.add(floor);
+  w.add(floor.get());
 
   std::shared_ptr<Shape> ball;
   ball.reset(new Sphere());
@@ -448,7 +453,7 @@ TEST(Refract, ShadeHitWIthReflectiveAndTransParent) {
   m2.set_color(Color(1, 0, 0));
   m2.set_ambient(0.5);
   ball->set_material(m2);
-  w.add(ball);
+  w.add(ball.get());
 
   auto xs = IntersectionVector{ Intersection(sqrt(2), floor.get())};
   auto comps = ComputedIntersection(xs[0], r, xs);

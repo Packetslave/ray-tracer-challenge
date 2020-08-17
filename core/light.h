@@ -3,6 +3,7 @@
 #include "color.h"
 #include "tuple.h"
 #include <vector>
+#include "folly/Random.h"
 
 class World;
 
@@ -22,7 +23,7 @@ class Light {
     return this->intensity_ == rhs.intensity_;
   }
 
-  virtual std::vector<Tuple> samples() const = 0;
+  virtual TupleVector samples() const = 0;
   virtual double intensity_at(const Tuple& point, const World* world) const = 0;
 };
 
@@ -35,7 +36,7 @@ class PointLight : public Light {
 
   double intensity_at(const Tuple& point, const World* world) const override;
 
-  std::vector<Tuple> samples() const override { return { position_ }; }
+  TupleVector samples() const override { return { position_ }; }
 
   bool operator==(const PointLight& rhs) const {
     return this->intensity_ == rhs.intensity_ &&
@@ -69,8 +70,8 @@ class AreaLight : public Light {
   Tuple vvec() const { return vvec_; }
   size_t vsteps() const { return vsteps_; }
 
-  std::vector<Tuple> samples() const override {
-    std::vector<Tuple> out;
+  TupleVector samples() const override {
+    TupleVector out;
     for (size_t v = 0; v < vsteps_; ++v) {
       for (size_t u = 0; u < usteps_; ++u) {
         out.push_back(point_on(u, v));
@@ -82,7 +83,7 @@ class AreaLight : public Light {
 
   Tuple point_on(double u, double v) const {
     return corner_ +
-           uvec_ * (u + drand48()) +
-           vvec_ * (v + drand48());
+           uvec_ * (u + folly::Random::randDouble01()) +
+           vvec_ * (v + folly::Random::randDouble01());
   }
 };

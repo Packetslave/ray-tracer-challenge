@@ -22,7 +22,7 @@ TEST(Light, SurfaceInShadow) {
   auto light = PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1));
   auto in_shadow = 0.0;
   auto m = Material();
-  auto result = m.lighting(nullptr, light, position, eyev, normalv, in_shadow);
+  auto result = m.lighting(nullptr, &light, position, eyev, normalv, in_shadow);
   EXPECT_EQ(Color(0.1, 0.1, 0.1), result);
 }
 
@@ -49,7 +49,7 @@ TEST(AreaLight, Create) {
   EXPECT_EQ(4, light.usteps());
   EXPECT_EQ(Tuple::vector(0, 0, 0.5), light.vvec());
   EXPECT_EQ(2, light.vsteps());
-  EXPECT_EQ(8, light.samples());
+  EXPECT_EQ(8, light.samples().size());
   EXPECT_EQ(Tuple::point(1, 0, 0.5), light.position());
 }
 

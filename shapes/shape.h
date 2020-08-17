@@ -62,7 +62,7 @@ class Shape : public std::enable_shared_from_this<Shape> {
   }
 
   virtual size_t size(bool recurse = false) const { return 1; }
-  virtual bool contains(const std::shared_ptr<Shape> obj) const { return false; }
+  virtual bool contains(Shape* obj) const { return false; }
 
   virtual BoundingBox* bounds_of() { return &box_; }
 

@@ -72,18 +72,18 @@ TEST(BoundingBox, PartitionChildren) {
   auto s3 = std::make_shared<Sphere>();
   auto g = std::make_shared<Group>();
 
-  g->add(s1);
-  g->add(s2);
-  g->add(s3);
+  g->add(s1.get());
+  g->add(s2.get());
+  g->add(s3.get());
 
-  std::pair<std::vector<std::shared_ptr<Shape>>, std::vector<std::shared_ptr<Shape>>> left_right = g->partition_children();
+  std::pair<ShapeVector, ShapeVector> left_right = g->partition_children();
 
   ASSERT_EQ(1, g->children().size());
-  EXPECT_EQ(s3, g->child<Sphere>(0));
+  EXPECT_EQ(*s3, *(g->child<Sphere>(0)));
 
   ASSERT_EQ(1, left_right.first.size());
   ASSERT_EQ(1, left_right.second.size());
 
-  EXPECT_EQ(s1, left_right.first[0]);
-  EXPECT_EQ(s2, left_right.second[0]);
+  EXPECT_EQ(*s1, *(left_right.first[0]));
+  EXPECT_EQ(*s2, *(left_right.second[0]));
 }

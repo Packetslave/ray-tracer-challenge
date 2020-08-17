@@ -5,7 +5,7 @@
 #pragma once
 #include "shape.h"
 
-using ShapeVector = std::vector<std::shared_ptr<Shape>>;
+using ShapeVector = std::vector<Shape*>;
 
 class Group : public Shape {
  public:
@@ -17,6 +17,7 @@ class Group : public Shape {
     }
 
     IntersectionVector out;
+    out.reserve(2 * children_.size());
 
     for (const auto& i : children_) {
       auto result = i->intersects(r);
@@ -47,7 +48,7 @@ class Group : public Shape {
   }
 
   template <typename T>
-  void add(const std::shared_ptr<T>& s) {
+  void add(T* s) {
     s->set_parent(this);
     children_.push_back(s);
     updated_ = true;
@@ -60,7 +61,7 @@ class Group : public Shape {
     //    }
   }
 
-  virtual bool contains(const std::shared_ptr<Shape> obj) const override {
+  virtual bool contains(Shape* obj) const override {
     for (const auto& c : children_) {
       if (c->contains(obj)) {
         return false;
@@ -70,11 +71,11 @@ class Group : public Shape {
   }
 
   template <typename T>
-  std::shared_ptr<T> child(size_t idx) {
-    return std::dynamic_pointer_cast<T>(children_[idx]);
+  T* child(size_t idx) {
+    return (T*)children_[idx];
   }
 
-  std::vector<std::shared_ptr<Shape>> children() { return children_; }
+  ShapeVector children() { return children_; }
 
   BoundingBox* bounds_of() override { return bounds_of(true); }
 
@@ -98,7 +99,7 @@ class Group : public Shape {
     auto bounds = this->bounds_of();
     auto [left, right] = bounds->split();
 
-    std::vector<std::shared_ptr<Shape>>::iterator it;
+    ShapeVector::iterator it;
     updated_ = true;
 
     for (it = children_.begin(); it != children_.end(); /* no increment */) {
@@ -121,7 +122,7 @@ class Group : public Shape {
   }
 
   void make_subgroup(const ShapeVector& shapes) {
-    auto g = std::make_shared<Group>();
+    auto g = new Group();  // TODO: leaks!
     for (const auto& s : shapes) {
       g->add(s);
     }
@@ -148,5 +149,5 @@ class Group : public Shape {
  private:
   BoundingBox box_;
   bool updated_ = true;
-  std::vector<std::shared_ptr<Shape>> children_ = {};
+  ShapeVector children_ = {};
 };

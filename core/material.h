@@ -37,8 +37,8 @@ class Material {
   void set_refractive(const double d) { refractive_ = d; }
   void set_pattern(const Pattern& p) { pattern_ = &p; }
 
-  Color lighting(Shape* obj, Light* light, Tuple point, Tuple eye_v,
-                 Tuple normal_v, double intensity) {
+  Color lighting(Shape* obj, Light* light, const Tuple& point, const Tuple& eye_v,
+                 const Tuple& normal_v, const double intensity) {
     Color c =
         pattern_ == nullptr ? color_ : pattern_->pattern_at_object(obj, point);
 

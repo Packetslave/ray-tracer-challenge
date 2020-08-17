@@ -14,6 +14,10 @@ find_package(gflags REQUIRED)
 find_package(glog REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
+include(external/oneTBB/cmake/TBBGet.cmake)
+tbb_get(TBB_ROOT tbb_root CONFIG_DIR TBB_DIR)
+find_package(TBB REQUIRED)
+
 enable_testing()
 add_subdirectory(tests)
 
@@ -29,7 +33,8 @@ target_sources(raytrace_lib PRIVATE
         core/matrix.cpp
         core/pattern.cpp
         external/minipbrt/minipbrt.cpp
-        importers/obj_file.cpp
+        #importers/obj_file.cpp
+        importers/yaml_file.cpp
         core/ray.cpp
         utils/timer.cpp
         core/tuple.cpp
@@ -41,7 +46,7 @@ target_sources(raytrace_lib PRIVATE
         shapes/sphere.cpp
         shapes/triangle.cpp
 )
-target_link_libraries(raytrace_lib fmt::fmt ${FOLLY_LIBRARIES} ${YAML_CPP_LIBRARIES})
+target_link_libraries(raytrace_lib fmt::fmt ${FOLLY_LIBRARIES} ${YAML_CPP_LIBRARIES} ${TBB_IMPORTED_TARGETS})
 
 add_executable(raytrace1 apps/raytrace1.cpp)
 target_link_libraries(raytrace1 raytrace_lib)
