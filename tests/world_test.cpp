@@ -179,7 +179,7 @@ TEST(ViewTransform, MoveTheWorld) {
 }
 
 // FIXME: this changed with the PBRT stuff
-TEST(ViewTransform, DISABLED_Arbitraty) {
+TEST(ViewTransform, Arbitraty) {
   auto from = Tuple::point(1, 3, 2);
   auto to = Tuple::point(4, -2, 8);
   auto up = Tuple::vector(1, 1, 0);

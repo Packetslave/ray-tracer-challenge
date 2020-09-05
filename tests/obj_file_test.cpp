@@ -80,7 +80,7 @@ TEST(ObjectFile, PolygonData) {
   EXPECT_EQ(t3->p3 , parsed.vertices()[5]);
 }
 
-TEST(ObjectFile, DISABLED_NamedGroup) {
+TEST(ObjectFile, NamedGroup) {
   std::string file = {
       "v -1 1 0\n"
       "v -1 0 0\n"
